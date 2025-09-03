@@ -1,21 +1,28 @@
-import React from 'react';
-import './App.scss';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
 
-interface Props {
-  onClick: () => void;
-  children: React.ReactNode;
-}
+import Home from "./pages/Home";
+import RecipePage from "./pages/RecipePage";
+import styles from "./App.module.scss";
 
-export const Provider: React.FC<Props> = React.memo(({ onClick, children }) => (
-  <button type="button" onClick={onClick}>
-    {children}
-  </button>
-));
-
-export const App: React.FC = () => {
+const App: React.FC = () => {
   return (
-    <div className="starter">
-      <Provider onClick={() => ({})}>TodoList</Provider>
+<Router>
+  <div className={styles.app}>
+    <Sidebar />
+    <div className={styles.content}>
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/recipe/:id" element={<RecipePage title="" author="" tag="" />} />
+        </Routes>
+      </main>
     </div>
+  </div>
+</Router>
+
   );
 };
+
+export default App;
