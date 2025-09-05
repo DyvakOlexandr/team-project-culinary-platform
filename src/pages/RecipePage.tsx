@@ -1,21 +1,47 @@
-import React from "react";
-import styles from "../components/RecipeCard.module.scss";
+import React, { useState } from "react";
+import Header from "../components/Header";
+import RecipeCard from "../components/RecipeCard";
+import styles from "./RecipesPage.module.scss";
+import { sections, summerOffers } from "../data/recipes";
+import type { Recipe } from "../data/recipes";
 
-interface RecipeCardProps {
-  title: string;
-  author: string;
-  tag: string;
-}
+const getAllRecipes = (): Recipe[] => {
+  const sectionRecipes = sections
+    .filter((s) => s.type === "recipes")
+    .flatMap((s) => s.items as Recipe[]);
+  return [...sectionRecipes, ...summerOffers];
+};
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ title, author, tag }) => {
+const RecipesPage: React.FC = () => {
+  const allRecipes = getAllRecipes();
+
+  const ITEMS_PER_PAGE = 9; // показываем по 9 рецептов
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+
+  const visibleRecipes = allRecipes.slice(0, visibleCount);
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
+  };
+
   return (
-    <div className={styles.recipeCard}>
-      <div className={styles.image}></div>
-      <span className={styles.tag}>{tag}</span>
-      <h2 className={styles.title}>{title}</h2>
-      <p className={styles.author}>{author}</p>
-    </div>
+    <main className={styles.main}>
+      <Header />
+      <div className={styles.grid}>
+        {visibleRecipes.map((recipe, idx) => (
+          <RecipeCard key={idx} {...recipe} />
+        ))}
+      </div>
+
+      {visibleCount < allRecipes.length && (
+        <div className={styles.loadMoreWrapper}>
+          <button className={styles.loadMoreButton} onClick={handleLoadMore}>
+            Показати більше
+          </button>
+        </div>
+      )}
+    </main>
   );
 };
 
-export default RecipeCard;
+export default RecipesPage;

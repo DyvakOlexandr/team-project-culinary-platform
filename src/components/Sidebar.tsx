@@ -27,7 +27,7 @@ const Sidebar: React.FC = () => {
     {
       title: "Основне",
       items: [
-        { label: "Головна", icon: FaHome, path: "/" },
+        { label: "Головна", icon: FaHome, path: " " },
         { label: "Рецепти", icon: FaBook, path: "/recipes" },
         { label: "Збережене", icon: FaBookmark, path: "/saved" },
       ],

@@ -4,7 +4,8 @@
   padding: 3rem;
   display: flex;
   flex-direction: column;
-
+  box-sizing: border-box;
+  width: 312px; /* фиксированная ширина сайдбара */
 
   /* Верхний блок (логотип + hr) */
   .topBlock {
@@ -88,6 +89,7 @@
     justify-content: center;
     align-items: center;
     padding: 1rem;
+    box-sizing: border-box;
     
 
     .premiumTitle {
