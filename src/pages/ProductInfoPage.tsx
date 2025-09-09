@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import styles from "./ProductInfoPage.module.scss";
 import flagIcon from "../assets/icon-park-outline_tag.svg";
@@ -20,7 +20,6 @@ import type { Author } from "../data/recipes";
 import { FaArrowRight } from "react-icons/fa";
 import RecipeCard from "../components/RecipeCard";
 import { ChevronRight } from "lucide-react";
-
 
 const ProductInfoPage: React.FC = () => {
   // Состояние для комментариев
@@ -46,6 +45,7 @@ const ProductInfoPage: React.FC = () => {
 };
   const [rating, setRating] = useState(0);
 const [hoverRating, setHoverRating] = useState(0);
+
   // Получаем ID рецепта из URL
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -101,6 +101,10 @@ const [hoverRating, setHoverRating] = useState(0);
   }
   return num.toString();
 };
+
+  const location = useLocation();
+  const targetCategory = location.state?.category || "Сніданок";
+  const selectedDate = location.state?.date; // дата, выбранная в MealPlannerPage
 
   return (
     <main className={styles.main}>
@@ -264,9 +268,23 @@ const [hoverRating, setHoverRating] = useState(0);
           <button className={styles.actionButton}>Зберегти
             <img src={flagIcon} alt="flag" className={styles.actionIcon} />
           </button>
-          <button className={styles.actionButton}>До плану
-            <img src={iconCalendar} alt="calendar" className={styles.actionIcon} />
-          </button>
+<button
+  className={styles.actionButton}
+  onClick={() =>
+    navigate("/planner", {
+      state: {
+         addedRecipe: recipe, 
+        category: targetCategory,
+        date: selectedDate // либо дата из location.state, либо текущая дата
+      },
+    })
+  }
+>
+  До плану
+  <img src={iconCalendar} alt="calendar" className={styles.actionIcon} />
+</button>
+
+
           <button className={styles.actionButton}>Друкувати
             <img src={iconPrinter} alt="printer" className={styles.actionIcon} />
           </button>
@@ -338,6 +356,7 @@ const [hoverRating, setHoverRating] = useState(0);
 </div>
     </div>
   </div>
+  <hr />
 
   {/* Форма для добавления нового комментария */}
   <form

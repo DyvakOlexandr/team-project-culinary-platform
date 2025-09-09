@@ -697,8 +697,14 @@ text-align: center;
   justify-content: space-between;
   align-items: center;
   width: 66.5%;
-  border-bottom: 1px solid #e5e7eb;
 }
+
+  hr {
+      border: none;
+      height: 1px;
+      width: 100%;
+      background-color: #e5e7eb;
+    }
 
 .commentsTitle{
   color: rgba(0, 0, 0, 1);
@@ -765,6 +771,7 @@ text-align: left;
   display: inline-block;
   width: 66.5%;
   }
+
   
   .avatar{
     width: 56px;

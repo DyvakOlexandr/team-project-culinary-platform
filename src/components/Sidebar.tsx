@@ -85,7 +85,7 @@ const Sidebar: React.FC = () => {
       <div className={styles.premiumBlock}>
         <div className={styles.premiumTextBlock}>
         <h1 className={styles.premiumTitle}>Отримати преміум</h1>
-        <p className={styles.premiumText}>Ексклюзивні рецепти та додаткові можливості </p>
+        <p className={styles.premiumText}>Ексклюзивні рецепти та <br/> додаткові можливості </p>
         <button className={styles.premiumButton}>
   Оновити
   <span className={styles.buttonIcon}>

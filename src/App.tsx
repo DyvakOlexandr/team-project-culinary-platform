@@ -2,10 +2,11 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
-import RecipePage from "./pages/RecipePage";
-import styles from "./App.module.scss";
+import RecipesPage from "./pages/RecipePage"; // <-- убедись, что компонент называется так
+import RecipePage from "./pages/RecipePage"; // страница конкретного рецепта
 import ProductInfoPage from "./pages/ProductInfoPage";
 import MealPlannerPage from "./pages/MealPlannerPage";
+import styles from "./App.module.scss";
 
 const App: React.FC = () => {
   return (
@@ -16,10 +17,10 @@ const App: React.FC = () => {
           <main>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/recipes" element={<RecipePage />} /> 
-              <Route path="/recipe/:id" element={<RecipePage />} />
+              <Route path="/recipes" element={<RecipesPage />} /> {/* страница со списком рецептов */}
+              <Route path="/recipe/:id" element={<RecipePage />} /> {/* конкретный рецепт */}
               <Route path="/product/:id" element={<ProductInfoPage />} />
-              <Route path="/planner" element={<MealPlannerPage />} />
+              <Route path="/planner" element={<MealPlannerPage />} /> {/* планировщик */}
             </Routes>
           </main>
         </div>

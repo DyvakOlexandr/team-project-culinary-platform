@@ -2,6 +2,7 @@ export interface Ingredient {
   name: string;   // продукт
   amount?: number; // количество, необязательно (например, "за смаком")
   unit?: string;   // единица измерения
+  category?: string;
 }
 
 export interface Nutrition {
@@ -32,14 +33,14 @@ export const recipeDetails: RecipeDetails[] = [
     id: "r1",
     description:
       "Це легка, соковита і ситна страва, яка швидко готується і підійде як для обіду, так і для вечері. Ідеально поєднується зі свіжою зеленню та може подаватися самостійно або як гарнір до картоплі чи круп.",
-    ingredients: [
-      { name: "Молода капуста", amount: 200, unit: "г" },
-      { name: "Куряче філе", amount: 120, unit: "г" },
-      { name: "Помідори", amount: 100, unit: "г" },
-      { name: "Твердий сир", amount: 50, unit: "г" },
-      { name: "Рослинна олія або вершкове масло", amount: 1, unit: "ст. л." },
-      { name: "Сіль", unit: "за смаком" },
-      { name: "Зелень (петрушка/кріп)", unit: "для подачі" },
+       ingredients: [
+      { name: "Молода капуста", amount: 200, unit: "г", category: "Овочі та зелень" },
+      { name: "Куряче філе", amount: 120, unit: "г", category: "М’ясо та риба" },
+      { name: "Помідори", amount: 100, unit: "г", category: "Овочі та зелень" },
+      { name: "Твердий сир", amount: 50, unit: "г", category: "Молочні продукти та яйця " },
+      { name: "Рослинна олія або вершкове масло", amount: 1, unit: "ст. л.", category: "Жири/Олія" },
+      { name: "Сіль", unit: "за смаком", category: "Спеції" },
+      { name: "Зелень (петрушка/кріп)", unit: "для подачі", category: "Овочі та зелень" },
     ],
     steps: [
       { title: "Підготовка овочів", description: " Для початку капусту тонко нашаткуйте, цибулю наріжте акуратними кубиками, помідори поріжте на середні шматочки, а часник подрібніть — так овочі рівномірно приготуються та віддадуть страві максимум смаку." },
@@ -61,11 +62,11 @@ export const recipeDetails: RecipeDetails[] = [
     description:
       "Ароматна шарлотка з ніжним сирним смаком і яблучними скибочками.",
     ingredients: [
-      { name: "Яблука", amount: 4, unit: "шт." },
-      { name: "Сир", amount: 200, unit: "г" },
-      { name: "Яйця", amount: 3, unit: "шт." },
-      { name: "Цукор", amount: 150, unit: "г" },
-      { name: "Борошно", amount: 250, unit: "г" },
+      { name: "Яблука", amount: 4, unit: "шт.", category: "Фрукти" },
+      { name: "Сир", amount: 200, unit: "г", category: "Молочні продукти та яйця "},
+      { name: "Яйця", amount: 3, unit: "шт.", category: "Молочні продукти та яйця " },
+      { name: "Цукор", amount: 150, unit: "г" , category: "Бакалія, соуси, горіхи "},
+      { name: "Борошно", amount: 250, unit: "г", category: "Бакалія, соуси, горіхи "},
     ],
     steps: [
       { title: "Підготовка капусти", description: "Нашаткувати капусту." },
