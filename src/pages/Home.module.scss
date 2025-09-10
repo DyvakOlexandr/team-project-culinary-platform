@@ -7,6 +7,7 @@
   gap: 2.5rem;
   box-sizing: border-box;
   overflow-y: auto;
+
   .cardLink {
   text-decoration: none;
   color: inherit;
@@ -68,11 +69,8 @@
     border: none;
     color: rgba(3, 102, 168, 1);
   cursor: pointer;
-font-family: Noto Sans;
 font-size: 18px;
 font-weight: 400;
 line-height: 25px;
-letter-spacing: 0%;
-text-align: left;
   }
 }

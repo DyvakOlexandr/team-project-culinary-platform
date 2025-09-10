@@ -83,4 +83,33 @@ export const recipeDetails: RecipeDetails[] = [
     ],
     tags: ["Десерт", "Швидко", "Солодке"], // добавляем теги
   },
+
+    {
+    id: "r3",
+    description:
+      "Ароматна шарлотка з ніжним сирним смаком і яблучними скибочками.",
+    ingredients: [
+      { name: "Яблука", amount: 4, unit: "шт.", category: "Фрукти" },
+      { name: "Сир", amount: 200, unit: "г", category: "Молочні продукти та яйця "},
+      { name: "Яйця", amount: 3, unit: "шт.", category: "Молочні продукти та яйця " },
+      { name: "Цукор", amount: 150, unit: "г" , category: "Бакалія, соуси, горіхи "},
+      { name: "Борошно", amount: 250, unit: "г", category: "Бакалія, соуси, горіхи "},
+    ],
+    steps: [
+      { title: "Підготовка капусти", description: "Нашаткувати капусту." },
+      { title: "Нарізка помідорів", description: "Нарізати помідори кубиками." },
+      { title: "Обсмажування", description: "Обсмажити овочі на олії." },
+      { title: "Тушкування", description: "Тушкувати 20 хв до готовності." },
+    ],
+    calories: 320,
+    nutrition: [
+      { name: "Калорії", amount: 320, unit: "ккал" },
+      { name: "Білки", amount: 6, unit: "г" },
+      { name: "Жири", amount: 12, unit: "г" },
+      { name: "Вуглеводи", amount: 45, unit: "г" },
+    ],
+    tags: ["Десерт", "Швидко", "Солодке"], // добавляем теги
+  },
+  
 ];
+

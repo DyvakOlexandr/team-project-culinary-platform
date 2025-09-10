@@ -21,6 +21,13 @@ import { FaArrowRight } from "react-icons/fa";
 import RecipeCard from "../components/RecipeCard";
 import { ChevronRight } from "lucide-react";
 
+interface SavedItem {
+  id: string;
+  title: string;
+  category: string;
+  dateSaved: string;
+}
+
 const ProductInfoPage: React.FC = () => {
   // Состояние для комментариев
   const [comments, setComments] = useState([
@@ -106,6 +113,28 @@ const [hoverRating, setHoverRating] = useState(0);
   const targetCategory = location.state?.category || "Сніданок";
   const selectedDate = location.state?.date; // дата, выбранная в MealPlannerPage
 
+const handleSaveRecipe = () => {
+  // Получаем текущие сохранённые рецепты
+  const saved: SavedItem[] = JSON.parse(localStorage.getItem("savedRecipes") || "[]");
+
+  // Проверяем, есть ли уже этот рецепт
+ const exists = saved.some(item => item.id === recipe.id);
+  if (exists) {
+    alert("Рецепт вже збережено!");
+    return;
+  }
+  const newItem: SavedItem = {
+    id: recipe.id,
+    title: recipe.title,
+    category: targetCategory, // категория текущего рецепта
+    dateSaved: new Date().toLocaleDateString(),
+  };
+    const updated = [...saved, newItem];
+  localStorage.setItem("savedRecipes", JSON.stringify(updated));
+     // Перейти на страницу Збережене
+  navigate("/saved");
+};
+
   return (
     <main className={styles.main}>
       <Header
@@ -120,12 +149,15 @@ const [hoverRating, setHoverRating] = useState(0);
             />
           </div>
         }
-        showBackButton
-        onBackClick={() => navigate(-1)}
+          showBackButton
+          backButtonLabel="До списку рецептів"   // 👈 свой текст
+          onBackClick={() => navigate(-1)}
       />
 
       <section className={styles.productInfo}>
-        <div className={styles.imagePlaceholder}>
+        <div className={styles.imagePlaceholder}   style={{
+    backgroundImage: recipe.image ? `url(${recipe.image})` : "none",
+  }}>
           <div className={styles.imageTopButton}>
             <button className={styles.exportButton}>
               <img src={exportIcon} alt="export" />
@@ -265,24 +297,25 @@ const [hoverRating, setHoverRating] = useState(0);
         </section>
         {/* Блок действий с рецептом */}
         <div className={styles.recipeActions}>
-          <button className={styles.actionButton}>Зберегти
-            <img src={flagIcon} alt="flag" className={styles.actionIcon} />
-          </button>
-<button
-  className={styles.actionButton}
-  onClick={() =>
-    navigate("/planner", {
-      state: {
-         addedRecipe: recipe, 
-        category: targetCategory,
-        date: selectedDate // либо дата из location.state, либо текущая дата
-      },
-    })
-  }
->
-  До плану
-  <img src={iconCalendar} alt="calendar" className={styles.actionIcon} />
-</button>
+ <button className={styles.actionButton} onClick={handleSaveRecipe}>
+      Зберегти
+      <img src={flagIcon} alt="flag" className={styles.actionIcon} />
+    </button>
+  <button
+      className={styles.actionButton}
+      onClick={() =>
+        navigate("/planner", {
+          state: {
+            addedRecipe: recipe,
+            category: targetCategory,
+            date: selectedDate || new Date().toLocaleDateString(),
+          },
+        })
+      }
+    >
+      До плану
+      <img src={iconCalendar} alt="calendar" className={styles.actionIcon} />
+    </button>
 
 
           <button className={styles.actionButton}>Друкувати

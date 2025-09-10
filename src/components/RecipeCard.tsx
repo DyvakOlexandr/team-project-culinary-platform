@@ -13,6 +13,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
   complexity,
   time,
   rating = 0,
+  image, 
 }) => {
   const [currentRating, setCurrentRating] = useState(rating);
   const navigate = useNavigate();
@@ -23,13 +24,18 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
   };
 
   const handleFlagClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // чтобы не срабатывали другие клики
+    e.stopPropagation();
     if (id) navigate(`/product/${id}`);
   };
 
   return (
     <div className={styles.recipeCard}>
-      <div className={styles.image}>
+      <div
+        className={styles.image}
+        style={{
+          backgroundImage: image ? `url(${image})` : "none",
+        }}
+      >
         <div className={styles.complexity}>{complexity}</div>
         <button onClick={handleFlagClick} className={styles.flag}>
           <img src={flagIcon} alt="flag" />

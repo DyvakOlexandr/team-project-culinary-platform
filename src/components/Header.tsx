@@ -2,12 +2,14 @@
 import React from "react";
 import { FaSearch, FaBell } from "react-icons/fa";
 import styles from "./Header.module.scss";
+import { ArrowLeft } from "lucide-react";
 
 interface HeaderProps {
-  showSearch?: boolean;       // показывать ли стандартный поиск
-  customSearch?: React.ReactNode; // сюда можно передать кастомный поисковик
-  showBackButton?: boolean;   // кнопка назад
+  showSearch?: boolean;            // показывать ли стандартный поиск
+  customSearch?: React.ReactNode;  // сюда можно передать кастомный поисковик
+  showBackButton?: boolean;        // кнопка назад
   onBackClick?: () => void;
+  backButtonLabel?: string;        // 👈 новый проп — подпись кнопки назад
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -15,12 +17,14 @@ const Header: React.FC<HeaderProps> = ({
   customSearch,
   showBackButton = false,
   onBackClick,
+  backButtonLabel = "Назад", // 👈 по умолчанию «Назад»
 }) => {
   return (
     <header className={styles.header}>
       {showBackButton && (
         <button className={styles.backButton} onClick={onBackClick}>
-          ← Назад
+          <ArrowLeft />
+          {backButtonLabel} {/* 👈 теперь текст задаётся пропом */}
         </button>
       )}
 
@@ -50,3 +54,4 @@ const Header: React.FC<HeaderProps> = ({
 };
 
 export default Header;
+

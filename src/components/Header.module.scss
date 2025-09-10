@@ -9,13 +9,21 @@
   box-sizing: border-box;
 
   .backButton {
-    background: transparent;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5rem;
     border: none;
-    color: #0d9488;
-    font-weight: 600;
-    font-size: 1rem;
     cursor: pointer;
-    margin-right: 1rem;
+    background: none;
+     transition: transform 0.3s ease-in-out;
+     color: rgba(37, 48, 62, 1);
+     font-size: 14px;
+     font-weight: 500;
+     line-height: 19px;
+    &:hover{
+      transform: scale(1.02);
+    }
   }
 
   .searchWrapper {

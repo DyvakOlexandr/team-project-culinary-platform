@@ -1,4 +1,5 @@
 // src/data/recipes.ts
+import image1 from "../assets/recepes/image_1.png";
 
 export interface Recipe {
   id: string;
@@ -7,6 +8,7 @@ export interface Recipe {
   complexity: string;
   time?: string;
   rating?: number;
+    image?: string; 
 }
 
 export interface Author {
@@ -26,7 +28,7 @@ export interface Section {
 
 // --- Рецепты ---
 export const recommendedRecipes: Recipe[] = [
-  { id: "r1", title: " Молода капуста з куркою, томатами та сиром", author: "Лілія Климчук", complexity: "Легко", time: "45 хв", rating: 4.7 },
+  { id: "r1", title: " Молода капуста з куркою, томатами та сиром", author: "Лілія Климчук", complexity: "Легко", time: "45 хв", rating: 4.7,  image: image1   },
   { id: "r2", title: "Сирна шарлотка з яблуками", author: "Марія Шевченко", complexity: "Складно", time: "1 год 30 хв", rating: 4.3 },
   { id: "r3", title: "Перець з куркою у духовці", author: "Юлія Романенко", complexity: "Помірно", time: "1 год 15 хв", rating: 4.9 },
 ];
