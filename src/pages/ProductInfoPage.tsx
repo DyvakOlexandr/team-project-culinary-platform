@@ -135,6 +135,50 @@ const handleSaveRecipe = () => {
   navigate("/saved");
 };
 
+// Тип для элемента списка покупок
+type ShoppingItem = {
+  id: string;
+  name: string;
+   amount?: number;
+  unit?: string;
+  recipeTitle?: string; // Позначаємо як обов'язкове, якщо це завжди буде з рецептом
+};
+
+// Функция добавления выбранных ингредиентов в список покупок
+const handleAddToShoppingList = () => {
+  // Выбираем отмеченные ингредиенты
+  const selectedItems: ShoppingItem[] = details.ingredients
+    .filter((_, index) => selectedIngredients[index])
+    .map((ingredient) => ({
+      id: `${Date.now()}-${ingredient.name}-${Math.random()}`,
+      name: ingredient.name,
+      amount: ingredient.amount ? ingredient.amount * servings : undefined,
+      unit: ingredient.unit,
+      recipeTitle: recipe.title,
+    }));
+
+  if (selectedItems.length === 0) {
+    alert("Оберіть хоча б один інгредієнт!");
+    return;
+  }
+
+  // Загружаем текущие продукты
+  const savedProducts: ShoppingItem[] = JSON.parse(
+    localStorage.getItem("shoppingProducts") || "[]"
+  );
+
+  // Добавляем новые
+  const updatedProducts = [...savedProducts, ...selectedItems];
+
+  // Сохраняем в localStorage
+  localStorage.setItem("shoppingProducts", JSON.stringify(updatedProducts));
+
+  console.log("Products saved:", updatedProducts); // ✅ лог для проверки
+
+  alert("Інгредієнти додані до списку покупок!");
+  navigate("/shopping-list");
+};
+
   return (
     <main className={styles.main}>
       <Header
@@ -227,34 +271,39 @@ const handleSaveRecipe = () => {
             </div>
 
             {/* Список ингредиентов */}
-            <ul className={styles.ingredientsList}>
-              {details.ingredients.map((ingredient, index) => {
-                const amount =
-                  ingredient.amount !== undefined ? ingredient.amount * servings : undefined;
+           <ul className={styles.ingredientsList}>
+  {details.ingredients.map((ingredient, index) => {
+    const amount =
+      ingredient.amount !== undefined ? ingredient.amount * servings : undefined;
 
-                return (
-                  <li key={index} className={styles.ingredientItem}>
-                    <input
-                      type="checkbox"
-                      id={`ingredient-${index}`}
-                      className={styles.ingredientCheckbox}
-                      checked={selectedIngredients[index]}
-                      onChange={() => toggleIngredient(index)}
-                    />
-                    <label htmlFor={`ingredient-${index}`} className={styles.ingredientLabel}>
-                      <span className={styles.ingredientName}>{ingredient.name}</span>
-                      {amount !== undefined || ingredient.unit ? (
-                        <span className={styles.ingredientAmount}>
-                          {amount !== undefined ? amount : ""} {ingredient.unit || ""}
-                        </span>
-                      ) : null}
-                    </label>
-                  </li>
-                );
-              })}
-            </ul>
+    return (
+      <li key={index} className={styles.ingredientItem}>
+        <input
+          type="checkbox"
+          id={`ingredient-${index}`}
+          className={styles.ingredientCheckbox}
+          checked={selectedIngredients[index]}       // ✅ связываем с состоянием
+          onChange={() => toggleIngredient(index)}   // ✅ переключение состояния при клике
+        />
+        <label htmlFor={`ingredient-${index}`} className={styles.ingredientLabel}>
+          <span className={styles.ingredientName}>{ingredient.name}</span>
+          {amount !== undefined || ingredient.unit ? (
+            <span className={styles.ingredientAmount}>
+              {amount !== undefined ? amount : ""} {ingredient.unit || ""}
+            </span>
+          ) : null}
+        </label>
+      </li>
+    );
+  })}
+</ul>
 
-            <button className={styles.addToListButton}>Додати в список покупок</button>
+        <button
+  className={styles.addToListButton}
+  onClick={handleAddToShoppingList}   // ✅ здесь вызываем нашу функцию
+>
+  Додати до списку покупок
+</button>
           </div>
               {/* Блок с информацией о питательной ценности */}
           <div className={styles.nutritionBlock}>

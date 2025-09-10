@@ -36,7 +36,7 @@ const Sidebar: React.FC = () => {
       title: "Планування",
       items: [
         { label: "Планувальник страв", icon: FaCalendarAlt, path: "/planner" },
-        { label: "Список покупок", icon: FaShoppingCart, path: "/shopping" },
+        { label: "Список покупок", icon: FaShoppingCart, path: "/shopping-list" },
       ],
     },
     {

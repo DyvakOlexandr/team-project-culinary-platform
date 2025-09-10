@@ -6,9 +6,11 @@ import RecipesPage from "./pages/RecipePage";
 import RecipePage from "./pages/RecipePage";
 import ProductInfoPage from "./pages/ProductInfoPage";
 import MealPlannerPage from "./pages/MealPlannerPage";
-import SavedPage from "./pages/SavedPage"; // <-- добавляем нашу страницу
-import styles from "./App.module.scss";
+import SavedPage from "./pages/SavedPage";
 import CollectionPage from "./pages/CollectionPage";
+import ShoppingListPage from "./pages/ShoppingListPage"; // 👈 добавили
+
+import styles from "./App.module.scss";
 
 const App: React.FC = () => {
   return (
@@ -23,8 +25,9 @@ const App: React.FC = () => {
               <Route path="/recipe/:id" element={<RecipePage />} />
               <Route path="/product/:id" element={<ProductInfoPage />} />
               <Route path="/planner" element={<MealPlannerPage />} />
-              <Route path="/saved" element={<SavedPage />} /> {/* новый маршрут */}
+              <Route path="/saved" element={<SavedPage />} />
               <Route path="/collection/:id" element={<CollectionPage />} />
+              <Route path="/shopping-list" element={<ShoppingListPage />} /> {/* 👈 новый маршрут */}
             </Routes>
           </main>
         </div>
@@ -34,3 +37,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
