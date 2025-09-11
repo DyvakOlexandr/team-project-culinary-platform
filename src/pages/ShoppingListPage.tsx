@@ -3,19 +3,21 @@ import React, { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import styles from "./ShoppingListPage.module.scss";
 import { Plus, ChevronDown, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface ShoppingItem {
   id: string;
   name: string;
   amount?: number;
   unit?: string;
+  checked?: boolean; // ✅ новое поле
 }
 
 interface ShoppingList {
   id: string;
   name: string;
   items: ShoppingItem[];
-   createdAt: string;
+  createdAt: string; // ISO-строка
 }
 
 const ShoppingListPage: React.FC = () => {
@@ -24,8 +26,8 @@ const ShoppingListPage: React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [sortOrder, setSortOrder] = useState<"default" | "az">("default");
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
-  // Закрытие меню при клике вне него
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -36,7 +38,6 @@ const ShoppingListPage: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Загрузка данных из localStorage один раз при монтировании
   useEffect(() => {
     const savedLists = JSON.parse(localStorage.getItem("shoppingLists") || "[]");
     const savedProducts = JSON.parse(localStorage.getItem("shoppingProducts") || "[]");
@@ -44,7 +45,6 @@ const ShoppingListPage: React.FC = () => {
     setProducts(savedProducts);
   }, []);
 
-  // --- Функции для работы с localStorage ---
   const updateLists = (updated: ShoppingList[]) => {
     setLists(updated);
     localStorage.setItem("shoppingLists", JSON.stringify(updated));
@@ -55,19 +55,20 @@ const ShoppingListPage: React.FC = () => {
     localStorage.setItem("shoppingProducts", JSON.stringify(updated));
   };
 
-  // --- Обработчики кнопок ---
   const handleAddList = () => {
-  const name = prompt("Назва нового списку:");
-  if (!name) return;
-  const newList: ShoppingList = { 
-    id: Date.now().toString(), 
-    name, 
-    items: [],
-    createdAt: new Date().toLocaleDateString() // сохраняем дату
+    const name = prompt("Назва нового списку:");
+    if (!name) return;
+
+    const newList: ShoppingList = {
+      id: Date.now().toString(),
+      name,
+      items: [],
+      createdAt: new Date().toISOString(),
+    };
+    updateLists([...lists, newList]);
+    setShowMenu(false);
   };
-  updateLists([...lists, newList]);
-  setShowMenu(false);
-};
+
   const handleDeleteList = (id: string) => {
     if (!window.confirm("Видалити цей список?")) return;
     updateLists(lists.filter(list => list.id !== id));
@@ -100,7 +101,6 @@ const ShoppingListPage: React.FC = () => {
     updateProducts(remainingProducts);
   };
 
-  // --- Сортировка ---
   const sortedProducts = [...products].sort((a, b) =>
     sortOrder === "az" ? a.name.localeCompare(b.name) : 0
   );
@@ -109,11 +109,18 @@ const ShoppingListPage: React.FC = () => {
     sortOrder === "az" ? a.name.localeCompare(b.name) : 0
   );
 
+  // --- Прогресс по отмеченным элементам ---
+  const getListProgress = (list: ShoppingList) => {
+    if (list.items.length === 0) return 0;
+    const checkedCount = list.items.filter(item => item.checked).length;
+    return (checkedCount / list.items.length) * 100;
+  };
+
+
   return (
     <main className={styles.main}>
       <Header />
 
-      {/* Верхнее меню */}
       <div className={styles.savePageButtons}>
         <button
           className={styles.SortButton}
@@ -140,10 +147,7 @@ const ShoppingListPage: React.FC = () => {
 
               {lists.length > 0 && (
                 <>
-                  <button
-                    className={styles.menuBtn}
-                    onClick={handleDeleteAllLists}
-                  >
+                  <button className={styles.menuBtn} onClick={handleDeleteAllLists}>
                     ❌ Видалити всі списки
                   </button>
 
@@ -160,10 +164,7 @@ const ShoppingListPage: React.FC = () => {
               )}
 
               {products.length > 0 && (
-                <button
-                  className={styles.menuBtn}
-                  onClick={handleDeleteAllProducts}
-                >
+                <button className={styles.menuBtn} onClick={handleDeleteAllProducts}>
                   ❌ Видалити всі продукти без списку
                 </button>
               )}
@@ -173,33 +174,47 @@ const ShoppingListPage: React.FC = () => {
       </div>
 
       <div className={styles.shoppingPageGrid}>
-
-        {/* Списки */}
         <div className={styles.listsColumn}>
           {sortedLists.length === 0 && <p>Поки що немає списків. Створіть новий.</p>}
-          {sortedLists.map(list => (
-            <div
-              key={list.id}
-              className={styles.collectionCard}
-              onDrop={e => {
-                e.preventDefault();
-                const productId = e.dataTransfer.getData("text/plain");
-                handleDropProduct(productId, list.id);
-              }}
-              onDragOver={e => e.preventDefault()}
-            >
-              <h3>{list.name}</h3>
-               <p className={styles.listDate}>{list.createdAt}</p>
-              {list.items.map(item => (
-                <div key={item.id} className={styles.listItem}>
-                  <span>{item.name}</span>
-                </div>
-              ))}
-            </div>
-          ))}
+           {sortedLists.map(list => (
+  <div
+    key={list.id}
+    className={styles.collectionCard}
+    onClick={() => navigate(`/shopping-list/${list.id}`)}
+    onDrop={e => {
+      e.preventDefault();
+      const productId = e.dataTransfer.getData("text/plain");
+      handleDropProduct(productId, list.id);
+    }}
+    onDragOver={e => e.preventDefault()}
+  >
+    <h3>{list.name}</h3>
+    <p className={styles.listDate}>
+      {new Date(list.createdAt).toLocaleDateString("uk-UA", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })}
+    </p>
+
+    {/* Прогресс надпись */}
+    <div className={styles.progressLabel}>
+      <p className={styles.progressTitle}>Прогрес</p>
+      {list.items.filter(item => item.checked).length} із {list.items.length}
+    </div>
+
+    {/* Прогресс полоска */}
+    <div className={styles.progressBarBackground}>
+      <div
+        className={styles.progressBarFill}
+        style={{ width: `${getListProgress(list)}%` }}
+      ></div>
+    </div>
+  </div>
+))}
+
         </div>
 
-        {/* Продукты */}
         <div className={styles.productsColumn}>
           {sortedProducts.length === 0 && <p>Поки що немає продуктів.</p>}
           {sortedProducts.map(product => (
@@ -210,16 +225,16 @@ const ShoppingListPage: React.FC = () => {
               onDragStart={e =>
                 e.dataTransfer.setData("text/plain", product.id)
               }
-            >  
+            >
               <span>{product.name}</span>
               <div className={styles.productAmountBlock}>
-              <span>{product.amount ? `${product.amount} ${product.unit}` : ""}</span>
-              <button
-                className={styles.menuBtn}
-                onClick={() => handleDeleteProduct(product.id)}
-              >
-                <Trash2 size={16} />
-              </button>
+                <span>{product.amount ? `${product.amount} ${product.unit}` : ""}</span>
+                <button
+                  className={styles.menuBtn}
+                  onClick={() => handleDeleteProduct(product.id)}
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
             </div>
           ))}

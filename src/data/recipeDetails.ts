@@ -1,3 +1,4 @@
+ /* recipeDetails.ts */
 export interface Ingredient {
   name: string;   // продукт
   amount?: number; // количество, необязательно (например, "за смаком")

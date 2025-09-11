@@ -8,9 +8,10 @@ import ProductInfoPage from "./pages/ProductInfoPage";
 import MealPlannerPage from "./pages/MealPlannerPage";
 import SavedPage from "./pages/SavedPage";
 import CollectionPage from "./pages/CollectionPage";
-import ShoppingListPage from "./pages/ShoppingListPage"; // 👈 добавили
-
+import ShoppingListPage from "./pages/ShoppingListPage"; 
+import ShoppingListDetailPage from "./pages/ShoppingListDetailPage";
 import styles from "./App.module.scss";
+import SettingsPage from "./pages/SettingsPage";
 
 const App: React.FC = () => {
   return (
@@ -27,7 +28,9 @@ const App: React.FC = () => {
               <Route path="/planner" element={<MealPlannerPage />} />
               <Route path="/saved" element={<SavedPage />} />
               <Route path="/collection/:id" element={<CollectionPage />} />
-              <Route path="/shopping-list" element={<ShoppingListPage />} /> {/* 👈 новый маршрут */}
+              <Route path="/shopping-list" element={<ShoppingListPage />} />
+              <Route path="/shopping-list/:id" element={<ShoppingListDetailPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Routes>
           </main>
         </div>

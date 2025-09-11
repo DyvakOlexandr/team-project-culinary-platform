@@ -658,3 +658,9 @@ font-size: 16px;
 font-weight: 500;
 line-height: 22px;
 }
+
+.itemList {
+  list-style: none; /* убираем точки */
+  padding: 0;       /* убираем отступ слева */
+  margin: 0;
+}
