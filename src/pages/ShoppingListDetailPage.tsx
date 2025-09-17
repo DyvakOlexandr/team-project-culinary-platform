@@ -9,7 +9,6 @@ import iconCopy from "../assets/icon-park-outline_copy.svg";
 import iconPrint from "../assets/icon-park-outline_printer-one.svg";
 import iconSend from "../assets/icon-park-outline_export.svg";
 import iconMarket from "../assets/icon-park-outline_transaction-order.svg";
-import { FaSearch } from "react-icons/fa";
 
 interface ShoppingItem {
   id: string;
@@ -167,13 +166,7 @@ const ShoppingListDetailPage: React.FC = () => {
   return (
     <main className={styles.main}>
       <Header
-        showSearch={false}
-        customSearch={
-          <div className={styles.customSearchWrapper}>
-            <FaSearch className={styles.searchIcon} />
-            <input type="text" className={styles.customSearch} placeholder="Пошук…" />
-          </div>
-        }
+        showSearch={true}
         showBackButton
         backButtonLabel="До списку рецептів"
         onBackClick={() => navigate(-1)}

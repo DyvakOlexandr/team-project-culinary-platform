@@ -14,39 +14,50 @@
     display: flex;
     flex-direction: column;
     justify-content: center; // равномерное вертикальное выравнивание
-    gap: 16px; // отступ между заголовком, текстом и кнопкой
+    gap: 8px; // отступ между заголовком, текстом и кнопкой
 
     h2 {
-      width: 344px;
-      height: 38px;
-      margin: 0; // убрать дополнительные отступы
+      margin: 0;
+    color:  rgba(252, 253, 253, 1);
+font-size: 34px;
+font-weight: 700;
+line-height: 46px;
     }
 
     p {
-      font-size: 1rem;
-      color: #555;
-      margin: 0; // убрать default margin
+      margin: 0;
+      width: 369px;
+height: 52px;
+     color:  rgba(246, 248, 248, 1);
+font-size: 18px;
+font-weight: 600;
+line-height: 25px;
     }
 
     .orderButton {
-      margin-top: 32px;
-      width: 212px;
-height: 56px;
+      margin-top: 43px;
+  width: 228px;
+  height: 48px;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px; // расстояние между текстом и иконкой
   padding: 0.5rem 1rem;
-  border: 2px solid rgba(240, 240, 241, 1);
   border-radius: 12px;
-  background: rgba(249, 249, 249, 1);
-  cursor: pointer;
-  transition: background-color 0.3s;
+  background: rgba(1, 64, 78, 1);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 22px;
+      color: rgba(252, 253, 253, 1);
+      cursor: pointer;
+      transition: background 0.2s;
+      transition: transform 0.3s ease-in-out;
 
-  &:hover {
-    background-color: #095958;
-    color: #fff;
-  }
+      &:hover {
+        background-color: rgba(31, 83, 94, 1);
+        transform: scale(1.02);
+      }
 
   .buttonIcon {
     font-size: 1.2rem;
@@ -55,17 +66,6 @@ height: 56px;
 }
   }
 
-  .imagePlaceholder {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background-color: #ccc;
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    text-align: center;
-    padding: 24px; // меньше padding на мобильных
 
     .text,
     .imagePlaceholder {
@@ -82,4 +82,4 @@ height: 56px;
       width: 100%;
     }
   }
-}
+

@@ -482,7 +482,7 @@ cursor: pointer;
         text-align: left;
       }
 
-      .stepImage,
+      .stepImage, 
       .stepPlaceholder {
         width: 56%;
         height: 22rem;
@@ -490,6 +490,14 @@ cursor: pointer;
        background: rgba(217, 217, 217, 1);
         object-fit: cover;
       }
+
+      .stepVideo{
+         width: 56%;
+        height: 22rem;
+       border-radius: 16px;
+       object-fit: cover;
+      }
+
     }
   }
 
@@ -604,10 +612,13 @@ text-align: left;
  }
 
   .avatar {
-   width: 88px;
-   height: 88px;
+   width: 80px;
+   height: 80px;
     border-radius: 50%;
     background-color: #ccc;
+    background-size: cover;
+    background-position: center;
+
   }
  
   .name {

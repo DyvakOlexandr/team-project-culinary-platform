@@ -7,7 +7,8 @@ interface AuthorCardProps {
   recipesCount?: number;
   followers?: number;
   email?: string;
-  className?: string; // новый пропс для кастомного класса
+  className?: string;
+  image?: string; 
 }
 
 const formatFollowers = (num: number | undefined) => {
@@ -25,7 +26,8 @@ const AuthorCard: React.FC<AuthorCardProps> = ({
   recipesCount,
   followers,
   email,
-  className, // получаем пропс
+  className,
+  image,
 }) => {
   const [subscribed, setSubscribed] = useState(false);
 
@@ -33,7 +35,12 @@ const AuthorCard: React.FC<AuthorCardProps> = ({
 
   return (
     <div className={`${styles.authorCard} ${className || ""}`}>
-      <div className={styles.avatar}></div>
+      <div className={styles.avatar}
+     style={{
+       backgroundImage: image ? `url(${image})` : "none",
+     }}
+>
+</div>
       <div className={styles.authorInfo}>
         <p className={styles.name}>{name}</p>
         {email && <p>{email}</p>}

@@ -1,0 +1,31 @@
+.main {
+  flex: 1;
+  height: 100vh;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr); // 2 колонки на планшетах
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr; // 1 колонка на телефонах
+  }
+}

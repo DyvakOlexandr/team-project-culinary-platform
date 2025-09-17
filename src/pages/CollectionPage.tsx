@@ -4,7 +4,6 @@ import { getAllRecipes } from "../data/recipes";
 import type { Recipe } from "../data/recipes";
 import RecipeCard from "../components/RecipeCard";
 import Header from "../components/Header";
-import { FaSearch } from "react-icons/fa";
 import styles from "./CollectionPage.module.scss";
 import iconBook from "../assets/menu_icon/icon-park-outline_notebook-one.svg"
 import {ChevronDown} from "lucide-react";
@@ -32,17 +31,7 @@ const CollectionPage: React.FC = () => {
   return (
     <main className={styles.main}>
 <Header
-  showSearch={false}
-  customSearch={
-    <div className={styles.customSearchWrapper}>
-      <FaSearch className={styles.searchIcon} />
-      <input
-        type="text"
-        className={styles.customSearch}
-        placeholder="Пошук…"
-      />
-    </div>
-  }
+  showSearch={true}
   showBackButton
   backButtonLabel="До колекцій"   // 👈 свой текст
   onBackClick={() => navigate(-1)}

@@ -6,7 +6,7 @@ import Header from "../components/Header";
 import { Plus, ChevronDown } from "lucide-react";
 import styles from "./SavedPage.module.scss";
 import { useNavigate } from "react-router-dom";
-import iconBook from "../assets/menu_icon/icon-park-outline_notebook-one.svg"
+import iconBook from "../assets/menu_icon/icon-park-outline_notebook-one.svg";
 
 interface SavedItem {
   id: string;
@@ -19,11 +19,34 @@ interface Collection {
   recipes: SavedItem[];
 }
 
+// Утилита для throttling
+const throttle = (callback: { (e: React.DragEvent): void; apply?: any; }, delay: number | undefined) => {
+  let isThrottled = false;
+  let lastArgs = null;
+  let lastThis = null;
+
+  const wrapper = (...args: any[]) => {
+    lastArgs = args;
+    lastThis = this;
+    if (!isThrottled) {
+      isThrottled = true;
+      callback.apply(lastThis, lastArgs);
+      setTimeout(() => {
+        isThrottled = false;
+      }, delay);
+    }
+  };
+  return wrapper;
+};
+
 const SavedPage: React.FC = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [savedRecipes, setSavedRecipes] = useState<SavedItem[]>([]);
   const [showMenu, setShowMenu] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(null);
+
   const menuRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Закрытие меню при клике вне него
   useEffect(() => {
@@ -44,6 +67,32 @@ const SavedPage: React.FC = () => {
     const recipes = JSON.parse(localStorage.getItem("savedRecipes") || "[]");
     if (recipes.length > 0) setSavedRecipes(recipes);
   }, []);
+
+  // Эффект для автоматической прокрутки при перетаскивании
+  useEffect(() => {
+    if (!scrollContainerRef.current || !scrollDirection) {
+      return;
+    }
+
+    let scrollInterval: NodeJS.Timeout;
+    const scrollSpeed = 15; // Увеличена скорость для более быстрого скролла
+
+    if (scrollDirection === "up") {
+      scrollInterval = setInterval(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop -= scrollSpeed;
+        }
+      }, 10); // Уменьшен интервал для более плавного и быстрого скролла
+    } else if (scrollDirection === "down") {
+      scrollInterval = setInterval(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop += scrollSpeed;
+        }
+      }, 15);
+    }
+
+    return () => clearInterval(scrollInterval);
+  }, [scrollDirection]);
 
   const updateCollections = (updated: Collection[]) => {
     setCollections(updated);
@@ -84,11 +133,25 @@ const SavedPage: React.FC = () => {
     localStorage.setItem("savedRecipes", JSON.stringify(updated));
   };
 
-  // Добавление рецепта в коллекцию через drag & drop
+  // Оптимизированный обработчик для перетаскивания
   const handleDropRecipe = (recipeId: string, collectionId: string) => {
     const recipe = savedRecipes.find(r => r.id === recipeId);
     if (!recipe) return;
 
+    // Оптимистичное обновление состояния
+    setCollections(prevCollections =>
+      prevCollections.map(col => {
+        if (col.id === collectionId) {
+          const exists = col.recipes.some(r => r.id === recipeId);
+          if (!exists) return { ...col, recipes: [...col.recipes, recipe] };
+        }
+        return col;
+      })
+    );
+
+    setSavedRecipes(prevSavedRecipes => prevSavedRecipes.filter(r => r.id !== recipeId));
+
+    // Асинхронное обновление localStorage
     const updatedCollections = collections.map(col => {
       if (col.id === collectionId) {
         const exists = col.recipes.some(r => r.id === recipeId);
@@ -96,20 +159,59 @@ const SavedPage: React.FC = () => {
       }
       return col;
     });
-    updateCollections(updatedCollections);
-
-    // Удаляем рецепт из savedRecipes после добавления
-    const remaining = savedRecipes.filter(r => r.id !== recipeId);
-    setSavedRecipes(remaining);
-    localStorage.setItem("savedRecipes", JSON.stringify(remaining));
+    localStorage.setItem("savedCollections", JSON.stringify(updatedCollections));
+    localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes.filter(r => r.id !== recipeId)));
   };
+
   const navigate = useNavigate();
 
+  // Оптимизированный обработчик для onDragOver с throttling
+const throttledDragOver = useRef(
+    throttle((e: React.DragEvent) => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        const rect = container.getBoundingClientRect();
+        const sensitivity = 50;
+        
+        // Получаем высоту и ширину видимой области окна
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+
+        // Определяем, находится ли курсор близко к верхней или нижней границе
+        const nearTop = e.clientY < rect.top + sensitivity;
+        const nearBottom = e.clientY > rect.bottom - sensitivity;
+
+        // Если курсор находится вне видимой области окна, прекращаем скролл
+        if (e.clientY < 0 || e.clientY > viewportHeight || e.clientX < 0 || e.clientX > viewportWidth) {
+            setScrollDirection(null);
+            return;
+        }
+
+        // Если курсор находится внутри контейнера, но близко к его границе, включаем скролл
+        if (nearTop) {
+            setScrollDirection("up");
+        } else if (nearBottom) {
+            setScrollDirection("down");
+        } else {
+            setScrollDirection(null);
+        }
+    }, 50)
+).current;
+
+  const handleDragEnd = () => {
+    setScrollDirection(null);
+  };
+
   return (
-    <main className={styles.main}>
+    <main
+      className={styles.main}
+      ref={scrollContainerRef}
+      onDragOver={throttledDragOver}
+      onDragEnd={handleDragEnd}
+    >
       <Header />
 
-      {/* Меню управления */}
       <div className={styles.savePageButtons}>
         <button className={styles.SortButton}>
           Сортувати за <ChevronDown size={16} className={styles.sortIcon} />
@@ -134,7 +236,6 @@ const SavedPage: React.FC = () => {
                   <button className={styles.menuBtn} onClick={handleDeleteAllCollections}>
                     ❌ Видалити всі колекції
                   </button>
-
                   {collections.map(col =>
                     col.recipes.length > 0 || col.name ? (
                       <div key={col.id} className={styles.deleteRecipesGroup}>
@@ -145,7 +246,6 @@ const SavedPage: React.FC = () => {
                         >
                           🗑 Видалити колекцію
                         </button>
-
                         {col.recipes.map(recipeItem => {
                           const recipe = getAllRecipes().find(r => r.id === recipeItem.id);
                           if (!recipe) return null;
@@ -188,7 +288,6 @@ const SavedPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Отображение коллекций */}
       {collections.length === 0 && savedRecipes.length === 0 ? (
         <p className={styles.empty}>У вас поки немає збережених колекцій.</p>
       ) : (
@@ -203,29 +302,28 @@ const SavedPage: React.FC = () => {
                 <div
                   key={col.id}
                   className={styles.collectionCard}
-                    onDrop={(e) => {
-                   e.preventDefault();
+                  onDrop={(e) => {
+                    e.preventDefault();
                     const recipeId = e.dataTransfer.getData("text/plain");
                     handleDropRecipe(recipeId, col.id);
-                   }}
+                  }}
                   onDragOver={(e) => e.preventDefault()}
-                  onClick={() => navigate(`/collection/${col.id}`)} // переход по клику
-                   >
+                  onClick={() => navigate(`/collection/${col.id}`)}
+                >
                   <img className={styles.collectionImage} />
                   <h3 className={styles.collectionName}>{col.name || "Без назви"}</h3>
                   <div className={styles.collectionNameBlock}>
-                    <img src={iconBook} alt="book"/>
-                  <p className={styles.collectionCount}>
-                    {savedInCollection.length}{" "}
-                    {savedInCollection.length === 1 ? "рецепт" : "рецептів"}
-                  </p>
+                    <img src={iconBook} alt="book" />
+                    <p className={styles.collectionCount}>
+                      {savedInCollection.length}{" "}
+                      {savedInCollection.length === 1 ? "рецепт" : "рецептів"}
+                    </p>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Отображение сохранённых рецептов без коллекций */}
           {savedRecipes.length > 0 && (
             <div className={styles.savedRecipesGrid}>
               {savedRecipes.map(recipeItem => {

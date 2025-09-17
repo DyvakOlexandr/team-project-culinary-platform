@@ -7,13 +7,12 @@ const FreshProductsBanner: React.FC = () => {
     <section className={styles.banner}>
       <div className={styles.text}>
         <h2>Свіжі товари від Сільпо</h2>
-        <p>Готуй разом із доставкою</p>
+        <p>Готуй із задоволенням — ми подбаємо, щоб усі інгредієнти були під рукою</p>
         <button className={styles.orderButton}>
           Спробувати зараз
           <FaShoppingBag className={styles.buttonIcon} />
         </button>
       </div>
-      <div className={styles.imagePlaceholder}></div>
     </section>
   );
 };

@@ -1,5 +1,6 @@
+// App.tsx
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
 import RecipesPage from "./pages/RecipePage";
@@ -8,14 +9,19 @@ import ProductInfoPage from "./pages/ProductInfoPage";
 import MealPlannerPage from "./pages/MealPlannerPage";
 import SavedPage from "./pages/SavedPage";
 import CollectionPage from "./pages/CollectionPage";
-import ShoppingListPage from "./pages/ShoppingListPage"; 
+import ShoppingListPage from "./pages/ShoppingListPage";
 import ShoppingListDetailPage from "./pages/ShoppingListDetailPage";
+import SettingsPage from "./pages/SettingsPage"; 
 import styles from "./App.module.scss";
-import SettingsPage from "./pages/SettingsPage";
+import HelpPage from "./pages/HelpPage";
+import RecommendedRecipesPage from "./pages/RecommendedRecipesPage";
+import PopularRecipesPage from "./pages/PopularRecipesPage";
+import SummerOffersPage from "./pages/SummerOffersPage";
+import AuthorsPage from "./pages/AuthorsPage";
 
 const App: React.FC = () => {
   return (
-    <Router basename="/team-project-culinary-platform">
+    <Router>
       <div className={styles.app}>
         <Sidebar />
         <div className={styles.content}>
@@ -31,6 +37,11 @@ const App: React.FC = () => {
               <Route path="/shopping-list" element={<ShoppingListPage />} />
               <Route path="/shopping-list/:id" element={<ShoppingListDetailPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/help" element={<HelpPage />} />
+              <Route path="/recipes/recommended" element={<RecommendedRecipesPage />} />
+               <Route path="/recipes/popular" element={<PopularRecipesPage />} />
+               <Route path="/recipes/summer-offers" element={<SummerOffersPage />} />
+               <Route path="/authors" element={<AuthorsPage />} />
             </Routes>
           </main>
         </div>
@@ -40,4 +51,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-

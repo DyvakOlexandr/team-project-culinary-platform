@@ -6,6 +6,9 @@
   flex-direction: column;
   box-sizing: border-box;
   overflow-y: auto;
+    overflow-y: auto; /* Включаем вертикальный скролл */
+    overflow-x: hidden; /* Скрываем горизонтальный скролл */
+    height: 100vh
 }
 
 .savePageButtons{

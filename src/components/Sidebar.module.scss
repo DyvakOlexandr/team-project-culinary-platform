@@ -1,63 +1,62 @@
 .sidebar {
-  background-color: #ffffff;
+  background:  rgba(252, 253, 253, 1);
   border-right: 1px solid #e5e7eb;
-  padding: 3rem;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 
 
-  /* Верхний блок (логотип + hr) */
-  .topBlock {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.logo{
+  padding: 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+.groupTitle{
+  color: rgba(95, 104, 109, 1);
+font-size: 14px;
+font-weight: 500;
+line-height: 19px;
+}
 
-      img {
-        display: block;
-        height: 2rem;
-        object-fit: contain;
-      }
-    }
-
-    hr {
-      border: none;
-      height: 1px;
-      width: 100%;
-      background-color: #e5e7eb;
-      margin-top: 1.5rem;
-    }
-  }
-
+.label{
+  color: rgba(28, 35, 39, 1);
+font-size: 16px;
+font-weight: 500;
+line-height: 22px;
+}
   /* Навигация растягивается на всё доступное пространство */
   .nav {
-    flex: 1; /* занимает всё пространство между верхом и низом */
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    padding: 1.5rem;
+  
+    .navGroup{
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
 
     .navButton {
-      width: 100%; /* адаптивная ширина */
+      width: 224px;
+     height: 48px;
       display: flex;
       align-items: center;
       gap: 0.75rem;
       padding: 0.5rem 1rem;
       background: none;
       border: none;
-      border-radius: 0.5rem;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 0.95rem;
-      color: #374151;
       transition: background 0.2s, color 0.2s;
+      transition: transform 0.3s ease-in-out;
 
       &:hover {
-        background-color: #e6fffa;
-        color: #0d9488;
+        box-sizing: border-box;
+border-radius: 12px;
+background: rgba(241, 243, 244, 1);
+   transform: scale(1.02);
       }
 
       .iconWrapper {
@@ -67,11 +66,12 @@
       }
 
       &.active {
-        background-color: #0d9488;
-        color: #ffffff;
+    color: rgba(1, 64, 78, 1);
+border-radius: 12px;
+background:  rgba(217, 224, 227, 1);
 
         .iconWrapper {
-          color: #ffffff;
+           color: rgba(1, 64, 78, 1);
         }
       }
     }
@@ -81,19 +81,20 @@
   .premiumBlock {
     align-self: center;
     margin-top: auto; /* прижимаем к низу */
-    width: 100%; /* адаптивная ширина */
-    border-radius: 24px;
-    background: #f3f3f3;
+    margin-bottom: 2rem;
+    width: 224px;
+    height: 178px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
-    box-sizing: border-box;
-    
+    border: 2px solid  rgba(227, 230, 232, 1);
+box-sizing: border-box;
+border-right: 1px solid  rgba(227, 230, 232, 1);
+background:  rgba(234, 239, 240, 1);
 
     .premiumTitle {
-      font-family: Noto Sans;
       font-size: 1.125rem; /* 18px */
       font-weight: 600;
       line-height: 1.4;
@@ -113,25 +114,27 @@
 
     .premiumButton {
       margin-top: 1.5rem;
-      width: 100%;
+      width: 192px;
+      height: 48px;
       padding: 0.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
+      border: none;
       gap: 0.5rem;
-      border: 2px solid #f0f0f1;
       border-radius: 12px;
-      background: #ffffff;
-      color: #25303e;
-      font-family: Noto Sans;
-      font-size: 1rem; /* 16px */
+      background: rgba(1, 64, 78, 1);
+      font-size: 16px;
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 22px;
+      color: rgba(252, 253, 253, 1);
       cursor: pointer;
       transition: background 0.2s;
+      transition: transform 0.3s ease-in-out;
 
       &:hover {
-        background-color: #f0f0f1;
+        background-color: rgba(31, 83, 94, 1);
+        transform: scale(1.02);
       }
     }
   }

@@ -13,6 +13,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
   complexity,
   time,
   rating = 0,
+  authorImage,
   image, 
 }) => {
   const [currentRating, setCurrentRating] = useState(rating);
@@ -54,7 +55,12 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
       </div>
       <hr />
       <div className={styles.authorBlock}>
-        <div className={styles.avatar}></div>
+          <div
+          className={styles.avatar}
+          style={{
+            backgroundImage: authorImage ? `url(${authorImage})` : "none",
+          }}
+        ></div>
         <p className={styles.author}>{author}</p>
       </div>
     </div>

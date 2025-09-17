@@ -133,28 +133,22 @@
   }
 
   /* Кружки под цифрой */
-  .mealDots {
-    position: absolute;
-    bottom: 1rem; /* чуть выше низа блока */
-    display: flex;
-    gap: 4px;
-    left: 1rem;
-    z-index: 1; /* под цифрой */
-     @for $i from 1 through 10 {
-    .mealDot:nth-child(#{$i}) {
-      background: rgba(147, 147, 147, 1); 
-    }
-  }
-  }
+.mealDots {
+  position: absolute;
+  bottom: 1rem;
+  display: flex;
+  gap: 4px;
+  left: 1rem;
+  z-index: 1;
 
   .mealDot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    display: block;
+    background: gray; // fallback на случай, если цвет не найден
   }
 }
-
+}
   /* Сегодняшнее число */
 .today {
     border: 2px solid #4caf50;
@@ -290,10 +284,12 @@ line-height: 22px;
 }
 
 .mealImagePlaceholder {
-  width: 112px;
-height: 80px;
+  width: 120px;
+height: 88px;
   border-radius: 12px;
   background: #e0e0e0; // серый фон
+  background-position: center;
+  background-size: cover;
 }
 
 .mealCardBlock{
@@ -474,10 +470,24 @@ line-height: 16px;
       margin: 6px 0;
 
       .progressFill {
-        height: 100%;
-        background: linear-gradient(90deg, #4caf50, #81c784);
-        transition: width 0.3s ease;
-      }
+  height: 8px;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.calories {
+  background-color:  rgba(65, 89, 230, 1); 
+}
+.protein {
+  background-color:  rgba(43, 182, 115, 1) 
+}
+.fat {
+  background-color:  rgba(249, 168, 37, 1); 
+}
+.carbs {
+  background-color: #7028FF; 
+}
+
     }
   }
 }

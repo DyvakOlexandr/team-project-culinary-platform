@@ -14,12 +14,16 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
-  .avatar {
-    width: 64px;
-    height: 64px;
-    background-color: #d1d5db;
-    border-radius: 50%;
-  }
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #d1d5db;
+  background-size: cover;
+  background-position: center;
+}
+
 
   .authorInfo {
     display: flex;

@@ -8,7 +8,7 @@ import LunchIcon from "../assets/menu_icon/icon-park-outline_bowl.svg";
 import DinnerIcon from "../assets/menu_icon/icon-park-outline_rice.svg";
 import SnackIcon from "../assets/menu_icon/icon-park-outline_apple-one.svg";
 import DessertIcon from "../assets/menu_icon/icon-park-outline_cake-five.svg";
-import DrinksIcon from "../assets/menu_icon/icon-park-outline_snacks.svg";
+import DrinksIcon from "../assets/menu_icon/icon-park-outline_tea-drink.svg";
 import { recipeDetails } from "../data/recipeDetails";
 import type { Recipe } from "../data/recipes";
 import { getAllRecipes } from "../data/recipes";
@@ -28,6 +28,15 @@ const categoryIcons: Record<string, string> = {
   "Напої": DrinksIcon,
 };
 
+const categoryColors: Record<string, string> = {
+  "Сніданок": "#FF4646", 
+  "Обід": "#FE8700",     
+  "Вечеря": "#3328FF",   
+  "Перекус": "#FFBB07",  
+  "Десерт": "#FF4FA3",   
+  "Напої": "#00C2A8",    
+};
+
 const mealCategories = ["Все","Сніданок","Обід","Вечеря","Перекус","Десерт","Напої"];
 
 interface MealCard {
@@ -37,6 +46,7 @@ interface MealCard {
   date: string; // YYYY-MM-DD
   calories?: number;
    servings?: number;
+   image?: string;
 }
 
 
@@ -347,11 +357,20 @@ const groupedIngredients = sortByCategory
                   >
                     {d.getDate()}
                   </span>
-                  <div className={styles.mealDots}>
-                    {Array.from({ length: mealsCountOnDate(d) }, (_, i) => (
-                      <span key={i} className={styles.mealDot}></span>
-                    ))}
-                  </div>
+                 <div className={styles.mealDots}>
+  {Array.from({ length: mealsCountOnDate(d) }, (_, i) => {
+    const meal = mealCardsList.filter(c => c.date === formatDateKey(d))[i];
+    const category = meal?.category || "Сніданок";
+    return (
+      <span
+        key={i}
+        className={styles.mealDot}
+        style={{ backgroundColor: categoryColors[category] }}
+      ></span>
+    );
+  })}
+</div>
+
                 </div>
               ))}
             </div>
@@ -374,10 +393,19 @@ const groupedIngredients = sortByCategory
                     {d.getDate()}
                   </span>
                   <div className={styles.mealDots}>
-                    {Array.from({ length: mealsCountOnDate(d) }, (_, i) => (
-                      <span key={i} className={styles.mealDot}></span>
-                    ))}
-                  </div>
+  {Array.from({ length: mealsCountOnDate(d) }, (_, i) => {
+    // Получаем категорию для i-го блюда на эту дату
+    const meal = mealCardsList.filter(c => c.date === formatDateKey(d))[i];
+    const category = meal?.category || "Сніданок"; // по умолчанию
+    return (
+      <span
+        key={i}
+        className={styles.mealDot}
+        style={{ backgroundColor: categoryColors[category] }}
+      ></span>
+    );
+  })}
+</div>
                 </div>
               ))}
             </div>
@@ -429,7 +457,10 @@ const groupedIngredients = sortByCategory
           </div>
 
   <div className={styles.mealCardBlock}>
-    <div className={styles.mealImagePlaceholder}></div>
+    <div
+  className={styles.mealImagePlaceholder}
+  style={{ backgroundImage: `url(${card.image || fullRecipe?.image})` }}
+></div>
     <div className={styles.mealCardInfo}>
     <div className={styles.mealTitle}>
   <h3>{card.title}</h3>
@@ -490,62 +521,61 @@ const groupedIngredients = sortByCategory
     })}
 </div>
       
-
-
       </section>
+
+       {/*Денний план*/}
 <div className={styles.dailyPlan}>
- <div className={styles.dailyPlanHead}>
+  <div className={styles.dailyPlanHead}>
     <h3 className={styles.dailiTitle}>Денний план</h3>
     <button className={styles.menuToggleBtn} onClick={handleEditAllGoals}>
       <MoreVertical size={16} />
     </button>
   </div>
   <div className={styles.dailyPlanInfo}>
-    
     {(["calories", "protein", "fat", "carbs"] as const).map((key) => (
-      
       <div key={key} className={styles.goalRow}>
-       <p className={styles.nutrient}>
-  <span className={styles.nutrientName}>
-    {key === "calories"
-      ? "Калорії"
-      : key === "protein"
-      ? "Білки"
-      : key === "fat"
-      ? "Жири"
-      : "Вуглеводи"}
-  </span>
-  <span className={styles.nutrientValue}>
-    {key === "calories"
-      ? `${dailyTotals.calories} ккал`
-      : key === "protein"
-      ? `${dailyTotals.protein} г`
-      : key === "fat"
-      ? `${dailyTotals.fat} г`
-      : `${dailyTotals.carbs} г`}
-  </span>
-</p>
+        <p className={styles.nutrient}>
+          <span className={styles.nutrientName}>
+            {key === "calories"
+              ? "Калорії"
+              : key === "protein"
+              ? "Білки"
+              : key === "fat"
+              ? "Жири"
+              : "Вуглеводи"}
+          </span>
+          <span className={styles.nutrientValue}>
+            {key === "calories"
+              ? `${dailyTotals.calories.toFixed(0)} ккал`
+              : key === "protein"
+              ? `${dailyTotals.protein.toFixed(2)} г`
+              : key === "fat"
+              ? `${dailyTotals.fat.toFixed(2)} г`
+              : `${dailyTotals.carbs.toFixed(2)} г`}
+          </span>
+        </p>
 
         <div className={styles.progressBar}>
           <div
-            className={styles.progressFill}
+            className={`${styles.progressFill} ${styles[key]}`}
             style={{ width: `${progress[key]}%` }}
           ></div>
         </div>
+
         <p className={styles.dailyTarget}>
-  {key === "calories"
-    ? `Ціль: ${nutritionGoals.calories} ккал`
-    : key === "protein"
-    ? `Ціль: ${nutritionGoals.protein} г`
-    : key === "fat"
-    ? `Ціль: ${nutritionGoals.fat} г`
-    : `Ціль: ${nutritionGoals.carbs} г`}
-</p>
+          {key === "calories"
+            ? `Ціль: ${nutritionGoals.calories.toFixed(2)} ккал`
+            : key === "protein"
+            ? `Ціль: ${nutritionGoals.protein.toFixed(2)} г`
+            : key === "fat"
+            ? `Ціль: ${nutritionGoals.fat.toFixed(2)} г`
+            : `Ціль: ${nutritionGoals.carbs.toFixed(2)} г`}
+        </p>
       </div>
     ))}
   </div>
-
 </div>
+
 
   {/* Інгредієнти */}
   

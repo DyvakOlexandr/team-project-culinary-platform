@@ -13,10 +13,8 @@ import iconCamera from "../assets/icon-park-outline_camera.svg";
 import like from "../assets/icon-park-outline_good-two.svg";
 import dislike from "../assets/icon-park-outline_bad-two.svg";
 import more_one from "../assets/icon-park-outline_more-one.svg";
-import { FaSearch } from "react-icons/fa";
 import { recipeDetails } from "../data/recipeDetails"
 import { getAllRecipes, getAllAuthors  } from "../data/recipes";
-import type { Author } from "../data/recipes";
 import { FaArrowRight } from "react-icons/fa";
 import RecipeCard from "../components/RecipeCard";
 import { ChevronRight } from "lucide-react";
@@ -84,21 +82,21 @@ const [hoverRating, setHoverRating] = useState(0);
   // Очистить все ингредиенты
   const clearAll = () => setSelectedIngredients(details.ingredients.map(() => false));
 
-  let authorData: Author | undefined = getAllAuthors().find(
-    (a) => a.name.trim().toLowerCase() === recipe.author.trim().toLowerCase()
-  );
+ let authorData = getAllAuthors().find(
+  (a) => a.name.trim().toLowerCase() === recipe.author.trim().toLowerCase()
+);
 
-  // Если автора нет в массиве, создаём "пустую" карточку
-  if (!authorData) {
-    authorData = {
-      id: `a_${recipe.id}`,
-      name: recipe.author,
-      email: "",
-      profession: "",
-      recipesCount: 1,
-      followers: 0,
-    };
-  }
+if (!authorData) {
+  // fallback если автора нет в popularAuthors
+  authorData = {
+    id: `a_${recipe.id}`,
+    name: recipe.author,
+    profession: "Домашній кулінар",
+    recipesCount: 1,
+    followers: 0,
+    image: recipe.authorImage ?? "", // 👈 берём из Recipe
+  };
+}
 
   const formatFollowers = (num: number | undefined) => {
   if (!num) return "0";
@@ -182,17 +180,7 @@ const handleAddToShoppingList = () => {
   return (
     <main className={styles.main}>
       <Header
-        showSearch={false}
-        customSearch={
-          <div className={styles.customSearchWrapper}>
-            <FaSearch className={styles.searchIcon} />
-            <input
-              type="text"
-              className={styles.customSearch}
-              placeholder="Пошук…"
-            />
-          </div>
-        }
+        showSearch={true}
           showBackButton
           backButtonLabel="До списку рецептів"   // 👈 свой текст
           onBackClick={() => navigate(-1)}
@@ -324,26 +312,33 @@ const handleAddToShoppingList = () => {
         </div>
             {/* Блок с шагами приготовления */}
         <section className={styles.recipeSteps}>
-          <h2 className={styles.stepsTitle}>Як приготувати</h2>
-          <ol className={styles.stepsList}>
-            {details.steps.map((step, idx) => (
-              <li key={idx} className={styles.stepItem}>
-                <div className={styles.stepHeader}>
-                  <span className={styles.stepNumber}>{idx + 1}</span>
-                  <h3 className={styles.stepTitle}>{step.title}</h3>
-                </div>
+  <h2 className={styles.stepsTitle}>Як приготувати</h2>
+  <ol className={styles.stepsList}>
+    {details.steps.map((step, idx) => (
+      <li key={idx} className={styles.stepItem}>
+        <div className={styles.stepHeader}>
+          <span className={styles.stepNumber}>{idx + 1}</span>
+          <h3 className={styles.stepTitle}>{step.title}</h3>
+        </div>
 
-                <p className={styles.stepDescription}>{step.description}</p>
+        <p className={styles.stepDescription}>{step.description}</p>
 
-                {step.image ? (
-                  <img src={step.image} alt={step.title} className={styles.stepImage} />
-                ) : (
-                  <div className={styles.stepPlaceholder}></div>
-                )}
-              </li>
-            ))}
-          </ol>
-        </section>
+        {/* Якщо є фото */}
+        {step.image && (
+          <img src={step.image} alt={step.title} className={styles.stepImage} />
+        )}
+
+        {/* Якщо є відео */}
+        {step.video && (
+          <video controls className={styles.stepVideo}>
+            <source src={step.video} type="video/mp4" />
+            Ваш браузер не підтримує відео.
+          </video>
+        )}
+      </li>
+    ))}
+  </ol>
+</section>
         {/* Блок действий с рецептом */}
         <div className={styles.recipeActions}>
  <button className={styles.actionButton} onClick={handleSaveRecipe}>
@@ -391,7 +386,15 @@ const handleAddToShoppingList = () => {
 <div className={styles.customAuthorCard}>
   <p className={styles.autorcardTitle}>Автор</p>
   <div className={styles.autocardBlock}>
-  <div className={styles.avatar}></div>
+  <div className={styles.authorCard}>
+<div
+  className={styles.avatar}
+  style={{ backgroundImage: `url(${authorData.image})` }}
+/>
+  <div className={styles.info}>
+  </div>
+</div>
+
   <div className={styles.authorInfo}>
     <div className={styles.authorHeader}>
     <div className={styles.authorDetails}>

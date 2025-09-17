@@ -14,7 +14,7 @@
 
 .image {
   width: 100%;
-  aspect-ratio: 16/9;       // всегда 16:9
+  aspect-ratio: 16 / 9; /* ✅ автоматически вычислит высоту */
   border-radius: 0.5rem;
   position: relative;
 
@@ -75,9 +75,8 @@
    
 
   .title {
-height: 52px;
+height: 100px;
     color: rgba(36, 36, 36, 1);
-   font-family: Noto Sans;
    font-size: 18px;
    font-weight: 600;
    line-height: 25px;
@@ -146,7 +145,10 @@ width: 24px;
 height: 24px;
   border-radius: 50%; // круг
   background-color: #d1d5db; // серый цвет
-  flex-shrink: 0; // чтобы не сжимался
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  background-position: center;
 }
 
 .author {
