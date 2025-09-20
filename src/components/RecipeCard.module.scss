@@ -40,7 +40,7 @@
     padding: 4px 8px;
     border-radius: 50px;
     background: rgba(255, 255, 255, 1);
-    color: rgba(0, 0, 0, 1);
+    color:#fff;
     font-family: Noto Sans;
     font-size: 12px;
     font-weight: 600;
@@ -176,4 +176,11 @@ text-align: left;
     transform: scale(1.03);
     cursor: pointer; 
   }
+}
+
+.modalCard {
+  // Новые стили, которые будут применяться только в модальном окне
+  border: 1px solid #ccc;
+  box-shadow: none;
+ 
 }

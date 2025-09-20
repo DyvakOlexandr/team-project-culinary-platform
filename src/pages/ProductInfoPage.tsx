@@ -318,11 +318,10 @@ const handleAddToShoppingList = () => {
       <li key={idx} className={styles.stepItem}>
         <div className={styles.stepHeader}>
           <span className={styles.stepNumber}>{idx + 1}</span>
-          <h3 className={styles.stepTitle}>{step.title}</h3>
-        </div>
+        
 
         <p className={styles.stepDescription}>{step.description}</p>
-
+        </div>
         {/* Якщо є фото */}
         {step.image && (
           <img src={step.image} alt={step.title} className={styles.stepImage} />

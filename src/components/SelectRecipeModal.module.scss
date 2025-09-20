@@ -1,0 +1,155 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: #fff;
+  width: 728px;
+  height: 608px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  position: relative;
+  height: 50px;
+}
+
+.title {
+  flex: 1;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.backBtn,
+.closeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.backBtn {
+  position: absolute;
+  left: 0;
+}
+
+.closeBtn {
+  position: absolute;
+  right: 0;
+}
+
+.searchInput {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: 100%;
+  margin: 0.75rem 0;
+  outline: none;
+}
+
+.suggestions {
+  max-height: 80px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.suggestionItem {
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.85rem;
+}
+
+.suggestionItem:last-child {
+  border-bottom: none;
+}
+
+.suggestionItem:hover {
+  background-color: #f9f9f9;
+}
+
+.highlight {
+  background-color: #ffeb3b;
+  font-weight: 600;
+}
+
+.savedBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.collectionsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  height: 130px;
+}
+
+.collectionCard {
+  background: #fafafa;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+}
+
+.collectionImage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1px;
+  height: 60px;
+  overflow: hidden;
+}
+
+.collectionImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collectionCount {
+  display: flex;
+  align-items: center;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.7rem;
+  color: #555;
+}
+
+.collectionCount img {
+  width: 14px;
+  height: 14px;
+  margin-right: 0.2rem;
+}
+
+.savedRecipesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  height: 170px;
+}
+
+.savedRecipeCard {
+  cursor: pointer;
+  font-size: 0.75rem;
+  height: 80px ;
+}

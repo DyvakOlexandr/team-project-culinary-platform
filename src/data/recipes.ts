@@ -109,23 +109,23 @@ export interface Section {
 
 // --- Рецепты ---
 export const recommendedRecipes: Recipe[] = [
-  { id: "r1", title: " Ідеальний гарбузовий пиріг", author: "Лілія Климчук",authorImage: autorimage14, complexity: "Легко", time: "2 год 45 хв", rating: 4.7,  image: image1   },
-  { id: "r2", title: "Полуничне сирне морозиво з крихтами", author: "Марія Шевченко",authorImage: autorimage13, complexity: "Помірно", time: "4 год 15 хв", rating: 4.3,  image: image2  },
-  { id: "r3", title: "Швидкий тортилья-кіш", author: "Юлія Романенко",authorImage: autorimage1, complexity: "Легко", time: "17 хв", rating: 4.9 , image: image3},
+  { id: "r1", title: " Ідеальний гарбузовий пиріг", author: "Лілія Климчук",authorImage: autorimage14, complexity: "Легко", time: "2 год 45 хв", rating: 5.0,  image: image1   },
+  { id: "r2", title: "Полуничне сирне морозиво з крихтами", author: "Марія Шевченко",authorImage: autorimage13, complexity: "Помірно", time: "4 год 15 хв", rating: 4.5,  image: image2  },
+  { id: "r3", title: "Швидкий тортилья-кіш", author: "Юлія Романенко",authorImage: autorimage1, complexity: "Легко", time: "17 хв", rating: 4.0 , image: image3},
   { id: "r10", title: "Міні-бургери з яйцем", author: "Юлія Романенко", complexity: "Легко", time: "15 хв", rating: 4.9 , image: image10},
-  { id: "r11", title: "Сніданкова тортилья-піца", author: "Юлія Романенко", complexity: "Легко", time: "10 хв", rating: 4.9 , image: image11},
-   { id: "r12", title: "Запечені оніґірі з бататом та авокадо", author: "Юлія Романенко", complexity: "Помірно", time: "1 год", rating: 4.9 , image: image12},
-   { id: "r13", title: "Сніданкова боул-тарілка з бататом", author: "Юлія Романенко", complexity: "Легко", time: "35 хв", rating: 4.9 , image: image13},
-    { id: "r14", title: "Фрикадельки з сиром рікота та моцарела", author: "Юлія Романенко", complexity: "Легко", time: "30 хв", rating: 4.9 , image: image14},
-   { id: "r15", title: "Паста з яловичиною та вершковим соусом", author: "Юлія Романенко", complexity: "Легко", time: "25 хв", rating: 4.9 , image: image15},  
-    { id: "r16", title: "Легка запіканка з тортильї з начинкою", author: "Юлія Романенко", complexity: "Легко", time: "1 год 5хв", rating: 4.9 , image: image16},
-     { id: "r17", title: "Шаурма з куркою", author: "Юлія Романенко", complexity: "Легко", time: "1 год 25хв", rating: 4.9 , image: image17},
-     { id: "r18", title: "Салат із запеченого нуту з ніжною кремовою заправкою", author: "Юлія Романенко", complexity: "Легко", time: "30хв", rating: 4.9 , image: image18},
-       { id: "r19", title: "Тако з цвітної капусти та кіноа", author: "Юлія Романенко", complexity: "Легко", time: "1 год", rating: 4.9 , image: image19},    
+  { id: "r11", title: "Сніданкова тортилья-піца", author: "Юлія Романенко", complexity: "Легко", time: "10 хв", rating: 4.0 , image: image11},
+   { id: "r12", title: "Запечені оніґірі з бататом та авокадо", author: "Юлія Романенко", complexity: "Помірно", time: "1 год", rating: 5.0 , image: image12},
+   { id: "r13", title: "Сніданкова боул-тарілка з бататом", author: "Юлія Романенко", complexity: "Легко", time: "35 хв", rating: 4.8 , image: image13},
+    { id: "r14", title: "Фрикадельки з сиром рікота та моцарела", author: "Юлія Романенко", complexity: "Легко", time: "30 хв", rating: 4.0 , image: image14},
+   { id: "r15", title: "Паста з яловичиною та вершковим соусом", author: "Юлія Романенко", complexity: "Легко", time: "25 хв", rating: 5.0 , image: image15},  
+    { id: "r16", title: "Легка запіканка з тортильї з начинкою", author: "Юлія Романенко", complexity: "Легко", time: "1 год 5хв", rating: 5.0 , image: image16},
+     { id: "r17", title: "Шаурма з куркою", author: "Юлія Романенко", complexity: "Легко", time: "1 год 25хв", rating: 5.0 , image: image17},
+     { id: "r18", title: "Салат із запеченого нуту з ніжною кремовою заправкою", author: "Юлія Романенко", complexity: "Легко", time: "30хв", rating: 4.0 , image: image18},
+       { id: "r19", title: "Тако з цвітної капусти та кіноа", author: "Юлія Романенко", complexity: "Легко", time: "1 год", rating: 4.5 , image: image19},    
        { id: "r20", title: "Лосось із кунжутом та салат з рисової локшини", author: "Юлія Романенко", complexity: "Легко", time: "45 хв", rating: 4.9 , image: image20},
-           { id: "r21", title: "Боул із креветками та манговою сальсою", author: "Юлія Романенко", complexity: "Легко", time: "45 хв", rating: 4.9 , image: image21},
-      { id: "r22", title: "Качині грудки з винним соусом і запеченим виноградом", author: "Юлія Романенко", complexity: "Легко", time: "40 хв", rating: 4.9 , image: image22},
-      { id: "r23", title: "Смажені на пательні свинячі відбивні", author: "Юлія Романенко", complexity: "Легко", time: "40 хв", rating: 4.9 , image: image23},           
+           { id: "r21", title: "Боул із креветками та манговою сальсою", author: "Юлія Романенко", complexity: "Легко", time: "45 хв", rating: 4.8 , image: image21},
+      { id: "r22", title: "Качині грудки з винним соусом і запеченим виноградом", author: "Юлія Романенко", complexity: "Легко", time: "40 хв", rating: 4.7 , image: image22},
+      { id: "r23", title: "Смажені на пательні свинячі відбивні", author: "Юлія Романенко", complexity: "Легко", time: "40 хв", rating: 4.5 , image: image23},           
 ];
 
 export const popularRecipes: Recipe[] = [

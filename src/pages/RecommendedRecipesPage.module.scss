@@ -9,24 +9,33 @@
   overflow-y: auto;
 }
 
+h1{
+color:  rgba(28, 35, 39, 1);
+font-size: 28px;
+font-weight: 700;
+line-height: 38px;
+letter-spacing: 0%;
+text-align: left;
+}
 
-.title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+.headerButtonBlock{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
 }
 
 .grid {
+   margin-top: 2rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
+  gap: 1.5rem;
 
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr); // 2 колонки на планшетах
+    grid-template-columns: repeat(2, 1fr);
   }
 
   @media (max-width: 640px) {
-    grid-template-columns: 1fr; // 1 колонка на телефонах
+    grid-template-columns: 1fr;
   }
 }
 
@@ -131,6 +140,9 @@ line-height: 22px;
 font-size: 16px;
 font-weight: 500;
 line-height: 22px;
+  &:last-child {
+    border-bottom: none; // Убираем линию у последнего элемента
+  }
 
   &:hover {
     background: #f3f3f3;
@@ -140,17 +152,4 @@ line-height: 22px;
 .activeItem {
   font-weight: 600;
   color: rgba(31, 83, 94, 1);
-}
-
-.headerButtonBlock{
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-}
-
-.headerBlock{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
 }

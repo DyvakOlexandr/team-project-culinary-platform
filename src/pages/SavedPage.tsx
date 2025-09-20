@@ -1,3 +1,4 @@
+// src/pages/SavedPage.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { getAllRecipes } from "../data/recipes";
 import type { Recipe } from "../data/recipes";
@@ -7,6 +8,8 @@ import { Plus, ChevronDown } from "lucide-react";
 import styles from "./SavedPage.module.scss";
 import { useNavigate } from "react-router-dom";
 import iconBook from "../assets/menu_icon/icon-park-outline_notebook-one.svg";
+import iconEmpty from "../assets/EmptyPage.png";
+import iconRedact from "../assets/redactCollelection.svg";
 
 interface SavedItem {
   id: string;
@@ -16,142 +19,104 @@ interface SavedItem {
 interface Collection {
   id: string;
   name: string;
+  description?: string;
+  collaborators?: string[];
   recipes: SavedItem[];
 }
 
-// Утилита для throttling
-const throttle = (callback: { (e: React.DragEvent): void; apply?: any; }, delay: number | undefined) => {
+// Throttle утилита
+const throttle = <T extends (...args: any[]) => void>(callback: T, delay: number) => {
   let isThrottled = false;
-  let lastArgs = null;
-  let lastThis = null;
-
-  const wrapper = (...args: any[]) => {
-    lastArgs = args;
-    lastThis = this;
+  return (...args: Parameters<T>) => {
     if (!isThrottled) {
       isThrottled = true;
-      callback.apply(lastThis, lastArgs);
-      setTimeout(() => {
-        isThrottled = false;
-      }, delay);
+      callback(...args);
+      setTimeout(() => { isThrottled = false; }, delay);
     }
   };
-  return wrapper;
 };
 
 const SavedPage: React.FC = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [savedRecipes, setSavedRecipes] = useState<SavedItem[]>([]);
-  const [showMenu, setShowMenu] = useState(false);
-  const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editCollectionId, setEditCollectionId] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  const menuRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollDirectionRef = useRef<"up" | "down" | null>(null);
+  const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Закрытие меню при клике вне него
+  const navigate = useNavigate();
+  const [sortMenuOpen, setSortMenuOpen] = useState(false);
+  const [sortOption, setSortOption] = useState<string | null>(null);
+
+  const [newCollectionName, setNewCollectionName] = useState("");
+  const [newCollectionDescription, setNewCollectionDescription] = useState("");
+  const [newCollectionCollaborators, setNewCollectionCollaborators] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
+
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setShowMenu(false);
+    const savedCollections = JSON.parse(localStorage.getItem("savedCollections") || "[]");
+    const recipes = JSON.parse(localStorage.getItem("savedRecipes") || "[]");
+    setCollections(savedCollections);
+    setSavedRecipes(recipes);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(`.${styles.menuWrapper}`)) {
+        setOpenMenuId(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Загрузка коллекций и сохранённых рецептов
-  useEffect(() => {
-    const savedCollections = JSON.parse(localStorage.getItem("savedCollections") || "[]");
-    if (savedCollections.length > 0) setCollections(savedCollections);
-
-    const recipes = JSON.parse(localStorage.getItem("savedRecipes") || "[]");
-    if (recipes.length > 0) setSavedRecipes(recipes);
-  }, []);
-
-  // Эффект для автоматической прокрутки при перетаскивании
-  useEffect(() => {
-    if (!scrollContainerRef.current || !scrollDirection) {
-      return;
-    }
-
-    let scrollInterval: NodeJS.Timeout;
-    const scrollSpeed = 15; // Увеличена скорость для более быстрого скролла
-
-    if (scrollDirection === "up") {
-      scrollInterval = setInterval(() => {
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollTop -= scrollSpeed;
-        }
-      }, 10); // Уменьшен интервал для более плавного и быстрого скролла
-    } else if (scrollDirection === "down") {
-      scrollInterval = setInterval(() => {
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollTop += scrollSpeed;
-        }
-      }, 15);
-    }
-
-    return () => clearInterval(scrollInterval);
-  }, [scrollDirection]);
-
   const updateCollections = (updated: Collection[]) => {
     setCollections(updated);
     localStorage.setItem("savedCollections", JSON.stringify(updated));
   };
 
-  const handleAddCollection = () => {
-    const name = prompt("Назва нової колекції:");
-    if (!name) return;
-    const newCollection: Collection = { id: Date.now().toString(), name, recipes: [] };
-    updateCollections([...collections, newCollection]);
-    setShowMenu(false);
+  const handleSaveCollection = () => {
+    if (!newCollectionName.trim()) return;
+
+    if (editCollectionId) {
+      const updatedCollections = collections.map(col =>
+        col.id === editCollectionId
+          ? {
+              ...col,
+              name: newCollectionName,
+              description: newCollectionDescription,
+              collaborators: newCollectionCollaborators.split(",").map(c => c.trim()),
+            }
+          : col
+      );
+      updateCollections(updatedCollections);
+    } else {
+      const newCollection: Collection = {
+        id: Date.now().toString(),
+        name: newCollectionName,
+        description: newCollectionDescription,
+        collaborators: newCollectionCollaborators.split(",").map(c => c.trim()),
+        recipes: [],
+      };
+      updateCollections([...collections, newCollection]);
+    }
+
+    setShowModal(false);
+    setEditCollectionId(null);
+    setNewCollectionName("");
+    setNewCollectionDescription("");
+    setNewCollectionCollaborators("");
+    setIsPrivate(false);
   };
 
-  const handleDeleteCollection = (id: string) => {
-    if (!window.confirm("Видалити цю колекцію?")) return;
-    updateCollections(collections.filter(c => c.id !== id));
-  };
-
-  const handleDeleteAllCollections = () => {
-    if (!window.confirm("Видалити всі колекції? Це дія незворотна.")) return;
-    updateCollections([]);
-  };
-
-  const handleDeleteRecipeFromCollection = (collectionId: string, recipeId: string) => {
-    const updatedCollections = collections.map(col =>
-      col.id === collectionId
-        ? { ...col, recipes: col.recipes.filter(r => r.id !== recipeId) }
-        : col
-    );
-    updateCollections(updatedCollections);
-  };
-
-  const handleDeleteSavedRecipe = (recipeId: string) => {
-    if (!window.confirm("Видалити цей рецепт?")) return;
-    const updated = savedRecipes.filter(r => r.id !== recipeId);
-    setSavedRecipes(updated);
-    localStorage.setItem("savedRecipes", JSON.stringify(updated));
-  };
-
-  // Оптимизированный обработчик для перетаскивания
   const handleDropRecipe = (recipeId: string, collectionId: string) => {
     const recipe = savedRecipes.find(r => r.id === recipeId);
     if (!recipe) return;
 
-    // Оптимистичное обновление состояния
-    setCollections(prevCollections =>
-      prevCollections.map(col => {
-        if (col.id === collectionId) {
-          const exists = col.recipes.some(r => r.id === recipeId);
-          if (!exists) return { ...col, recipes: [...col.recipes, recipe] };
-        }
-        return col;
-      })
-    );
-
-    setSavedRecipes(prevSavedRecipes => prevSavedRecipes.filter(r => r.id !== recipeId));
-
-    // Асинхронное обновление localStorage
     const updatedCollections = collections.map(col => {
       if (col.id === collectionId) {
         const exists = col.recipes.some(r => r.id === recipeId);
@@ -159,137 +124,154 @@ const SavedPage: React.FC = () => {
       }
       return col;
     });
-    localStorage.setItem("savedCollections", JSON.stringify(updatedCollections));
-    localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes.filter(r => r.id !== recipeId)));
+
+    updateCollections(updatedCollections);
+
+    const newSavedRecipes = savedRecipes.filter(r => r.id !== recipeId);
+    setSavedRecipes(newSavedRecipes);
+    localStorage.setItem("savedRecipes", JSON.stringify(newSavedRecipes));
   };
 
-  const navigate = useNavigate();
+  const throttledDragOver = throttle((e: React.DragEvent) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-  // Оптимизированный обработчик для onDragOver с throttling
-const throttledDragOver = useRef(
-    throttle((e: React.DragEvent) => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const sensitivity = 100;
 
-        const rect = container.getBoundingClientRect();
-        const sensitivity = 50;
-        
-        // Получаем высоту и ширину видимой области окна
-        const viewportHeight = window.innerHeight;
-        const viewportWidth = window.innerWidth;
+    if (e.clientY < rect.top + sensitivity) {
+      scrollDirectionRef.current = "up";
+    } else if (e.clientY > rect.bottom - sensitivity) {
+      scrollDirectionRef.current = "down";
+    } else {
+      scrollDirectionRef.current = null;
+    }
 
-        // Определяем, находится ли курсор близко к верхней или нижней границе
-        const nearTop = e.clientY < rect.top + sensitivity;
-        const nearBottom = e.clientY > rect.bottom - sensitivity;
-
-        // Если курсор находится вне видимой области окна, прекращаем скролл
-        if (e.clientY < 0 || e.clientY > viewportHeight || e.clientX < 0 || e.clientX > viewportWidth) {
-            setScrollDirection(null);
-            return;
+    if (!scrollIntervalRef.current && scrollDirectionRef.current) {
+      scrollIntervalRef.current = setInterval(() => {
+        if (!scrollDirectionRef.current) {
+          clearInterval(scrollIntervalRef.current!);
+          scrollIntervalRef.current = null;
+          return;
         }
-
-        // Если курсор находится внутри контейнера, но близко к его границе, включаем скролл
-        if (nearTop) {
-            setScrollDirection("up");
-        } else if (nearBottom) {
-            setScrollDirection("down");
-        } else {
-            setScrollDirection(null);
-        }
-    }, 50)
-).current;
+        container.scrollTop += scrollDirectionRef.current === "up" ? -15 : 15;
+      }, 20);
+    }
+  }, 100);
 
   const handleDragEnd = () => {
-    setScrollDirection(null);
+    scrollDirectionRef.current = null;
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+      scrollIntervalRef.current = null;
+    }
   };
+
+  const isEmpty = collections.length === 0 && savedRecipes.length === 0;
+
+  const onEdit = (id: string) => {
+    const collection = collections.find(c => c.id === id);
+    if (!collection) return;
+
+    setEditCollectionId(id);
+    setNewCollectionName(collection.name);
+    setNewCollectionDescription(collection.description || "");
+    setNewCollectionCollaborators(collection.collaborators?.join(", ") || "");
+    setShowModal(true);
+    setOpenMenuId(null);
+  };
+
+  const onDelete = (id: string) => {
+    const updatedCollections = collections.filter(col => col.id !== id);
+    updateCollections(updatedCollections);
+    setOpenMenuId(null);
+  };
+
+  const handleSortSelect = (option: string) => {
+    setSortOption(option);
+    setSortMenuOpen(false);
+
+    let sortedCollections = [...collections];
+
+    switch(option) {
+      case "За популярністю":
+        sortedCollections.sort((a, b) => b.recipes.length - a.recipes.length);
+        break;
+      case "За датою додавання":
+        sortedCollections.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+        break;
+      case "За кількістю рецептів":
+        sortedCollections.sort((a, b) => b.recipes.length - a.recipes.length);
+        break;
+      case "За назвою":
+        sortedCollections.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+        break;
+    }
+
+    setCollections(sortedCollections);
+  };
+
+  
 
   return (
     <main
-      className={styles.main}
+      className={`${styles.main} ${isEmpty ? styles.emptyPage : ""}`}
       ref={scrollContainerRef}
       onDragOver={throttledDragOver}
       onDragEnd={handleDragEnd}
     >
       <Header />
 
-      <div className={styles.savePageButtons}>
-        <button className={styles.SortButton}>
-          Сортувати за <ChevronDown size={16} className={styles.sortIcon} />
-        </button>
+      {!isEmpty && (
+        <div className={styles.savePageButtons}>
+          <div className={styles.sortWrapper}>
+            <button
+              className={styles.allButton}
+              onClick={(e) => { e.stopPropagation(); setSortMenuOpen(!sortMenuOpen); }}
+            >
+              Сортувати за <ChevronDown size={16} />
+            </button>
 
-        <div className={styles.addCollectionWrapper} ref={menuRef}>
+            {sortMenuOpen && (
+              <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
+                {["За популярністю", "За датою додавання", "За кількістю рецептів", "За назвою"].map(option => (
+                  <div
+                    key={option}
+                    className={`${styles.dropdownItem} ${sortOption === option ? styles.activeItem : ""}`}
+                    onClick={() => handleSortSelect(option)}
+                  >
+                    {option}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className={styles.addCollectionWrapper}>
+            <button
+              className={styles.ingredientsAddButton}
+              onClick={() => setShowModal(true)}
+            >
+              Додати колекцію <Plus size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isEmpty ? (
+        <div className={styles.emptyBlock}>
+          <img className={styles.emptyImage} src={iconEmpty} alt="empty" />
+          <h1 className={styles.emptyTitle}>У вас ще немає колекцій</h1>
+          <p className={styles.emptyText}>
+            Створіть першу, щоб зберігати <br /> улюблені рецепти в одному місці
+          </p>
           <button
             className={styles.ingredientsAddButton}
-            onClick={() => setShowMenu(prev => !prev)}
+            onClick={() => setShowModal(true)}
           >
             Додати колекцію <Plus size={16} />
           </button>
-
-          {showMenu && (
-            <div className={styles.menuDropdown}>
-              <button className={styles.menuBtn} onClick={handleAddCollection}>
-                ➕ Створити нову
-              </button>
-
-              {collections.length > 0 && (
-                <>
-                  <button className={styles.menuBtn} onClick={handleDeleteAllCollections}>
-                    ❌ Видалити всі колекції
-                  </button>
-                  {collections.map(col =>
-                    col.recipes.length > 0 || col.name ? (
-                      <div key={col.id} className={styles.deleteRecipesGroup}>
-                        <p className={styles.collectionTitle}>{col.name || "Без назви"}</p>
-                        <button
-                          className={styles.menuBtn}
-                          onClick={() => handleDeleteCollection(col.id)}
-                        >
-                          🗑 Видалити колекцію
-                        </button>
-                        {col.recipes.map(recipeItem => {
-                          const recipe = getAllRecipes().find(r => r.id === recipeItem.id);
-                          if (!recipe) return null;
-                          return (
-                            <button
-                              key={recipe.id}
-                              className={styles.menuBtn}
-                              onClick={() => handleDeleteRecipeFromCollection(col.id, recipe.id)}
-                            >
-                              🗑 {recipe.title}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    ) : null
-                  )}
-                </>
-              )}
-
-              {savedRecipes.length > 0 && (
-                <div className={styles.deleteRecipesGroup}>
-                  <p className={styles.collectionTitle}>Моя колекція</p>
-                  {savedRecipes.map(recipeItem => {
-                    const recipe = getAllRecipes().find(r => r.id === recipeItem.id);
-                    if (!recipe) return null;
-                    return (
-                      <button
-                        key={recipe.id}
-                        className={styles.menuBtn}
-                        onClick={() => handleDeleteSavedRecipe(recipe.id)}
-                      >
-                        🗑 {recipe.title}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
         </div>
-      </div>
-
-      {collections.length === 0 && savedRecipes.length === 0 ? (
-        <p className={styles.empty}>У вас поки немає збережених колекцій.</p>
       ) : (
         <>
           <div className={styles.collectionsGrid}>
@@ -302,21 +284,41 @@ const throttledDragOver = useRef(
                 <div
                   key={col.id}
                   className={styles.collectionCard}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    const recipeId = e.dataTransfer.getData("text/plain");
-                    handleDropRecipe(recipeId, col.id);
-                  }}
+                  onDrop={(e) => { e.preventDefault(); handleDropRecipe(e.dataTransfer.getData("text/plain"), col.id); }}
                   onDragOver={(e) => e.preventDefault()}
                   onClick={() => navigate(`/collection/${col.id}`)}
                 >
-                  <img className={styles.collectionImage} />
+                  <div className={styles.collectionImage}>
+                    {savedInCollection.length === 0 ? (
+                      <div className={styles.placeholder}></div>
+                    ) : savedInCollection.length === 1 ? (
+                      <img src={savedInCollection[0].image} alt="img0" className={styles.singleImage} />
+                    ) : (
+                      <>
+                        {savedInCollection[0] && <img src={savedInCollection[0].image} alt="img0" className={styles.image0} />}
+                        {savedInCollection[1] && <img src={savedInCollection[1].image} alt="img1" className={styles.image1} />}
+                        {savedInCollection[2] && <img src={savedInCollection[2].image} alt="img2" className={styles.image2} />}
+                      </>
+                    )}
+
+                    <div className={styles.menuWrapper} onClick={(e) => e.stopPropagation()}>
+                      <button className={styles.menuButton} onClick={() => setOpenMenuId(openMenuId === col.id ? null : col.id)}>
+                        <img src={iconRedact} alt="redact"/>
+                      </button>
+                      {openMenuId === col.id && (
+                        <div className={styles.menuPopup}>
+                          <button onClick={() => onEdit(col.id)}> Редагувати</button>
+                          <button onClick={() => onDelete(col.id)}> Видалити</button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   <h3 className={styles.collectionName}>{col.name || "Без назви"}</h3>
                   <div className={styles.collectionNameBlock}>
                     <img src={iconBook} alt="book" />
                     <p className={styles.collectionCount}>
-                      {savedInCollection.length}{" "}
-                      {savedInCollection.length === 1 ? "рецепт" : "рецептів"}
+                      {savedInCollection.length} {savedInCollection.length === 1 ? "рецепт" : "рецептів"}
                     </p>
                   </div>
                 </div>
@@ -343,6 +345,57 @@ const throttledDragOver = useRef(
             </div>
           )}
         </>
+      )}
+
+      {showModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>{editCollectionId ? "Редагування колекції" : "Створення колекції"}</h2>
+              <button className={styles.modalClose} onClick={() => setShowModal(false)}>✖</button>
+            </div>
+
+            <p className={styles.inputTitle}>Назва</p>
+            <input
+              type="text"
+              placeholder="Наприклад: «Улюблені десерти»"
+              value={newCollectionName}
+              onChange={(e) => setNewCollectionName(e.target.value)}
+              className={styles.modalInput}
+            />
+
+            <p className={styles.inputTitle}>Опис</p>
+            <input
+              type="text"
+              placeholder="Наприклад: «Рецепти, які готую у будні»"
+              value={newCollectionDescription}
+              onChange={(e) => setNewCollectionDescription(e.target.value)}
+              className={styles.modalInput}
+            />
+
+            <p className={styles.inputTitle}>Запросити співавторів</p>
+            <input
+              type="text"
+              placeholder="Ім’я, нікнейм або e-mail співавтора"
+              value={newCollectionCollaborators}
+              onChange={(e) => setNewCollectionCollaborators(e.target.value)}
+              className={styles.modalInput}
+            />
+
+            <label className={styles.checkboxWrapper}>
+              <input type="checkbox" checked={isPrivate} onChange={(e) => setIsPrivate(e.target.checked)} />
+              <span className={styles.customCheckbox}></span>
+              <div className={styles.checkboxText}>
+                <h1 className={styles.checkboxTitle}>Приховати колекцію від інших</h1>
+                <p className={styles.checkboxText}>Колекція стане доступною лише вам</p>
+              </div>
+            </label>
+
+            <button onClick={handleSaveCollection} className={styles.modalCreate}>
+              {editCollectionId ? "Зберегти зміни" : "Створити колекцію"}
+            </button>
+          </div>
+        </div>
       )}
     </main>
   );

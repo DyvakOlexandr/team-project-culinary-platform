@@ -1,0 +1,237 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 728px;
+  height: 544px;
+  background: #fff;
+  padding: 24px 32px 24px 32px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header h2 {
+  margin: 0;
+  color: rgba(31, 41, 51, 1);
+font-size: 24px;
+font-weight: 700;
+line-height: 33px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+     transform: scale(1.2);
+  }
+}
+
+.formRow label {
+  color: rgba(58, 65, 69, 1);
+font-size: 14px;
+font-weight: 500;
+line-height: 19px;
+}
+
+/* Псевдо-input выбора рецепта */
+.pseudoInput {
+  margin-top: 8px;
+  
+  height: 48px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.2s;
+  justify-content: space-between;
+
+  &:hover {
+    border-color: rgba(1, 64, 78, 1);
+  }
+  &:active {
+    border-color: rgba(1, 64, 78, 1);
+  }
+}
+
+.pseudoChevron {
+  margin-right: 12px;
+  color: #666;
+  flex-shrink: 0; // чтобы не сжималась
+}
+
+.pseudoText{
+  margin-left: 12px;
+  color: rgba(161, 171, 175, 1);
+font-size: 16px;
+font-weight: 500;
+line-height: 22px;
+}
+
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.categorySelect {
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
+  padding: 10px 36px 10px 12px; // справа делаем место под иконку
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  color:  rgba(161, 171, 175, 1);
+font-size: 16px;
+font-weight: 500;
+line-height: 22px;
+  background: #fff;
+  appearance: none; // убираем дефолтную стрелку
+  cursor: pointer;
+
+  &:hover {
+    border-color: rgba(1, 64, 78, 1);
+  }
+
+  &:focus {
+    border-color: rgba(1, 64, 78, 1);
+    outline: none;
+  }
+}
+
+.chevronIcon {
+  position: absolute;
+  top: 36px;
+  right: 12px;
+  transform: translateY(-50%);
+  pointer-events: none; 
+  color: #666;
+}
+
+.dateWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.dateInput {
+  width: 100%;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  color:  rgba(28, 35, 39, 1);
+font-size: 16px;
+font-weight: 500;
+line-height: 22px;
+  background: #fff;
+  appearance: none; // убираем дефолтное оформление
+  cursor: pointer;
+
+  &:hover {
+    border-color: rgba(1, 64, 78, 1);
+  }
+
+  &:focus {
+    border-color: rgba(1, 64, 78, 1);
+    outline: none;
+  }
+}
+
+/* Скрываем стандартную иконку календаря */
+.dateInput::-webkit-calendar-picker-indicator {
+  opacity: 0;        /* прозрачная */
+  position: absolute;
+  width: 100%;       /* растягиваем */
+  height: 100%;
+  left: 0;
+  top: 0;
+  cursor: pointer;   /* чтобы курсор был как у кнопки */
+}
+
+.dateInput::-moz-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  cursor: pointer;
+}
+
+/* Кнопка сохранить */
+.saveBtn {
+  display: flex;
+  align-self: flex-end;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  width: 168px;
+  height: 48px;
+  border-radius: 12px;
+  background:  rgba(217, 224, 227, 1);
+  color: rgba(128, 138, 142, 1);
+font-size: 16px;
+font-weight: 600;
+line-height: 22px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+     transform: scale(1.05);
+  }
+}
+
+.numberInput {
+  width: 100%;
+  height: 48px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  padding-left: 12px;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+/* Убираем стандартные стрелочки */
+.numberInput::-webkit-inner-spin-button,
+.numberInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.numberInput::placeholder {
+  color: rgba(161, 171, 175, 1); // цвет плейсхолдера
+  font-size: 16px;               // размер шрифта
+  font-weight: 500;              // жирность
+  line-height: 22px;             // высота строки
+  font-family: 'Inter', sans-serif; // шрифт, если нужно
+}

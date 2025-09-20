@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import styles from "./MealPlannerPage.module.scss";
 import Header from "../components/Header";
-import { ChevronRight, ChevronLeft, Plus, Trash2, Edit2, MoreVertical, ChevronDown } from "lucide-react";
+import { ChevronRight, ChevronLeft, Plus,  MoreVertical, ChevronDown, Check } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BreakfastIcon from "../assets/menu_icon/icon-park-outline_snacks.svg";
 import LunchIcon from "../assets/menu_icon/icon-park-outline_bowl.svg";
@@ -15,6 +15,10 @@ import { getAllRecipes } from "../data/recipes";
 import FireIcon  from "../assets/menu_icon/icon-park-outline_fire.svg";
 import TimeIcon  from "../assets/menu_icon/icon-park-outline_time.svg";
 import personIcon from "../assets/menu_icon/icon-park-outline_user.svg";
+import emptyPlan from "../assets/Empty_state.png"
+import iconRedact from "../assets/icon-park-outline_edit.svg"
+import AddMealModal from "../components/AddMealModal";
+
 
 const daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
 const monthNames = ["Січень","Лютий","Березень","Квітень","Травень","Червень","Липень","Серпень","Вересень","Жовтень","Листопад","Грудень"];
@@ -39,6 +43,7 @@ const categoryColors: Record<string, string> = {
 
 const mealCategories = ["Все","Сніданок","Обід","Вечеря","Перекус","Десерт","Напої"];
 
+
 interface MealCard {
   id: string;
   title: string;
@@ -47,24 +52,36 @@ interface MealCard {
   calories?: number;
    servings?: number;
    image?: string;
+   time?: string;
 }
 
 
 
 const MealPlannerPage: React.FC = () => {
   const today = new Date();
+  const cardDropdownRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
    const [showActionsMenu, setShowActionsMenu] = useState<string | null>(null);
-
+  const recipes = getAllRecipes();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDate, setSelectedDate] = useState(today);
   const [viewMode, setViewMode] = useState<"month"|"week">("month");
   const [activeCategory, setActiveCategory] = useState("Все");
   const [mealCardsList, setMealCardsList] = useState<MealCard[]>([]);
+  const [sortMode, setSortMode] = useState<"all" | "category" | "recipe" | "status">("all");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const sortLabels: Record<typeof sortMode, string> = {
+  all: "Усі разом",
+  category: "За категоріями",
+  recipe: "За рецептом",
+  status: "За статусом",
+};
+  const [isModalOpen, setIsModalOpen] = useState(false);
+const formatDateKey = (d: Date) => d.toLocaleDateString("en-CA");
 
-  const formatDateKey = (d: Date) => d.toISOString().split("T")[0];
 
   // Загрузка из localStorage
   useEffect(() => {
@@ -73,68 +90,54 @@ const MealPlannerPage: React.FC = () => {
   }, []);
 
 
- // Добавление рецепта после возврата со страницы /recipes
+// Добавление рецепта после возврата со страницы /recipes
+// ⬇️ сохраняем выбранную дату между рендерами
+const restoredDateRef = useRef<Date | null>(null);
+
 useEffect(() => {
   const addedRecipe: Recipe = location.state?.addedRecipe;
   if (!addedRecipe) return;
 
   const category: string = location.state.category || "Сніданок";
-  const date: string = location.state.date || formatDateKey(selectedDate);
+  const date: string = location.state.date;
+
+  const newCard: MealCard = {
+    id: addedRecipe.id + "_" + Date.now(),
+    title: addedRecipe.title,
+    category,
+    date,
+    time: addedRecipe.time,
+    calories: recipeDetails.find(d => d.id === addedRecipe.id)
+      ?.nutrition?.find(n => n.name === "Калорії")?.amount,
+    image: addedRecipe.image
+  };
 
   setMealCardsList(prev => {
-    const exists = prev.some(c => c.id === addedRecipe.id && c.date === date);
-    if (exists) return prev;
-
-    const newCard: MealCard = {
-      id: addedRecipe.id,
-      title: addedRecipe.title,
-      category,
-      date,
-      calories: recipeDetails.find(d => d.id === addedRecipe.id)?.nutrition?.find(n => n.name === "Калорії")?.amount,
-    };
-
     const updated = [...prev, newCard];
     localStorage.setItem("mealPlanner", JSON.stringify(updated));
     return updated;
   });
 
-  // Очищаем location.state, чтобы при повторном рендере не добавлялся повторно
+  // ✅ сохраняем дату в ref
+  if (location.state?.selectedDateFromPlanner) {
+    restoredDateRef.current = new Date(location.state.selectedDateFromPlanner);
+  }
+
+  // ✅ очищаем только после того, как сохранили
   navigate(location.pathname, { replace: true, state: {} });
-}, [location.state, navigate, location.pathname, selectedDate]);
+}, [location.state, navigate, location.pathname]);
 
+// второй useEffect — применяем дату из ref
+useEffect(() => {
+  if (restoredDateRef.current) {
+    setSelectedDate(restoredDateRef.current);
+    restoredDateRef.current = null; // очистка после применения
+  }
+}, []);
 
-
-
-
-
-  const handleAddCard = () => {
-    if (activeCategory === "Все") return; // запрет добавления
-    navigate("/recipes", {
-      state: { 
-        category: activeCategory,
-        date: formatDateKey(selectedDate)
-      }
-    });
-  };
-
-  const handleDeleteCard = (id: string) => {
-    const updated = mealCardsList.filter(c => c.id !== id);
-    setMealCardsList(updated);
-    localStorage.setItem("mealPlanner", JSON.stringify(updated));
-  };
-
-  const handleEditCard = (id: string) => {
-    const card = mealCardsList.find(c => c.id === id);
-    if (!card) return;
-    const newTitle = prompt("Редагувати назву страви:", card.title);
-    if (newTitle && newTitle.trim() !== "") {
-      const updated = mealCardsList.map(c => c.id === id ? {...c, title: newTitle} : c);
-      setMealCardsList(updated);
-      localStorage.setItem("mealPlanner", JSON.stringify(updated));
-    }
-  };
-
-  const cardsForSelectedDate = mealCardsList.filter(c => c.date === formatDateKey(selectedDate));
+ const cardsForSelectedDate = mealCardsList.filter(
+  c => c.date === formatDateKey(selectedDate)
+);
 
   const handlePrevMonth = () => {
     if (currentMonth === 0) {
@@ -200,22 +203,26 @@ useEffect(() => {
 };
 
 const dailyTotals = cardsForSelectedDate.reduce(
-  (totals, card) => {
-    const recipe = recipeDetails.find(r => r.id === card.id);
-    if (!recipe) return totals;
+  (totals, card) => {
+    // ✅ Extract the base recipe ID from the unique card ID
+    const recipeId = card.id.split('_')[0];
 
-    const servings = card.servings ?? 1;
+    // ✅ Use the correct recipe ID to find the details
+    const recipe = recipeDetails.find(r => r.id === recipeId);
+    if (!recipe) return totals;
 
-    recipe.nutrition?.forEach(n => {
-      if (n.name === "Калорії") totals.calories += n.amount * servings;
-      if (n.name === "Білки") totals.protein += n.amount * servings;
-      if (n.name === "Жири") totals.fat += n.amount * servings;
-      if (n.name === "Вуглеводи") totals.carbs += n.amount * servings;
-    });
+    const servings = card.servings ?? 1;
 
-    return totals;
-  },
-  { calories: 0, protein: 0, fat: 0, carbs: 0 }
+    recipe.nutrition?.forEach(n => {
+      if (n.name === "Калорії") totals.calories += n.amount * servings;
+      if (n.name === "Білки") totals.protein += n.amount * servings;
+      if (n.name === "Жири") totals.fat += n.amount * servings;
+      if (n.name === "Вуглеводи") totals.carbs += n.amount * servings;
+    });
+
+    return totals;
+  },
+  { calories: 0, protein: 0, fat: 0, carbs: 0 }
 );
 const [nutritionGoals, setNutritionGoals] = useState(() => {
   const saved = localStorage.getItem("nutritionGoals");
@@ -265,27 +272,27 @@ const handleEditAllGoals = () => {
   localStorage.setItem("nutritionGoals", JSON.stringify(nutritionGoals));
 };
 
-const allIngredients = cardsForSelectedDate.flatMap(card => {
-  const recipe = recipeDetails.find(r => r.id === card.id);
-  if (!recipe) return [];
-  const servings = card.servings ?? 1;
-  return recipe.ingredients.map(ing => ({
-    ...ing,
-    amount: ing.amount ? ing.amount * servings : undefined,
-  }));
+const allIngredients: IngredientWithIndex[] = cardsForSelectedDate.flatMap((card, cardIdx) => {
+  // ✅ Extract the base recipe ID from the unique card ID
+  const recipeId = card.id.split('_')[0];
+  
+  // ✅ Use the correct recipe ID to find the details
+  const recipeInfo = recipeDetails.find(r => r.id === recipeId);
+  const recipe = recipes.find(r => r.id === recipeId);
+
+  if (!recipeInfo || !recipe) return [];
+
+  const servings = card.servings ?? 1;
+
+  return recipeInfo.ingredients.map((ing, idx) => ({
+    ...ing,
+    amount: ing.amount ? ing.amount * servings : undefined,
+    recipeTitle: recipe.title,
+    originalIndex: cardIdx * 1000 + idx
+  }));
 });
 
 
-// Редактирование ингредиента
-const handleEditIngredient = (index: number) => {
-  const ingredient = allIngredients[index];
-  const newName = prompt("Редагувати назву інгредієнта:", ingredient.name);
-  if (newName && newName.trim() !== "") {
-    const updated = [...allIngredients];
-    updated[index] = { ...ingredient, name: newName };
-    localStorage.setItem("allIngredients", JSON.stringify(updated));
-  }
-};
 
 // Добавляем состояние для вычеркнутых ингредиентов
 const [crossedIngredients, setCrossedIngredients] = useState<number[]>([]);
@@ -299,20 +306,72 @@ const handleCrossIngredient = (index: number) => {
   );
 };
 
-// Состояние для сортировки
-const [sortByCategory, setSortByCategory] = useState(false);
 
 // Группировка ингредиентов по категориям
-type IngredientWithIndex = (typeof allIngredients)[number] & { originalIndex: number };
+type IngredientWithIndex = {
+  name: string;
+  amount?: number;
+  unit?: string;
+  category?: string;
+  recipeTitle: string;   // ✅ добавлено название рецепта
+  originalIndex: number; // ✅ для идентификации
+};
 
-const groupedIngredients = sortByCategory
-  ? allIngredients.reduce<Record<string, IngredientWithIndex[]>>((acc, ing, idx) => {
+const groupedIngredients = (() => {
+  if (sortMode === "category") {
+    return allIngredients.reduce<Record<string, IngredientWithIndex[]>>((acc, ing, idx) => {
       const cat = ing.category || "Інші";
       if (!acc[cat]) acc[cat] = [];
-      acc[cat].push({ ...ing, originalIndex: idx }); // сохраняем оригинальный индекс для действий
+      acc[cat].push({ ...ing, originalIndex: idx });
       return acc;
-    }, {} as Record<string, IngredientWithIndex[]>)
-  : { "Усі": allIngredients.map((ing, idx) => ({ ...ing, originalIndex: idx })) as IngredientWithIndex[] };
+    }, {});
+  } else {
+    return { "Усі": allIngredients.map((ing, idx) => ({ ...ing, originalIndex: idx })) };
+  }
+})();
+
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      showActionsMenu !== null && 
+      cardDropdownRef.current && 
+      !cardDropdownRef.current.contains(event.target as Node)
+    ) {
+      setShowActionsMenu(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, [showActionsMenu]);
+  
+const handleSaveMeal = (data: {
+  recipeObj: Recipe;   // вместо строки теперь передаём весь объект рецепта
+  category: string;
+  date: string;
+  portions: number;
+}) => {
+  const calories =
+    recipeDetails.find(d => d.id === data.recipeObj.id)?.nutrition?.find(n => n.name === "Калорії")?.amount ?? 0;
+
+  const newCard: MealCard = {
+    id: data.recipeObj.id + "_" + Date.now(),
+    title: data.recipeObj.title,
+    category: data.category,
+    date: data.date,
+    calories,
+    image: data.recipeObj.image,
+    servings: data.portions,
+     time: data.recipeObj.time
+  };
+
+  setMealCardsList(prev => {
+    const updated = [...prev, newCard];
+    localStorage.setItem("mealPlanner", JSON.stringify(updated));
+    return updated;
+  });
+};
+
 
 
 
@@ -414,114 +473,263 @@ const groupedIngredients = sortByCategory
       </section>
       
         {/*Бдок планировки */}
-      <section className={styles.mealPlannerBlock}>
-        <div className={styles.mealPlannerHeader}>
-          <h2>{selectedDate.toLocaleDateString("uk-UA", { day: "numeric", month: "long", year: "numeric" })}</h2>
-          <button 
-            className={styles.addButton} 
-            onClick={handleAddCard} 
-            disabled={activeCategory === "Все"} // кнопка отключена
+    <section className={styles.mealPlannerBlock}>
+  <div className={styles.mealPlannerHeader}>
+  <div className={styles.mealHeader}>
+    <h2>
+      {selectedDate.toLocaleDateString("uk-UA", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })}
+    </h2>
+
+    <div className={styles.headerActions} ref={dropdownRef}>
+      {/* Кнопка с меню */}
+      <button
+        className={styles.moreOptionsBtn}
+        onClick={() => setDropdownOpen(prev => !prev)}
+      >
+        <img src={iconRedact} alt="redact"/>
+      </button>
+
+      {/* Всплывающее меню */}
+      {dropdownOpen && (
+        <div className={styles.headerDropdownMenu}>
+          <button onClick={() => alert("Скопіювати день")}>Скопіювати день</button>
+          <button onClick={() => alert("Поділитися планом дня")}>Поділитися планом дня</button>
+          <button onClick={() => alert("Експорт плану в PDF")}>Експорт плану в PDF</button>
+          <button
+            className={styles.deletePlan}
+            onClick={() => {
+              if (window.confirm("Очистити план на цей день?")) {
+                const updated = mealCardsList.filter(
+                  (c) => c.date !== formatDateKey(selectedDate)
+                );
+                setMealCardsList(updated);
+                localStorage.setItem("mealPlanner", JSON.stringify(updated));
+              }
+            }}
           >
-            <Plus size={18} /> Додати
+            Очистити план
           </button>
         </div>
+      )}
+    </div>
+  </div>
 
-        <nav className={styles.mealCategories}>
-          {mealCategories.map(cat => (
-            <button 
-              key={cat} 
-              className={`${styles.categoryButton} ${activeCategory === cat ? styles.active : ""}`} 
-              onClick={() => setActiveCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </nav>
+  {cardsForSelectedDate.length > 0 && (
+     <button
+        className={styles.addButton}
+        onClick={() => setIsModalOpen(true)}
+      >
+        <Plus size={18} /> Додати
+      </button>
+  
+       )}
+   <AddMealModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  defaultCategory="Сніданок" // можно подставить текущую категорию
+  onSave={handleSaveMeal}
+/>
+</div>
 
-      <div className={styles.mealCards}>
-  {cardsForSelectedDate
-    .filter(card => activeCategory === "Все" || card.category === activeCategory)
-    .map(card => {
-      // Получаем полный рецепт и детали для каждой карточки
-      const fullRecipe = getAllRecipes().find(r => r.id === card.id);
 
-      // Если рецепт удалён или не найден, показываем заглушку
-      const time =  fullRecipe?.time || "Не вказано";
-
-      return (
-    <div key={card.id} className={styles.mealCard}>
-          <div className={styles.mealCardHeader}>
-             <img src={categoryIcons[card.category]} alt={card.category} className={styles.icon} />
-             <span className={styles.categoryName}>{card.category}</span>
-            {card.calories && <span className={styles.caloriesHeader}>{card.calories} ккал</span>}
-          </div>
-
-  <div className={styles.mealCardBlock}>
-    <div
-  className={styles.mealImagePlaceholder}
-  style={{ backgroundImage: `url(${card.image || fullRecipe?.image})` }}
-></div>
-    <div className={styles.mealCardInfo}>
-    <div className={styles.mealTitle}>
-  <h3>{card.title}</h3>
-  <div className={styles.mealCardActionsWrapper}>
-    <button
-      className={styles.menuToggleBtn}
-      onClick={() => setShowActionsMenu(card.id === showActionsMenu ? null : card.id)} >
-      <MoreVertical size={16} />
-    </button>
-    {showActionsMenu === card.id && (
-      <div className={styles.mealCardActionsMenu}>
-        <button onClick={() => handleEditCard(card.id)}>
-          <Edit2 size={16} /> Редагувати
+     {cardsForSelectedDate.length > 0 && (
+    <nav className={styles.mealCategories}>
+      {mealCategories.map((cat) => (
+        <button
+          key={cat}
+          className={`${styles.categoryButton} ${
+            activeCategory === cat ? styles.active : ""
+          }`}
+          onClick={() => setActiveCategory(cat)}
+        >
+          {cat}
         </button>
-        <button onClick={() => handleDeleteCard(card.id)}>
-          <Trash2 size={16} /> Видалити
-        </button>
+      ))}
+    </nav>
+     )}
+
+  <div className={styles.mealCards}>
+    {cardsForSelectedDate.length === 0 ? (
+      <div className={styles.emptyMealPlanner}>
+        <img
+          src={emptyPlan}
+          alt="Порожній план"
+          className={styles.emptyImage}
+        />
+        <h3 className={styles.emptyTitle}>План на день порожній</h3>
+        <p className={styles.emptyText}>
+          Додайте рецепти, щоб наповнити день <br/>
+           смачними та корисними стравами.
+        </p>
+          <button
+    className={styles.addButton}
+    onClick={() => setIsModalOpen(true)}
+  >
+    <Plus size={18} /> Додати
+  </button>
+   <AddMealModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  defaultCategory="Сніданок" // можно подставить текущую категорию
+  onSave={handleSaveMeal}
+/>
       </div>
+    ) : (
+      cardsForSelectedDate
+        .filter(
+          (card) => activeCategory === "Все" || card.category === activeCategory
+        )
+        .map((card) => {
+          const fullRecipe = getAllRecipes().find((r) => r.id === card.id);
+           const time = card.time || "Не вказано";
+
+          return (
+            <div key={card.id} className={styles.mealCard}>
+              <div className={styles.mealCardHeader}>
+                <img
+                  src={categoryIcons[card.category]}
+                  alt={card.category}
+                  className={styles.icon}
+                />
+                <span className={styles.categoryName}>{card.category}</span>
+                {card.calories && (
+                  <span className={styles.caloriesHeader}>{card.calories} ккал</span>
+                )}
+              </div>
+
+              <div className={styles.mealCardBlock}>
+                <div
+                  className={styles.mealImagePlaceholder}
+                  style={{ backgroundImage: `url(${card.image || fullRecipe?.image})` }}
+                ></div>
+                <div className={styles.mealCardInfo}>
+                  <div className={styles.mealTitle}>
+                    <h3>{card.title}</h3>
+                   <div className={styles.mealCardActionsWrapper} ref={cardDropdownRef}>
+  <button
+    className={styles.menuToggleBtn}
+    onClick={() =>
+      setShowActionsMenu(card.id === showActionsMenu ? null : card.id)
+    }
+  >
+    <MoreVertical size={16} />
+  </button>
+
+  {showActionsMenu === card.id && (
+              <div className={styles.mealCardActionsWrapper} ref={showActionsMenu === card.id ? cardDropdownRef : null}>
+  <button
+    className={styles.menuToggleBtn}
+    onClick={() =>
+      setShowActionsMenu(card.id === showActionsMenu ? null : card.id)
+    }
+  >
+    <MoreVertical size={16} />
+  </button>
+
+  {showActionsMenu === card.id && (
+    <div className={styles.mealCardActionsMenu}>
+      <button onClick={() => alert(`Копіювати страву "${card.title}"`)}>Копіювати</button>
+      <button    onClick={() => {
+    // Сначала удаляем старую карточку
+    setMealCardsList(prev => {
+      const filtered = prev.filter(c => c.id !== card.id);
+      localStorage.setItem("mealPlanner", JSON.stringify(filtered));
+      return filtered;
+    });
+
+    // Переход на страницу рецептов для выбора нового
+    navigate("/recipes", {
+      state: { 
+        category: card.category, 
+        date: card.date,
+        replacingCardId: card.id,// можно использовать для логики если нужно
+        selectedDateFromPlanner: selectedDate
+      }
+    });
+
+    setShowActionsMenu(null); // закрываем меню
+  }}
+
+>Замінити страву</button>
+      <button onClick={() => {
+        const newServings = prompt(
+          "Введіть нову кількість порцій:",
+          (card.servings ?? 1).toString()
+        );
+        if (newServings && !isNaN(Number(newServings)) && Number(newServings) > 0) {
+          const updated = mealCardsList.map(c =>
+            c.id === card.id ? { ...c, servings: Number(newServings) } : c
+          );
+          setMealCardsList(updated);
+          localStorage.setItem("mealPlanner", JSON.stringify(updated));
+        }
+      }}>Змінити кількість порцій</button>
+      <button
+        className={styles.deletePlan}
+        onClick={() => {
+          if (window.confirm(`Видалити страву "${card.title}" з плану?`)) {
+            const updated = mealCardsList.filter(c => c.id !== card.id);
+            setMealCardsList(updated);
+            localStorage.setItem("mealPlanner", JSON.stringify(updated));
+          }
+        }}
+      >
+        Видалити страву з плану
+      </button>
+    </div>
+  )}
+</div>
+                )}
+           </div>
+
+                  </div>
+
+                  <div className={styles.mealInfo}>
+                    {time && (
+                      <p className={styles.time}>
+                        <img src={TimeIcon} alt="time" className={styles.fireIcon} />
+                        {time}
+                      </p>
+                    )}
+
+                    <div className={styles.caloriesRow}>
+                      <img src={FireIcon} alt="fire" className={styles.fireIcon} />
+                      <span className={styles.servingsValue}>
+                        {card.calories ? card.calories * (card.servings ?? 1) : 0} ккал
+                      </span>
+                    </div>
+
+                    <div className={styles.servingsControlCard}>
+                      <button
+                        className={styles.servingsButton}
+                        onClick={() => handleIncreasePortions(card.id)}
+                      >
+                        <img src={personIcon} alt="person" className={styles.personIcon} />
+                      </button>
+                      <span>
+                        {card.servings ?? 1}{" "}
+                        {(card.servings ?? 1) === 1
+                          ? "порція"
+                          : (card.servings ?? 1) >= 2 && (card.servings ?? 1) <= 4
+                          ? "порції"
+                          : "порцій"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })
     )}
   </div>
-</div>
-
-     <div className={styles.mealInfo}>
-     {time && (
-    <p className={styles.time}>
-      <img src={TimeIcon} alt="time" className={styles.fireIcon} />
-      {time}
-    </p>
-       )}
-
-<div className={styles.caloriesRow}>
-  <img src={FireIcon} alt="fire" className={styles.fireIcon} />
-  <span className={styles.servingsValue}>
-    {card.calories ? card.calories * (card.servings ?? 1) : 0} ккал
-  </span>
-</div>
-
-         <div className={styles.servingsControlCard}>
-         <button className={styles.servingsButton} onClick={() => handleIncreasePortions(card.id)}>
-           <img src={personIcon} alt="person"className={styles.personIcon} />
-           </button>
-       <span>
-    {card.servings ?? 1}{" "}
-    {((card.servings ?? 1) === 1 ? "порція" : 
-      ((card.servings ?? 1) >= 2 && (card.servings ?? 1) <= 4 ? "порції" : "порцій"))}
-  </span>
-       </div>
-      </div>
-   </div>
+</section>
 
 
-  
-      
-                </div>
-                </div>                    
-        
-      );
-    })}
-</div>
-      
-      </section>
 
        {/*Денний план*/}
 <div className={styles.dailyPlan}>
@@ -581,89 +789,147 @@ const groupedIngredients = sortByCategory
   
 {allIngredients.length > 0 && (
   <div className={styles.ingredientsBlock}>
-  <div className={styles.ingredientsHeader}>
-    <h3 className={styles.ingredientsTitle}>Інгредієнти на день</h3>
-    <div className={styles.ingredientsButtons}>
-      <button
-        className={styles.ingredientsSortButton}
-        onClick={() => setSortByCategory(prev => !prev)}
-      >
-        {sortByCategory ? "Всі" : "За категорією"}
-        <ChevronDown size={16} className={styles.sortIcon} />
-      </button>
-      <button className={styles.ingredientsAddButton}>
-        Додати у список
-        <Plus size={18} />
-      </button>
-    </div>
-  </div>
+    <div className={styles.ingredientsHeader}>
+      <h3 className={styles.ingredientsTitle}>Інгредієнти на день</h3>
+      <div className={styles.ingredientsButtons}>
+        <div className={styles.sortWrapper}>
+          <button
+            className={styles.ingredientsSortButton}
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            {sortLabels[sortMode]} <ChevronDown size={16} className={styles.sortIcon} />
+          </button>
 
-  {Object.entries(groupedIngredients).map(([category, items]) => (
-    <div key={category} className={styles.ingredientCategoryBlock}>
-      {sortByCategory && <h4 className={styles.ingredientCategoryTitle}>{category}</h4>}
-      <ul className={styles.ingredientsList}>
-        {items.map((ingredient) => {
-          const index = ingredient.originalIndex;
-          return (
-            <li key={index} className={styles.ingredientItem}>
-              <label className={styles.ingredientLabel}>
-                <input type="checkbox" className={styles.ingredientCheckbox} />
-                <span
-                  className={styles.ingredientName}
-                  style={{
-                    textDecoration: crossedIngredients.includes(index) ? "line-through" : "none",
-                    color: crossedIngredients.includes(index) ? "#888" : "#000",
+          {dropdownOpen && (
+            <div className={styles.dropdownMenu}>
+              {(Object.keys(sortLabels) as (keyof typeof sortLabels)[]).map((option) => (
+                <div
+                  key={option}
+                  className={`${styles.dropdownItem} ${
+                    sortMode === option ? styles.activeItem : ""
+                  }`}
+                  onClick={() => {
+                    setSortMode(option);
+                    setDropdownOpen(false);
                   }}
                 >
-                  {ingredient.name}
-                </span>
-              </label>
-
-              <div className={styles.ingredientAmountBlock}>
-                <span
-                  className={styles.ingredientAmount}
-                  style={{
-                    textDecoration: crossedIngredients.includes(index) ? "line-through" : "none",
-                    color: crossedIngredients.includes(index) ? "#888" : "#000",
-                  }}
-                >
-                  {ingredient.amount ?? ""} {ingredient.unit ?? ""}
-                </span>
-
-                <div className={styles.mealCardActionsWrapper}>
-                  <button
-                    className={styles.menuToggleBtn}
-                    onClick={() =>
-                      setShowActionsMenu(
-                        showActionsMenu === `ingredient-${index}`
-                          ? null
-                          : `ingredient-${index}`
-                      )
-                    }
-                  >
-                    <MoreVertical size={16} />
-                  </button>
-                  {showActionsMenu === `ingredient-${index}` && (
-                    <div className={styles.mealCardActionsMenu}>
-                      <button onClick={() => handleEditIngredient(index)}>
-                        <Edit2 size={16} /> Редагувати
-                      </button>
-                      <button onClick={() => handleCrossIngredient(index)}>
-                        <Trash2 size={16} /> Викреслити
-                      </button>
-                    </div>
-                  )}
+                  {sortLabels[option]}
+                  {sortMode === option && <Check size={16} />}
                 </div>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  ))}
-</div>
+              ))}
+            </div>
+          )}
+        </div>
 
+        {/* 🔽 Кнопка "Додати у список" */}
+        <button
+          className={styles.ingredientsAddButton}
+          onClick={() => {
+            const selectedIngredients = allIngredients.filter((_, index) =>
+              crossedIngredients.includes(index)
+            );
+
+            if (selectedIngredients.length === 0) {
+              alert("Виберіть хоча б один інгредієнт ✅");
+              return;
+            }
+
+            const savedProducts = JSON.parse(localStorage.getItem("shoppingProducts") || "[]");
+
+            const newProducts = selectedIngredients.map((ingredient) => ({
+              id: Date.now().toString() + Math.random(),
+              name: ingredient.name,
+              amount: ingredient.amount,
+              unit: ingredient.unit,
+              checked: false,
+            }));
+
+            const updatedProducts = [...savedProducts, ...newProducts];
+            localStorage.setItem("shoppingProducts", JSON.stringify(updatedProducts));
+
+            setCrossedIngredients([]);
+            alert("✅ Інгредієнти додано у список покупок!");
+          }}
+        >
+          Додати у список
+          <Plus size={18} />
+        </button>
+      </div>
+    </div>
+
+    {/* 🔽 Группировка по выбранному режиму */}
+    {(() => {
+      let groupedView: Record<string, typeof allIngredients> = {};
+
+      if (sortMode === "all") {
+        groupedView = { "": allIngredients };
+      } else if (sortMode === "category") {
+        groupedView = groupedIngredients;
+      } else if (sortMode === "recipe") {
+        groupedView = allIngredients.reduce((acc, ing) => {
+          const recipeName = ing.recipeTitle || "Без рецепта";
+          if (!acc[recipeName]) acc[recipeName] = [];
+          acc[recipeName].push(ing);
+          return acc;
+        }, {} as Record<string, typeof allIngredients>);
+      } else if (sortMode === "status") {
+        groupedView = {
+          " Обрані": allIngredients.filter((_, idx) => crossedIngredients.includes(idx)),
+          " Не обрані": allIngredients.filter((_, idx) => !crossedIngredients.includes(idx)),
+        };
+      }
+
+      return Object.entries(groupedView).map(([group, items]) => (
+        <div key={group} className={styles.ingredientCategoryBlock}>
+          {group && <h4 className={styles.ingredientCategoryTitle}>{group}</h4>}
+          <ul className={styles.ingredientsList}>
+            {items.map((ingredient) => {
+              const index = ingredient.originalIndex;
+              return (
+                <li key={index} className={styles.ingredientItem}>
+                  <label className={styles.ingredientLabel}>
+                    <input
+                      type="checkbox"
+                      className={styles.ingredientCheckbox}
+                      checked={crossedIngredients.includes(index)}
+                      onChange={() => handleCrossIngredient(index)}
+                    />
+                    <span
+                      className={styles.ingredientName}
+                      style={{
+                        textDecoration: crossedIngredients.includes(index)
+                          ? "line-through"
+                          : "none",
+                        color: crossedIngredients.includes(index) ? "#888" : "#000",
+                      }}
+                    >
+                      {ingredient.name}
+                    </span>
+                  </label>
+
+                  <div className={styles.ingredientAmountBlock}>
+                    <span
+                      className={styles.ingredientAmount}
+                      style={{
+                        textDecoration: crossedIngredients.includes(index)
+                          ? "line-through"
+                          : "none",
+                        color: crossedIngredients.includes(index) ? "#888" : "#000",
+                      }}
+                    >
+                      {ingredient.amount ?? ""} {ingredient.unit ?? ""}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ));
+    })()}
+  </div>
 )}
+
 
 
 
