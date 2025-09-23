@@ -1,14 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
+// ShoppingListDetailPage.tsx
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import AddIngredientModal from "../components/AddIngredientModal";
 import styles from "./ShoppingListDetailPage.module.scss";
 import { recipeDetails } from "../data/recipeDetails";
-import type { Ingredient } from "../data/recipeDetails";
-import { Plus, ChevronDown, MoreVertical, Check, X } from "lucide-react";
-import iconCopy from "../assets/icon-park-outline_copy.svg";
-import iconPrint from "../assets/icon-park-outline_printer-one.svg";
-import iconSend from "../assets/icon-park-outline_export.svg";
-import iconMarket from "../assets/icon-park-outline_transaction-order.svg";
+import emptyList from "../assets/EmptyLists.png";
+import { Plus, ChevronDown, Check, X } from "lucide-react";
+import iconEdit from "../assets/icon-park-outline_edit.svg"
 
 interface ShoppingItem {
   id: string;
@@ -37,24 +36,40 @@ const categoryOrder = [
   "Інше",
 ];
 
+const unitsList = ["г", "кг", "мл", "л", "шт"];
+
 const ShoppingListDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
   const [list, setList] = useState<ShoppingList | null>(null);
-
-  const [showAddBlock, setShowAddBlock] = useState(false);
-  const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
-  const [customAmount, setCustomAmount] = useState<number | string>("");
-  const [customUnit, setCustomUnit] = useState<string>("");
-
   const [sortByCategory, setSortByCategory] = useState(false);
-
-  const addBlockRef = useRef<HTMLDivElement | null>(null);
-
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [showAddBlock, setShowAddBlock] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<{ name: string; amount?: number | string; unit?: string }>({ name: "" });
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const menuRef = React.useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+  const handleClickOutside = (e: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      setShowMenu(false);
+    }
+  };
+
+  if (showMenu) {
+    document.addEventListener("mousedown", handleClickOutside);
+  } else {
+    document.removeEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [showMenu]);
+
+
 
   useEffect(() => {
     const lists: ShoppingList[] = JSON.parse(localStorage.getItem("shoppingLists") || "[]");
@@ -62,51 +77,11 @@ const ShoppingListDetailPage: React.FC = () => {
     setList(found);
   }, [id]);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (addBlockRef.current && !addBlockRef.current.contains(e.target as Node)) {
-        setShowAddBlock(false);
-      }
-    };
-    if (showAddBlock) document.addEventListener("mousedown", handleClickOutside);
-    else document.removeEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showAddBlock]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setEditingItemId(null);
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
   const saveLists = (updatedList: ShoppingList) => {
     const allLists: ShoppingList[] = JSON.parse(localStorage.getItem("shoppingLists") || "[]");
     const updatedLists = allLists.map((l) => (l.id === updatedList.id ? updatedList : l));
     localStorage.setItem("shoppingLists", JSON.stringify(updatedLists));
     setList(updatedList);
-  };
-
-  const handleAddItem = () => {
-    if (!list || !selectedIngredient) return;
-
-    const newItem: ShoppingItem = {
-      id: Date.now().toString(),
-      name: selectedIngredient.name,
-      amount: customAmount !== "" ? customAmount : selectedIngredient.amount,
-      unit: customUnit || selectedIngredient.unit,
-      checked: false,
-      category: selectedIngredient.category || "Інше",
-    };
-
-    const updatedList = { ...list, items: [...list.items, newItem] };
-    saveLists(updatedList);
-
-    setSelectedIngredient(null);
-    setCustomAmount("");
-    setCustomUnit("");
-    setShowAddBlock(false);
   };
 
   const toggleChecked = (itemId: string) => {
@@ -117,12 +92,6 @@ const ShoppingListDetailPage: React.FC = () => {
     saveLists({ ...list, items: updatedItems });
   };
 
-  const startEditing = (item: ShoppingItem) => {
-    setEditingItemId(item.id);
-    setEditValues({ name: item.name, amount: item.amount, unit: item.unit });
-    setOpenMenuId(null);
-    setTimeout(() => nameInputRef.current?.focus(), 0);
-  };
 
   const saveEdit = (itemId: string) => {
     if (!list) return;
@@ -133,22 +102,11 @@ const ShoppingListDetailPage: React.FC = () => {
     setEditingItemId(null);
   };
 
-  const deleteItem = (itemId: string) => {
-    if (!list) return;
-    const updatedItems = list.items.filter((item) => item.id !== itemId);
-    saveLists({ ...list, items: updatedItems });
-    setOpenMenuId(null);
-  };
 
   if (!list) return <p>Список не знайдено</p>;
 
-  const allIngredients: Ingredient[] = recipeDetails.flatMap((r) => r.ingredients);
-  const availableIngredients = allIngredients.filter(
-    (ing) => !list.items.some((item) => item.name === ing.name)
-  );
-
   const ingredientCategoryMap = new Map<string, string>();
-  allIngredients.forEach((ing) => {
+  recipeDetails.flatMap((r) => r.ingredients).forEach((ing) => {
     if (ing.category) ingredientCategoryMap.set(ing.name, ing.category);
   });
 
@@ -160,19 +118,64 @@ const ShoppingListDetailPage: React.FC = () => {
   }, {});
 
   const categoriesToRender = sortByCategory
-    ? [...categoryOrder.filter((c) => groupedItems[c]), ...Object.keys(groupedItems).filter((c) => !categoryOrder.includes(c))]
-    : [""]; // обычный список без категории
+    ? [
+        ...categoryOrder.filter((c) => groupedItems[c]),
+        ...Object.keys(groupedItems).filter((c) => !categoryOrder.includes(c)),
+      ]
+    : [""];
+
+  const isEmpty = list.items.length === 0;
+
 
   return (
     <main className={styles.main}>
       <Header
-        showSearch={true}
+        showSearch
         showBackButton
         backButtonLabel="До списку рецептів"
         onBackClick={() => navigate(-1)}
       />
+
       <div className={styles.titleBlock}>
+        <div className={styles.nameBlock}>
         <h1 className={styles.title}>{list.name}</h1>
+        
+  <div className={styles.menuWrapper}>
+    <button
+      className={styles.menuButton}
+      onClick={() => setShowMenu((prev) => !prev)}
+    >
+      <img src={iconEdit} alt="edit"/>
+    </button>
+
+           {showMenu && (
+  <div className={styles.menuPopup} ref={menuRef}>
+    <button
+      onClick={() => {
+        if (window.confirm("Видалити всі продукти зі списку?")) {
+          saveLists({ ...list, items: [] });
+        }
+        setShowMenu(false);
+      }}
+    >
+      Видалити всі продукти
+    </button>
+    <button
+      disabled={!selectedItemId}
+      onClick={() => {
+        if (!selectedItemId) return;
+        const updatedItems = list.items.filter((i) => i.id !== selectedItemId);
+        saveLists({ ...list, items: updatedItems });
+        setSelectedItemId(null);
+        setShowMenu(false);
+      }}
+    >
+      Видалити інгредієнт
+    </button>
+  </div>
+)}
+  </div>
+  </div>
         <div className={styles.createdAtBlock}>
           <p className={styles.createdAt}>
             Створено:{" "}
@@ -186,161 +189,127 @@ const ShoppingListDetailPage: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.productsBlock}>
-        <div className={styles.productsButtons}>
-          <button className={styles.sortButton} onClick={() => setSortByCategory((prev) => !prev)}>
-            {sortByCategory ? "Звичайний список" : "За категорією"} <ChevronDown size={20} />
-          </button>
-          <button className={styles.showAddButton} onClick={() => setShowAddBlock(!showAddBlock)}>
-            Додати інгредієнт <Plus size={20} />
+      {isEmpty ? (
+        <div className={styles.emptyListBlock}>
+          <img src={emptyList} alt="empty list" className={styles.emptyImage} />
+          <h2>Список продуктів порожній</h2>
+          <p>
+            Додайте потрібні інгредієнти, щоб завжди <br />
+            мати під рукою все для улюблених страв.
+          </p>
+          <button className={styles.showAddButton} onClick={() => setShowAddBlock(true)}>
+            Додати інгредієнти <Plus size={20} />
           </button>
         </div>
-
-        {showAddBlock && (
-          <div className={styles.addItemBlock} ref={addBlockRef}>
-            <div className={styles.selectInputWrapper}>
-              <select
-                className={styles.selectInput}
-                value={selectedIngredient?.name || ""}
-                onChange={(e) => {
-                  const ingredient = availableIngredients.find((i) => i.name === e.target.value) || null;
-                  setSelectedIngredient(ingredient);
-                  setCustomAmount(ingredient?.amount || "");
-                  setCustomUnit(ingredient?.unit || "");
-                }}
-              >
-                <option value="">Виберіть продукт</option>
-                {availableIngredients.map((ing, idx) => (
-                  <option key={idx} value={ing.name}>
-                    {ing.name} {ing.amount ? `- ${ing.amount} ${ing.unit || ""}` : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {selectedIngredient && (
-              <>
-                <input
-                  type="number"
-                  placeholder="Кількість"
-                  value={customAmount}
-                  onChange={(e) =>
-                    setCustomAmount(e.target.value === "" ? "" : Number(e.target.value))
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Одиниця"
-                  value={customUnit}
-                  onChange={(e) => setCustomUnit(e.target.value)}
-                />
-              </>
-            )}
-
-            <button onClick={handleAddItem}>Додати продукт</button>
+      ) : (
+        <div className={styles.productsBlock}>
+          <div className={styles.productsButtons}>
+            <button className={styles.sortButton} onClick={() => setSortByCategory((prev) => !prev)}>
+              Сортувати за <ChevronDown size={20} />
+            </button>
+            <button className={styles.showAddButton} onClick={() => setShowAddBlock(true)}>
+              Додати інгредієнт <Plus size={20} />
+            </button>
           </div>
-        )}
 
-        {categoriesToRender.map((category) => {
-          const items = category ? groupedItems[category] : list.items;
-          if (!items || items.length === 0) return null;
+          {categoriesToRender.map((category) => {
+            const items = category ? groupedItems[category] : list.items;
+            if (!items || items.length === 0) return null;
 
-          return (
-            <div key={category || "all"} className={styles.categoryBlock}>
-              {sortByCategory && <h3 className={styles.categoryTitle}>{category}</h3>}
-              <ul className={styles.itemList}>
-                {items.map((item) => (
-                  <li key={item.id} className={styles.item}>
-                    {editingItemId === item.id ? (
-                      <div className={styles.editBlock}>
-                        <input
-                          ref={nameInputRef}
-                          type="text"
-                          value={editValues.name}
-                          onChange={(e) => setEditValues((v) => ({ ...v, name: e.target.value }))}
-                        />
-                        <input
-                          type="number"
-                          value={editValues.amount || ""}
-                          onChange={(e) =>
-                            setEditValues((v) => ({
-                              ...v,
-                              amount: e.target.value === "" ? "" : Number(e.target.value),
-                            }))
-                          }
-                        />
-                        <input
-                          type="text"
-                          value={editValues.unit || ""}
-                          onChange={(e) => setEditValues((v) => ({ ...v, unit: e.target.value }))}
-                        />
-                        <div className={styles.editButtons}>
-                          <button className={styles.saveButton} onClick={() => saveEdit(item.id)}>
-                            <Check size={16} />
-                          </button>
-                          <button className={styles.deleteButton} onClick={() => setEditingItemId(null)}>
-                            <X size={16} />
-                          </button>
+            return (
+              <div key={category || "all"} className={styles.categoryBlock}>
+                {sortByCategory && <h3 className={styles.categoryTitle}>{category}</h3>}
+                <ul className={styles.itemList}>
+                  {items.map((item) => (
+                    <li
+  key={item.id}
+  className={`${styles.item} ${selectedItemId === item.id ? styles.selectedItem : ""}`}
+  onClick={() => setSelectedItemId(item.id)}
+>
+                      {editingItemId === item.id ? (
+                        <div className={styles.editBlock}>
+                          <input
+                            type="text"
+                            value={editValues.name}
+                            onChange={(e) => setEditValues((v) => ({ ...v, name: e.target.value }))}
+                          />
+                          <input
+                            type="number"
+                            value={editValues.amount || ""}
+                            onChange={(e) =>
+                              setEditValues((v) => ({
+                                ...v,
+                                amount: e.target.value === "" ? "" : Number(e.target.value),
+                              }))
+                            }
+                          />
+                          <input
+                            type="text"
+                            value={editValues.unit || ""}
+                            onChange={(e) => setEditValues((v) => ({ ...v, unit: e.target.value }))}
+                          />
+                          <div className={styles.editButtons}>
+                            <button className={styles.saveButton} onClick={() => saveEdit(item.id)}>
+                              <Check size={16} />
+                            </button>
+                            <button className={styles.deleteButton} onClick={() => setEditingItemId(null)}>
+                              <X size={16} />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className={styles.itemNameBlock}>
-                          <label className={styles.checkboxWrapper}>
-                            <input
-                              type="checkbox"
-                              checked={item.checked || false}
-                              onChange={() => toggleChecked(item.id)}
-                            />
-                            <span className={styles.customCheck}></span>
-                          </label>
-                          <span className={item.checked ? styles.checkedItem : styles.itemName}>{item.name}</span>
-                        </div>
-                        <div className={styles.itemAmountBlock}>
-                        {item.amount && (
-                          <span className={styles.itemAmount}>
-                            {item.amount} {item.unit || ""}
-                          </span>
-                        )}
-                        <div className={styles.itemMenu}>
-                          <button onClick={() => setOpenMenuId(openMenuId === item.id ? null : item.id)}>
-                            <MoreVertical size={20} />
-                          </button>
-                          {openMenuId === item.id && (
-                            <div className={styles.menuDropdown}>
-                              <button onClick={() => startEditing(item)}>Редагувати</button>
-                              <button onClick={() => deleteItem(item.id)}>Видалити</button>
-                            </div>
-                          )}
-                        </div>
-                        </div>
-                      </>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className={styles.footerButtons}>
-        <div className={styles.footerButtonsBlock}>
-          <button className={styles.copyButton}>
-            Копіювати <img src={iconCopy} alt="copy" />
-          </button>
-          <button className={styles.printButton}>
-            Друкувати <img src={iconPrint} alt="prin" />
-          </button>
-          <button className={styles.sendButton}>
-            Поділитись <img src={iconSend} alt="send" />
-          </button>
+                      ) : (
+                        <>
+                          <div className={styles.itemNameBlock}>
+                            <label className={styles.checkboxWrapper}>
+                              <input
+                                type="checkbox"
+                                checked={item.checked || false}
+                                onChange={() => toggleChecked(item.id)}
+                              />
+                              <span className={styles.customCheck}></span>
+                            </label>
+                            <span className={item.checked ? styles.checkedItem : styles.itemName}>{item.name}</span>
+                          </div>
+                          <div className={styles.itemAmountBlock}>
+                            {item.amount && (
+                              <span className={styles.itemAmount}>
+                                {item.amount} {item.unit || ""}
+                              </span>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
-        <button className={styles.marketButton}>
-          <img src={iconMarket} alt="market" />
-          Замовити в Сільпо
-        </button>
-      </div>
+      )}
+
+{showAddBlock && (
+  <AddIngredientModal
+    categories={categoryOrder}
+    units={unitsList}
+    existingIngredients={recipeDetails.flatMap(r => r.ingredients)}
+    onClose={() => setShowAddBlock(false)}
+    onAdd={(data) => {
+      if (!list) return;
+      const newItem: ShoppingItem = {
+        id: Date.now().toString(),
+        name: data.name,
+        category: data.category,
+        amount: data.amount,
+        unit: data.unit,
+        checked: false,
+      };
+      saveLists({ ...list, items: [...list.items, newItem] });
+      setShowAddBlock(false);
+    }}
+  />
+)}
+
     </main>
   );
 };

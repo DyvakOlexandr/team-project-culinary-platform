@@ -2,11 +2,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getAllRecipes } from "../data/recipes";
 import type { Recipe } from "../data/recipes";
-import RecipeCard from "../components/RecipeCard";
 import Header from "../components/Header";
 import { Plus, ChevronDown } from "lucide-react";
 import styles from "./SavedPage.module.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import iconBook from "../assets/menu_icon/icon-park-outline_notebook-one.svg";
 import iconEmpty from "../assets/EmptyPage.png";
 import iconRedact from "../assets/redactCollelection.svg";
@@ -25,16 +24,7 @@ interface Collection {
 }
 
 // Throttle утилита
-const throttle = <T extends (...args: any[]) => void>(callback: T, delay: number) => {
-  let isThrottled = false;
-  return (...args: Parameters<T>) => {
-    if (!isThrottled) {
-      isThrottled = true;
-      callback(...args);
-      setTimeout(() => { isThrottled = false; }, delay);
-    }
-  };
-};
+
 
 const SavedPage: React.FC = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -48,6 +38,9 @@ const SavedPage: React.FC = () => {
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const addedRecipeId: string | undefined = location.state?.addedRecipeId;
+
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const [sortOption, setSortOption] = useState<string | null>(null);
 
@@ -56,6 +49,7 @@ const SavedPage: React.FC = () => {
   const [newCollectionCollaborators, setNewCollectionCollaborators] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
 
+  // Загрузка из localStorage
   useEffect(() => {
     const savedCollections = JSON.parse(localStorage.getItem("savedCollections") || "[]");
     const recipes = JSON.parse(localStorage.getItem("savedRecipes") || "[]");
@@ -63,6 +57,7 @@ const SavedPage: React.FC = () => {
     setSavedRecipes(recipes);
   }, []);
 
+  // Закрытие меню при клике вне
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -132,32 +127,6 @@ const SavedPage: React.FC = () => {
     localStorage.setItem("savedRecipes", JSON.stringify(newSavedRecipes));
   };
 
-  const throttledDragOver = throttle((e: React.DragEvent) => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const rect = container.getBoundingClientRect();
-    const sensitivity = 100;
-
-    if (e.clientY < rect.top + sensitivity) {
-      scrollDirectionRef.current = "up";
-    } else if (e.clientY > rect.bottom - sensitivity) {
-      scrollDirectionRef.current = "down";
-    } else {
-      scrollDirectionRef.current = null;
-    }
-
-    if (!scrollIntervalRef.current && scrollDirectionRef.current) {
-      scrollIntervalRef.current = setInterval(() => {
-        if (!scrollDirectionRef.current) {
-          clearInterval(scrollIntervalRef.current!);
-          scrollIntervalRef.current = null;
-          return;
-        }
-        container.scrollTop += scrollDirectionRef.current === "up" ? -15 : 15;
-      }, 20);
-    }
-  }, 100);
 
   const handleDragEnd = () => {
     scrollDirectionRef.current = null;
@@ -211,13 +180,32 @@ const SavedPage: React.FC = () => {
     setCollections(sortedCollections);
   };
 
-  
+  const handleCollectionClick = (col: Collection) => {
+    if (addedRecipeId) {
+      const recipeToAdd = savedRecipes.find(r => r.id === addedRecipeId);
+      if (recipeToAdd) {
+        const updatedCollections = collections.map(c =>
+          c.id === col.id
+            ? {
+                ...c,
+                recipes: c.recipes.some(r => r.id === addedRecipeId)
+                  ? c.recipes
+                  : [...c.recipes, recipeToAdd],
+              }
+            : c
+        );
+        setCollections(updatedCollections);
+        localStorage.setItem("savedCollections", JSON.stringify(updatedCollections));
+      }
+    }
+
+    navigate(`/collection/${col.id}`, { state: {} });
+  };
 
   return (
     <main
       className={`${styles.main} ${isEmpty ? styles.emptyPage : ""}`}
       ref={scrollContainerRef}
-      onDragOver={throttledDragOver}
       onDragEnd={handleDragEnd}
     >
       <Header />
@@ -284,66 +272,58 @@ const SavedPage: React.FC = () => {
                 <div
                   key={col.id}
                   className={styles.collectionCard}
-                  onDrop={(e) => { e.preventDefault(); handleDropRecipe(e.dataTransfer.getData("text/plain"), col.id); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const recipeId = e.dataTransfer.getData("text/plain");
+                    handleDropRecipe(recipeId, col.id);
+                  }}
                   onDragOver={(e) => e.preventDefault()}
-                  onClick={() => navigate(`/collection/${col.id}`)}
                 >
-                  <div className={styles.collectionImage}>
-                    {savedInCollection.length === 0 ? (
-                      <div className={styles.placeholder}></div>
-                    ) : savedInCollection.length === 1 ? (
-                      <img src={savedInCollection[0].image} alt="img0" className={styles.singleImage} />
-                    ) : (
-                      <>
-                        {savedInCollection[0] && <img src={savedInCollection[0].image} alt="img0" className={styles.image0} />}
-                        {savedInCollection[1] && <img src={savedInCollection[1].image} alt="img1" className={styles.image1} />}
-                        {savedInCollection[2] && <img src={savedInCollection[2].image} alt="img2" className={styles.image2} />}
-                      </>
-                    )}
-
-                    <div className={styles.menuWrapper} onClick={(e) => e.stopPropagation()}>
-                      <button className={styles.menuButton} onClick={() => setOpenMenuId(openMenuId === col.id ? null : col.id)}>
-                        <img src={iconRedact} alt="redact"/>
-                      </button>
-                      {openMenuId === col.id && (
-                        <div className={styles.menuPopup}>
-                          <button onClick={() => onEdit(col.id)}> Редагувати</button>
-                          <button onClick={() => onDelete(col.id)}> Видалити</button>
-                        </div>
+                  <div
+                    className={styles.collectionContent}
+                    onClick={() => handleCollectionClick(col)}
+                  >
+                    <div className={styles.collectionImage}>
+                      {savedInCollection.length === 0 ? (
+                        <div className={styles.placeholder}></div>
+                      ) : savedInCollection.length === 1 ? (
+                        <img src={savedInCollection[0].image} alt="img0" className={styles.singleImage} />
+                      ) : (
+                        <>
+                          {savedInCollection[0] && <img src={savedInCollection[0].image} alt="img0" className={styles.image0} />}
+                          {savedInCollection[1] && <img src={savedInCollection[1].image} alt="img1" className={styles.image1} />}
+                          {savedInCollection[2] && <img src={savedInCollection[2].image} alt="img2" className={styles.image2} />}
+                        </>
                       )}
-                    </div>
-                  </div>
 
-                  <h3 className={styles.collectionName}>{col.name || "Без назви"}</h3>
-                  <div className={styles.collectionNameBlock}>
-                    <img src={iconBook} alt="book" />
-                    <p className={styles.collectionCount}>
-                      {savedInCollection.length} {savedInCollection.length === 1 ? "рецепт" : "рецептів"}
-                    </p>
+                      <div className={styles.menuWrapper} onClick={(e) => e.stopPropagation()}>
+                        <button
+                          className={styles.menuButton}
+                          onClick={() => setOpenMenuId(openMenuId === col.id ? null : col.id)}
+                        >
+                          <img src={iconRedact} alt="redact" />
+                        </button>
+                        {openMenuId === col.id && (
+                          <div className={styles.menuPopup}>
+                            <button onClick={() => onEdit(col.id)}>Редагувати</button>
+                            <button onClick={() => onDelete(col.id)}>Видалити</button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <h3 className={styles.collectionName}>{col.name || "Без назви"}</h3>
+                    <div className={styles.collectionNameBlock}>
+                      <img src={iconBook} alt="book" />
+                      <p className={styles.collectionCount}>
+                        {savedInCollection.length} {savedInCollection.length === 1 ? "рецепт" : "рецептів"}
+                      </p>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
-
-          {savedRecipes.length > 0 && (
-            <div className={styles.savedRecipesGrid}>
-              {savedRecipes.map(recipeItem => {
-                const recipe = getAllRecipes().find(r => r.id === recipeItem.id);
-                if (!recipe) return null;
-                return (
-                  <div
-                    key={recipe.id}
-                    className={styles.savedRecipeCard}
-                    draggable
-                    onDragStart={(e) => e.dataTransfer.setData("text/plain", recipe.id)}
-                  >
-                    <RecipeCard {...recipe} />
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </>
       )}
 

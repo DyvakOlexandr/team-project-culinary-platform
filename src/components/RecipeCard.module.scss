@@ -75,6 +75,7 @@
    
 
   .title {
+    margin: 0.5rem;
 height: 100px;
     color: rgba(36, 36, 36, 1);
    font-size: 18px;
@@ -89,15 +90,20 @@ height: 20px;
     flex-direction: row;
     align-items: center;
     gap: 2.5rem;
-  
+    margin-bottom: 1rem;
 
   .time {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
   color: rgba(161, 161, 161, 1);
-  font-family: Noto Sans;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 16px;
-text-align: left;
+  text-align: left;
+
 }
 
 .rating {
@@ -107,19 +113,10 @@ text-align: left;
   gap: 0.5rem;
 }
 
-.star {
-  color: #d1d5db; // серая по умолчанию
-  transition: color 0.2s;
-  cursor: pointer;
-  &:hover{
-    color: #fbbf24;
-  }
-}
 
 .ratingValue {
   color: rgba(161, 161, 161, 1);
-font-family: Noto Sans;
-font-size: 12px;
+font-size: 14px;
 font-weight: 500;
 line-height: 16px;
 text-align: left;

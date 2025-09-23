@@ -234,6 +234,11 @@ import r58step_1 from "../assets/ricept_58/step_1.mp4"
  import r59step_5 from "../assets/ricept_59/step_5.webp"
  import r59step_7 from "../assets/ricept_59/step_7.webp"
 
+ import r60step_1 from "../assets/ricept_60/step_1.webp"
+ import r60step_2 from "../assets/ricept_60/step_2.webp"
+  import r60step_3 from "../assets/ricept_60/step_3.webp"
+   import r60step_4 from "../assets/ricept_60/step_4.webp"
+    import r60step_5 from "../assets/ricept_60/step_5.webp"
  /* recipeDetails.ts */
 
 export interface Ingredient {
@@ -1246,16 +1251,16 @@ export const recipeDetails: RecipeDetails[] = [
     { name: "Кошерні мариновані огірки з кропом", amount: 4, unit: "шт.", category: "Овочі" },
     // Чикагський стиль
     { name: "Солодкий маринований огірок", amount: 2, unit: "ст. л.", category: "Овочі" },
-    { name: "Жовта цибуля", amount: 1/4, unit: "шт.", category: "Овочі" },
+    { name: "Жовта цибуля", amount: 0.25, unit: "шт.", category: "Овочі" },
     { name: "Помідор", amount: 1, unit: "шт.", category: "Овочі" },
     { name: "Венські спортивні перці", amount: 2, unit: "шт.", category: "Овочі" },
     { name: "Сіль селери", amount: 1, unit: "щіпка", category: "Спеції" },
     // Гавайський стиль
     { name: "Кільця ананаса", amount: 4, unit: "шт.", category: "Фрукти" },
-    { name: "Червона цибуля", amount: 1/4, unit: "шт.", category: "Овочі" },
-    { name: "Майонез", amount: 1/2, unit: "склянки", category: "Соуси" },
+    { name: "Червона цибуля", amount: 0.25, unit: "шт.", category: "Овочі" },
+    { name: "Майонез", amount: 0.5, unit: "склянки", category: "Соуси" },
     { name: "Соус Теріякі", amount: 1, unit: "ст. л.", category: "Соуси" },
-    { name: "Сік лайма", amount: 1/2, unit: "ст. л.", category: "Фрукти/Цитрусові" },
+    { name: "Сік лайма", amount: 0.5, unit: "ст. л.", category: "Фрукти/Цитрусові" },
     // Стиль BLT
     { name: "Бекон", amount: 2, unit: "скибки", category: "М’ясо" },
     { name: "Салат ромейн", amount: 1, unit: "чашка", category: "Овочі" },
@@ -1264,8 +1269,8 @@ export const recipeDetails: RecipeDetails[] = [
     { name: "Соус барбекю", amount: 2, unit: "ст. л.", category: "Соуси" },
     { name: "Мікс з капусти", amount: 4, unit: "ст. л.", category: "Овочі" },
     // Техаський стиль
-    { name: "Соус чилі з квасолею", amount: 1/2, unit: "склянки", category: "Соуси" },
-    { name: "Тертий сир чеддер", amount: 1/2, unit: "склянки", category: "Молочні продукти" },
+    { name: "Соус чилі з квасолею", amount: 0.5, unit: "склянки", category: "Соуси" },
+    { name: "Тертий сир чеддер", amount: 0.5, unit: "склянки", category: "Молочні продукти" },
     { name: "Перець халапеньйо", amount: 1, unit: "шт.", category: "Овочі" },
     { name: "Свіжа кінза", amount: 2, unit: "стебла", category: "Овочі/Зелень" },
     { name: "Гострий соус", amount: 1, unit: "тире", category: "Соуси" },
@@ -1298,11 +1303,11 @@ export const recipeDetails: RecipeDetails[] = [
   ingredients: [
     { name: "Безглютенові вівсяні пластівці", amount: 1, unit: "чашка", category: "Зернові" },
     { name: "Лосось", amount: 1, unit: "банка", category: "Риба" },
-    { name: "Червона цибуля", amount: 1/2, unit: "чашки", category: "Овочі" },
+    { name: "Червона цибуля", amount: 0.5, unit: "чашки", category: "Овочі" },
     { name: "Морква терта", amount: 4, unit: "ст. л.", category: "Овочі" },
     { name: "Часник", amount: 1, unit: "ч. л.", category: "Спеції" },
-    { name: "Приправа з сіллю", amount: 1/2, unit: "ч. л.", category: "Спеції" },
-    { name: "Копчена паприка", amount: 1/2, unit: "ч. л.", category: "Спеції" },
+    { name: "Приправа з сіллю", amount: 0.5, unit: "ч. л.", category: "Спеції" },
+    { name: "Копчена паприка", amount: 0.5, unit: "ч. л.", category: "Спеції" },
     { name: "Лимонний сік", amount: 1, unit: "шт.", category: "Фрукти/Цитрусові" },
     { name: "Яйця", amount: 2, unit: "шт.", category: "Молочні продукти" },
     { name: "Безглютеновий соус барбекю", amount: 2, unit: "ст. л.", category: "Соуси" },
@@ -1622,7 +1627,7 @@ export const recipeDetails: RecipeDetails[] = [
     { name: "Коричневий рис", amount: 0.33, unit: "склянки", category: "Зернові" },
     { name: "Кіноа", amount: 0.33, unit: "склянки", category: "Зернові" },
     { name: "Вода", amount: 1, unit: "чашка", category: "Рідина" },
-    { name: "Овес", amount: 1/2, unit: "склянки", category: "Зернові" },
+    { name: "Овес", amount: 0.5, unit: "склянки", category: "Зернові" },
     { name: "Цибуля", amount: 1, unit: "шт.", category: "Овочі" },
     { name: "Гриби", amount: 1, unit: "чашка", category: "Овочі" },
     { name: "Часник", amount: 3, unit: "зубчики", category: "Овочі/Спеції" },
@@ -2189,7 +2194,7 @@ ingredients: [
   { name: "Масло", amount: 1, unit: "чашка", category: "Молочні продукти" },
   { name: "Цукор-пісок", amount: 0.65, unit: "склянки", category: "Солодощі" },
   { name: "Коричневий цукор", amount: 0.65, unit: "склянки", category: "Солодощі" },
-  { name: "Консервоване гарбузове пюре", amount: 3/4, unit: "склянки", category: "Овочі" },
+  { name: "Консервоване гарбузове пюре", amount: 0.75, unit: "склянки", category: "Овочі" },
   { name: "Екстракт ванілі", amount: 1, unit: "ч. л.", category: "Ароматизатори" },
   { name: "Кукурудзяний крохмаль", amount: 1, unit: "ч. л.", category: "Борошняні вироби" },
   { name: "Борошно пшеничне", amount: 2.75, unit: "склянки", category: "Борошняні вироби" },
@@ -2471,8 +2476,37 @@ tags: ["тонкацу", "свиняча вирізка", "рис", "кінза"
     { name: "Вуглеводи", amount: 7.9, unit: "г" }
   ],
   tags: ["кіноа", "шпинат", "сир", "сніданок", "перекус"]
-}
+},
 
+ {
+  id: "r60",
+  description: "5-хвилинний кекс з Нутеллою в кружці — ідеальний десерт, коли потрібен швидкий шоколадний перекус. Змішайте інгредієнти прямо в кружці та приготуйте в мікрохвильовці всього за пару хвилин.",
+  ingredients: [
+    { name: "Борошно з розпушувачем", amount: 4, unit: "ст. л.", category: "Зернові" },
+    { name: "Цукор", amount: 4, unit: "ст. л.", category: "Цукор" },
+    { name: "Несолодке какао-порошок", amount: 3, unit: "ст. л.", category: "Какао" },
+    { name: "Яйце", amount: 1, unit: "шт.", category: "Яйця" },
+    { name: "Молоко", amount: 3, unit: "ст. л.", category: "Молочні" },
+    { name: "Рослинна олія", amount: 3, unit: "ст. л.", category: "Жири" },
+    { name: "Nutella®", amount: 3, unit: "ст. л.", category: "Шоколад / паста" }
+  ],
+  steps: [
+    { title: "Крок 1", description: "У велику кружку насипте борошно з розпушувачем та цукор.", image: r60step_1 },
+    { title: "Крок 2", description: "Додайте несолодке какао-порошок і перемішайте." , image: r60step_2 },
+    { title: "Крок 3", description: "Додайте яйце і знову перемішайте до однорідності." , image: r60step_3 },
+    { title: "Крок 4", description: "Влийте молоко та рослинну олію, ретельно перемішайте.", image: r60step_4},
+    { title: "Крок 5", description: "Додайте Nutella® і розмішайте виделкою до зникнення грудочок." , image: r60step_5},
+    { title: "Крок 6", description: "Готуйте в мікрохвильовці на високій потужності 1,5–2 хвилини до готовності." },
+    { title: "Крок 7", description: "Подавайте теплим і насолоджуйтеся!" }
+  ],
+  nutrition: [
+    { name: "Калорії", amount: 1084, unit: "ккал" },
+    { name: "Жири", amount: 66.8, unit: "г" },
+    { name: "Білки", amount: 17.4, unit: "г" },
+    { name: "Вуглеводи", amount: 121.2, unit: "г" }
+  ],
+  tags: ["кекс", "шоколад", "Nutella", "десерт", "швидко"]
+}
 
 
 

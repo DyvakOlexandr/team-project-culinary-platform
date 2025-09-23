@@ -8,6 +8,7 @@
   overflow-y: auto;
 } 
 
+
 .customSearchWrapper {
   position: relative;
   flex: 1 1 300px;
@@ -40,6 +41,14 @@
   }
 }
 
+.emptyListBlock{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+   width: 100%;
+  height: 100%;
+}
 .titleBlock{
   margin-top: 40px;
 display: flex;
@@ -61,6 +70,13 @@ color: rgba(159, 159, 159, 1);
 font-size: 16px;
 font-weight: 400;
 line-height: 22px;
+}
+
+.nameBlock{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
 }
 
 .addItemBlock {
@@ -100,49 +116,8 @@ line-height: 22px;
     box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
   }
 }
-
-/* Для стрелки можно сделать псевдо-элемент */
-.selectInputWrapper {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-
-  &::after {
-    content: "▼"; /* стрелка */
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: #666;
-    font-size: 10px;
-  }
 }
 
-  input {
-    display: block;
-    width: 100%;
-    padding: 8px 10px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-  }
-
-  button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 6px;
-    background-color: #4caf50;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  button:hover {
-    background-color: #45a049;
-  }
-}
 
 .sortButton{
       display: flex;
@@ -168,26 +143,27 @@ line-height: 22px;
 }
 
 .showAddButton{
-    display: flex;
+        display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    width: 225px;
+    width: 228px;
     height: 48px;
-    color: rgba(37, 48, 62, 1);
+    color: #fff;
     font-size: 16px;
     font-weight: 600;
     line-height: 22px;
     box-sizing: border-box;
-    border: 2px solid rgba(240, 240, 241, 1);
+    border: none;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 1);
+    background: rgba(1, 64, 78, 1);
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
     &:hover{
       transform: scale(1.05);
     }
+
 }
 
 .productsButtons{
@@ -257,49 +233,8 @@ font-weight: 600;
 line-height: 22px;
 }
 
-.itemMenu {
-  position: relative;
-  display: inline-block;
-  margin-left: 8px;
 
-  button {
-    background: none;
-    border: none;
-    cursor: pointer;
-     transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.2);
-    }
-  }
 
-  .menuDropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-radius: 6px;
-    padding: 4px 0;
-    min-width: 120px;
-    z-index: 10;
-
-    button {
-      width: 100%;
-      text-align: left;
-      padding: 6px 12px;
-      background: none;
-      border: none;
-      font-size: 14px;
-      color: #333;
-       cursor: pointer;
-     transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.2);
-    }
-    }
-  }
-}
 
 /* Контейнер редактирования */
 .editBlock {
@@ -314,156 +249,8 @@ line-height: 22px;
   padding: 1rem;
 }
 
-/* Поля ввода */
-.editBlock input[type="text"],
-.editBlock input[type="number"] {
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: all 0.2s;
-}
 
-.editBlock input:focus {
-  border-color: #4a90e2;
-  outline: none;
-  box-shadow: 0 0 4px rgba(74, 144, 226, 0.3);
-}
 
-/* Кнопки сохранения/отмены */
-.editButtons {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-
-.editButtons button {
-  border: none;
-  color: #fff;
-  border-radius: 6px;
-  padding: 4px 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.editButtons button:hover {
-  background: #357ab7;
-}
-
-.saveButton{
-  background-color: #4caf50;
-}
-
-.deleteButton{
-  background-color: red;
-}
-
-.footerButtons{
-  margin-top: 1.5rem;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footerButtonsBlock{
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-}
-
-.copyButton{
-  width: 164px;
-height: 48px;
-box-sizing: border-box;
-border: 2px solid rgba(240, 240, 241, 1);
-border-radius: 12px;
-background: rgba(255, 255, 255, 1);
-display: flex;
-flex-direction: row;
-align-items: center;
-justify-content: center;
-gap: 0.5rem;
-color: rgba(37, 48, 62, 1);
-font-size: 16px;
-font-weight: 600;
-line-height: 22px;
-  cursor: pointer;
-     transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.05);
-    }
-}
-
-.printButton{
-    width: 164px;
-height: 48px;
-box-sizing: border-box;
-border: 2px solid rgba(240, 240, 241, 1);
-border-radius: 12px;
-background: rgba(255, 255, 255, 1);
-display: flex;
-flex-direction: row;
-align-items: center;
-justify-content: center;
-gap: 0.5rem;
-color: rgba(37, 48, 62, 1);
-font-size: 16px;
-font-weight: 600;
-line-height: 22px;
-  cursor: pointer;
-     transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.05);
-    }
-}
-
-.sendButton{
-      width: 171px;
-height: 48px;
-box-sizing: border-box;
-border: 2px solid rgba(240, 240, 241, 1);
-border-radius: 12px;
-background: rgba(255, 255, 255, 1);
-display: flex;
-flex-direction: row;
-align-items: center;
-justify-content: center;
-gap: 0.5rem;
-color: rgba(37, 48, 62, 1);
-font-size: 16px;
-font-weight: 600;
-line-height: 22px;
-  cursor: pointer;
-     transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.05);
-    }
-}
-
-.marketButton{
-        width: 231px;
-height: 48px;
-box-sizing: border-box;
-border: 2px solid rgba(240, 240, 241, 1);
-border-radius: 12px;
-background: rgba(255, 255, 255, 1);
-display: flex;
-flex-direction: row-reverse;
-align-items: center;
-justify-content: center;
-gap: 0.5rem;
-color: rgba(37, 48, 62, 1);
-font-size: 16px;
-font-weight: 600;
-line-height: 22px;
-  cursor: pointer;
-     transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.05);
-    }
-}
 
 
 .checkboxWrapper {
@@ -531,4 +318,54 @@ line-height: 22px;
 font-size: 16px;
 font-weight: 500;
 line-height: 22px;
+}
+
+.menuWrapper {
+  position: relative;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+
+  &:hover {
+border: 1px solid rgba(246, 248, 248, 1);
+border-radius: 8px;
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.6);
+transform: scale(1.05);
+  }
+}
+
+.categoryTitle{
+  margin-top: 1.5rem;
+}
+.menuPopup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  overflow: hidden;
+
+  button {
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  }
 }

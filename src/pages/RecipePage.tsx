@@ -6,8 +6,9 @@ import styles from "./RecipesPage.module.scss";
 import { sections, summerOffers } from "../data/recipes";
 import type { Recipe } from "../data/recipes";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronDown, ArrowDown, Check } from "lucide-react";
+import { ChevronDown, ArrowDown } from "lucide-react";
 import iconFilter from "../assets/icon-park-outline_center-alignment.svg";
+import FilterModal from "../components/FilterModal";
 
 type SortOption = "popularity" | "rating" | "time" | "complexity" | "newest";
 
@@ -41,7 +42,6 @@ const getAllRecipes = (): Recipe[] => {
   return [...sectionRecipes, ...summerOffers];
 };
 
-// Тип коллекции
 interface Collection {
   id: string;
   name: string;
@@ -53,13 +53,21 @@ const RecipesPage: React.FC = () => {
   const location = useLocation();
   const targetCategory = location.state?.category || "Сніданок";
   const selectedDate = location.state?.date;
-  const collectionId = location.state?.collectionId; // коллекция куда добавляем
+  const collectionId = location.state?.collectionId;
 
   const allRecipes = getAllRecipes();
 
   const [showAll, setShowAll] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>("popularity");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [filters, setFilters] = useState<{
+    cuisines?: string[];
+    category?: string;
+    time?: string;
+    complexity?: string;
+    diet?: string;
+  }>({});
 
   const sortedRecipes = useMemo(() => {
     return [...allRecipes].sort((a, b) => {
@@ -85,13 +93,50 @@ const RecipesPage: React.FC = () => {
     });
   }, [sortBy, allRecipes]);
 
+  const filteredRecipes = useMemo(() => {
+  return sortedRecipes.filter((r) => {
+    // Кухня
+    if (filters.cuisines && filters.cuisines.length > 0) {
+      if (!r.cuisine || !filters.cuisines.includes(r.cuisine)) return false;
+    }
+
+    // Категорія
+    if (filters.category) {
+      if (!r.category || !r.category.toLowerCase().includes(filters.category.toLowerCase())) {
+        return false;
+      }
+    }
+
+    // Час (до N хв)
+    if (filters.time) {
+      const match = filters.time.match(/до\s*(\d+)\s*хв/);
+      if (match) {
+        const maxMinutes = parseInt(match[1], 10);
+        if (parseTime(r.time) > maxMinutes) return false;
+      }
+    }
+
+    // Складність
+    if (filters.complexity) {
+      if (!r.complexity || r.complexity !== filters.complexity) return false;
+    }
+
+    // Дієта
+    if (filters.diet) {
+      if (!r.diet || !r.diet.includes(filters.diet)) return false;
+    }
+
+    return true;
+  });
+}, [sortedRecipes, filters]);
+
+
   const displayedRecipes = showAll
-    ? sortedRecipes
-    : sortedRecipes.slice(0, 9);
+    ? filteredRecipes
+    : filteredRecipes.slice(0, 9);
 
   const handleSelectRecipe = (recipe: Recipe) => {
     if (collectionId) {
-      // Добавляем рецепт в коллекцию
       const savedCollections: Collection[] = JSON.parse(localStorage.getItem("savedCollections") || "[]");
       const updatedCollections = savedCollections.map(col => {
         if (col.id === collectionId) {
@@ -102,16 +147,10 @@ const RecipesPage: React.FC = () => {
         return col;
       });
       localStorage.setItem("savedCollections", JSON.stringify(updatedCollections));
-      // Переходим обратно на страницу коллекции
       navigate(`/collection/${collectionId}`);
     } else {
-      // Добавление в планировщик
       navigate("/planner", {
-        state: {
-          addedRecipe: recipe,
-          category: targetCategory,
-          date: selectedDate,
-        },
+        state: { addedRecipe: recipe, category: targetCategory, date: selectedDate },
       });
     }
   };
@@ -143,19 +182,50 @@ const RecipesPage: React.FC = () => {
                     }}
                   >
                     {sortLabels[option]}
-                    {sortBy === option && <Check size={16} />}
+              
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <button className={styles.filterButton}>
+          <button className={styles.filterButton} onClick={() => setFilterModalOpen(true)}>
             Фільтр
             <img src={iconFilter} alt="filter" />
           </button>
         </div>
       </div>
+      {/* Под кнопкой фильтра, сразу после headerBlock */}
+{filters.cuisines?.length || filters.category || filters.time || filters.complexity || filters.diet ? (
+  <div className={styles.selectedFilters}>
+    <button
+      className={styles.clearFiltersButton}
+      onClick={() =>
+        setFilters({ cuisines: [], category: "", time: "", complexity: "", diet: "" })
+      }
+    >
+      Очистити
+    </button>
+
+    {/* Кухни */}
+    {filters.cuisines?.map(c => (
+      <span key={c} className={styles.filterTag}>{c}</span>
+    ))}
+
+    {/* Категория */}
+    {filters.category && <span className={styles.filterTag}>{filters.category}</span>}
+
+    {/* Время */}
+    {filters.time && <span className={styles.filterTag}>{filters.time}</span>}
+
+    {/* Сложность */}
+    {filters.complexity && <span className={styles.filterTag}>{filters.complexity}</span>}
+
+    {/* Диета */}
+    {filters.diet && <span className={styles.filterTag}>{filters.diet}</span>}
+  </div>
+) : null}
+
 
       <div className={styles.grid}>
         {displayedRecipes.map(recipe => (
@@ -165,11 +235,20 @@ const RecipesPage: React.FC = () => {
         ))}
       </div>
 
-      {!showAll && allRecipes.length > 9 && (
+      {!showAll && filteredRecipes.length > 9 && (
         <button className={styles.allButton} onClick={() => setShowAll(true)}>
           Показати більше <ArrowDown size={24} />
         </button>
       )}
+
+      <FilterModal
+        isOpen={filterModalOpen}
+        onClose={() => setFilterModalOpen(false)}
+        onApply={(f) => {
+          setFilters(f);
+          setFilterModalOpen(false);
+        }}
+      />
     </main>
   );
 };

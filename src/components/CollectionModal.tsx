@@ -1,8 +1,8 @@
-// src/components/CollectionModal.tsx
-import React from "react";
+import React, { useState } from "react";
 import styles from "./CollectionModal.module.scss";
 import { X, ChevronLeft } from "lucide-react";
 import type { Recipe } from "../data/recipes";
+import { getAllRecipes } from "../data/recipes";
 
 interface SavedItem {
   id: string;
@@ -21,11 +21,9 @@ interface CollectionModalProps {
   isOpen: boolean;
   collection: Collection | null;
   onClose: () => void;
-  onBack?: () => void; // кнопка назад
+  onBack?: () => void;
   onSelectRecipe?: (recipe: Recipe) => void;
 }
-
-import { getAllRecipes } from "../data/recipes";
 
 const CollectionModal: React.FC<CollectionModalProps> = ({
   isOpen,
@@ -34,9 +32,10 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
   onBack,
   onSelectRecipe,
 }) => {
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+
   if (!isOpen || !collection) return null;
 
-  // Получаем все рецепты коллекции
   const recipesInCollection: Recipe[] = collection.recipes
     .map(item => getAllRecipes().find(r => r.id === item.id))
     .filter((r): r is Recipe => r !== undefined);
@@ -49,6 +48,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
           {onBack && (
             <button className={styles.backBtn} onClick={onBack}>
               <ChevronLeft size={20} />
+              Назад
             </button>
           )}
           <h2 className={styles.title}>{collection.name}</h2>
@@ -58,15 +58,15 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
         </div>
 
         {/* Recipes Grid */}
+        <div className={styles.recipesBlock}>
         <div className={styles.recipesGrid}>
           {recipesInCollection.map(recipe => (
             <div
               key={recipe.id}
-              className={styles.recipeCard}
-              onClick={() => {
-                if (onSelectRecipe) onSelectRecipe(recipe);
-                onClose();
-              }}
+              className={`${styles.recipeCard} ${
+                selectedRecipe?.id === recipe.id ? styles.selected : ""
+              }`}
+              onClick={() => setSelectedRecipe(recipe)}
             >
               <div
                 className={styles.recipeImage}
@@ -79,7 +79,23 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
             <p className={styles.emptyText}>Рецепти відсутні</p>
           )}
         </div>
-      </div>
+        </div>
+        {/* Always Visible Add Recipe Button */}
+        
+            <button
+    className={`${styles.addRecipeBtn} ${selectedRecipe ? styles.active : ""}`}
+    onClick={() => {
+      if (selectedRecipe && onSelectRecipe) {
+        onSelectRecipe(selectedRecipe);
+        onClose();
+      } else {
+        alert("Оберіть рецепт перед додаванням");
+      }
+    }}
+  >
+    Додати рецепт
+  </button>
+        </div>
     </div>
   );
 };

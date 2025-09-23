@@ -371,7 +371,26 @@ const handleSaveMeal = (data: {
     return updated;
   });
 };
+const handleAddMealIngredients = (mealIngredients: { name: string; amount?: number; unit?: string }[], recipeTitle: string) => {
+  // формируем элементы так же, как в ProductInfoPage
+  const items = mealIngredients.map((ingredient) => ({
+    id: `${Date.now()}-${ingredient.name}-${Math.random()}`,
+    name: ingredient.name,
+    amount: ingredient.amount,
+    unit: ingredient.unit,
+    recipeTitle,
+  }));
 
+  if (items.length === 0) {
+    alert("Немає інгредієнтів для додавання!");
+    return;
+  }
+
+  // передаём в ShoppingListPage
+  navigate("/shopping-list", {
+    state: { ingredientsToAdd: items },
+  });
+};
 
 
 
@@ -823,37 +842,38 @@ const handleSaveMeal = (data: {
 
         {/* 🔽 Кнопка "Додати у список" */}
         <button
-          className={styles.ingredientsAddButton}
-          onClick={() => {
-            const selectedIngredients = allIngredients.filter((_, index) =>
-              crossedIngredients.includes(index)
-            );
+  className={styles.ingredientsAddButton}
+  onClick={() => {
+    // Берем только выбранные ингредиенты
+    const selectedIngredients = allIngredients.filter((_, index) =>
+      crossedIngredients.includes(index)
+    );
 
-            if (selectedIngredients.length === 0) {
-              alert("Виберіть хоча б один інгредієнт ✅");
-              return;
-            }
+    if (selectedIngredients.length === 0) {
+      alert("Виберіть хоча б один інгредієнт ✅");
+      return;
+    }
 
-            const savedProducts = JSON.parse(localStorage.getItem("shoppingProducts") || "[]");
+    // Используем универсальную функцию для добавления
+    handleAddMealIngredients(
+      selectedIngredients.map((ing) => ({
+        name: ing.name,
+        amount: ing.amount,
+        unit: ing.unit,
+      })),
+      "Інгредієнти на день" // название блока или можно любой другой label
+    );
 
-            const newProducts = selectedIngredients.map((ingredient) => ({
-              id: Date.now().toString() + Math.random(),
-              name: ingredient.name,
-              amount: ingredient.amount,
-              unit: ingredient.unit,
-              checked: false,
-            }));
+    // Сбрасываем вычеркнутые
+    setCrossedIngredients([]);
+  }}
+>
+  Додати у список
+  <Plus size={18} />
+</button>
 
-            const updatedProducts = [...savedProducts, ...newProducts];
-            localStorage.setItem("shoppingProducts", JSON.stringify(updatedProducts));
 
-            setCrossedIngredients([]);
-            alert("✅ Інгредієнти додано у список покупок!");
-          }}
-        >
-          Додати у список
-          <Plus size={18} />
-        </button>
+
       </div>
     </div>
 

@@ -1,48 +1,43 @@
 // ShoppingListPage.tsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import styles from "./ShoppingListPage.module.scss";
-import { Plus, ChevronDown, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Plus, ChevronDown, MoreVertical } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import CreateListModal from "../components/CreateListModal";
+import emptyList from "../assets/EmptyLists.png";
 
 interface ShoppingItem {
   id: string;
   name: string;
   amount?: number;
   unit?: string;
-  checked?: boolean; // ✅ новое поле
+  checked?: boolean;
 }
 
 interface ShoppingList {
   id: string;
   name: string;
+  description?: string;
+  color?: string;
   items: ShoppingItem[];
-  createdAt: string; // ISO-строка
+  createdAt: string;
 }
 
 const ShoppingListPage: React.FC = () => {
   const [lists, setLists] = useState<ShoppingList[]>([]);
-  const [products, setProducts] = useState<ShoppingItem[]>([]);
-  const [showMenu, setShowMenu] = useState(false);
-  const [sortOrder, setSortOrder] = useState<"default" | "az">("default");
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingList, setEditingList] = useState<ShoppingList | null>(null);
+  const [sortMenuOpen, setSortMenuOpen] = useState(false);
+  const [sortOption, setSortOption] = useState<string>("default");
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setShowMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
     const savedLists = JSON.parse(localStorage.getItem("shoppingLists") || "[]");
-    const savedProducts = JSON.parse(localStorage.getItem("shoppingProducts") || "[]");
     setLists(savedLists);
-    setProducts(savedProducts);
   }, []);
 
   const updateLists = (updated: ShoppingList[]) => {
@@ -50,196 +45,228 @@ const ShoppingListPage: React.FC = () => {
     localStorage.setItem("shoppingLists", JSON.stringify(updated));
   };
 
-  const updateProducts = (updated: ShoppingItem[]) => {
-    setProducts(updated);
-    localStorage.setItem("shoppingProducts", JSON.stringify(updated));
+  const handleSortSelect = (option: string) => {
+    setSortOption(option);
+    setSortMenuOpen(false);
   };
 
-  const handleAddList = () => {
-    const name = prompt("Назва нового списку:");
-    if (!name) return;
+  const sortedLists = [...lists].sort((a, b) => {
+    switch (sortOption) {
+      case "За назвою":
+        return a.name.localeCompare(b.name);
+      case "За датою створення":
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      case "За кількістю інгредієнтів":
+        return a.items.length - b.items.length;
+      default:
+        return 0;
+    }
+  });
 
+  // Создание нового списка
+  const handleCreateList = (name: string, description: string, color: string) => {
     const newList: ShoppingList = {
       id: Date.now().toString(),
       name,
+      description,
+      color,
       items: [],
       createdAt: new Date().toISOString(),
     };
     updateLists([...lists, newList]);
-    setShowMenu(false);
+    setIsCreateModalOpen(false);
   };
 
-  const handleDeleteList = (id: string) => {
-    if (!window.confirm("Видалити цей список?")) return;
-    updateLists(lists.filter(list => list.id !== id));
-  };
-
-  const handleDeleteAllLists = () => {
-    if (!window.confirm("Видалити всі списки? Це дія незворотна.")) return;
-    updateLists([]);
-  };
-
-  const handleDeleteProduct = (id: string) => {
-    updateProducts(products.filter(p => p.id !== id));
-  };
-
-  const handleDeleteAllProducts = () => {
-    if (!window.confirm("Видалити всі продукти без списку?")) return;
-    updateProducts([]);
-  };
-
-  const handleDropProduct = (productId: string, listId: string) => {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    const updatedLists = lists.map(list =>
-      list.id === listId ? { ...list, items: [...list.items, product] } : list
+  // Редактирование существующего списка
+  const handleUpdateList = (id: string, name: string, description: string, color: string) => {
+    const updated = lists.map(list =>
+      list.id === id ? { ...list, name, description, color } : list
     );
-    updateLists(updatedLists);
-
-    const remainingProducts = products.filter(p => p.id !== productId);
-    updateProducts(remainingProducts);
+    updateLists(updated);
+    setEditingList(null);
   };
 
-  const sortedProducts = [...products].sort((a, b) =>
-    sortOrder === "az" ? a.name.localeCompare(b.name) : 0
-  );
-
-  const sortedLists = [...lists].sort((a, b) =>
-    sortOrder === "az" ? a.name.localeCompare(b.name) : 0
-  );
-
-  // --- Прогресс по отмеченным элементам ---
   const getListProgress = (list: ShoppingList) => {
     if (list.items.length === 0) return 0;
     const checkedCount = list.items.filter(item => item.checked).length;
     return (checkedCount / list.items.length) * 100;
   };
 
+  const noLists = sortedLists.length === 0;
+
+  // Удаление списка
+  const handleDeleteList = (id: string) => {
+    const updated = lists.filter(list => list.id !== id);
+    updateLists(updated);
+    setOpenMenuId(null);
+  };
+
+  // Открыть модалку для редактирования
+  const handleEditList = (list: ShoppingList) => {
+    setEditingList(list);
+    setOpenMenuId(null);
+  };
+
+  // Клик вне меню закрывает открытое меню
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(`.${styles.cardMenu}`)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   return (
     <main className={styles.main}>
       <Header />
 
-      <div className={styles.savePageButtons}>
-        <button
-          className={styles.SortButton}
-          onClick={() =>
-            setSortOrder(prev => (prev === "default" ? "az" : "default"))
-          }
-        >
-          Сортувати за <ChevronDown size={20} className={styles.sortIcon} />
-        </button>
-
-        <div className={styles.addCollectionWrapper} ref={menuRef}>
-          <button
-            className={styles.ingredientsAddButton}
-            onClick={() => setShowMenu(prev => !prev)}
-          >
-            Додати <Plus size={20} />
-          </button>
-
-          {showMenu && (
-            <div className={styles.menuDropdown}>
-              <button className={styles.menuBtn} onClick={handleAddList}>
-                ➕ Створити новий список
-              </button>
-
-              {lists.length > 0 && (
-                <>
-                  <button className={styles.menuBtn} onClick={handleDeleteAllLists}>
-                    ❌ Видалити всі списки
-                  </button>
-
-                  {lists.map(list => (
-                    <button
-                      key={list.id}
-                      className={styles.menuBtn}
-                      onClick={() => handleDeleteList(list.id)}
-                    >
-                      <Trash2 size={16} /> {list.name}
-                    </button>
-                  ))}
-                </>
-              )}
-
-              {products.length > 0 && (
-                <button className={styles.menuBtn} onClick={handleDeleteAllProducts}>
-                  ❌ Видалити всі продукти без списку
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className={styles.shoppingPageGrid}>
-        <div className={styles.listsColumn}>
-          {sortedLists.length === 0 && <p>Поки що немає списків. Створіть новий.</p>}
-           {sortedLists.map(list => (
-  <div
-    key={list.id}
-    className={styles.collectionCard}
-    onClick={() => navigate(`/shopping-list/${list.id}`)}
-    onDrop={e => {
-      e.preventDefault();
-      const productId = e.dataTransfer.getData("text/plain");
-      handleDropProduct(productId, list.id);
-    }}
-    onDragOver={e => e.preventDefault()}
-  >
-    <h3>{list.name}</h3>
-    <p className={styles.listDate}>
-      {new Date(list.createdAt).toLocaleDateString("uk-UA", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })}
-    </p>
-
-    {/* Прогресс надпись */}
-    <div className={styles.progressLabel}>
-      <p className={styles.progressTitle}>Прогрес</p>
-      {list.items.filter(item => item.checked).length} із {list.items.length}
-    </div>
-
-    {/* Прогресс полоска */}
-    <div className={styles.progressBarBackground}>
-      <div
-        className={styles.progressBarFill}
-        style={{ width: `${getListProgress(list)}%` }}
-      ></div>
-    </div>
-  </div>
-))}
-
-        </div>
-
-        <div className={styles.productsColumn}>
-          {sortedProducts.length === 0 && <p>Поки що немає продуктів.</p>}
-          {sortedProducts.map(product => (
-            <div
-              key={product.id}
-              className={styles.productCard}
-              draggable
-              onDragStart={e =>
-                e.dataTransfer.setData("text/plain", product.id)
-              }
+      {!noLists && (
+        <div className={styles.savePageButtons}>
+          <div className={styles.sortWrapper}>
+            <button
+              className={styles.SortButton}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSortMenuOpen(!sortMenuOpen);
+              }}
             >
-              <span>{product.name}</span>
-              <div className={styles.productAmountBlock}>
-                <span>{product.amount ? `${product.amount} ${product.unit}` : ""}</span>
-                <button
-                  className={styles.menuBtn}
-                  onClick={() => handleDeleteProduct(product.id)}
-                >
-                  <Trash2 size={16} />
-                </button>
+              Сортувати за <ChevronDown size={20} className={styles.sortIcon} />
+            </button>
+
+            {sortMenuOpen && (
+              <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
+                {["За назвою", "За датою створення", "За кількістю інгредієнтів"].map(option => (
+                  <div
+                    key={option}
+                    className={`${styles.dropdownItem} ${sortOption === option ? styles.activeItem : ""}`}
+                    onClick={() => handleSortSelect(option)}
+                  >
+                    {option}
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
+            )}
+          </div>
+
+          <div className={styles.addCollectionWrapper}>
+            <button
+              className={styles.addListBtn}
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              Додати список <Plus size={20} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {noLists ? (
+        <div className={styles.emptyLists}>
+          <img src={emptyList} alt="emptyList" className={styles.emptyImage} />
+          <h2>У вас ще немає списків</h2>
+          <p>Створіть свій перший список <br /> продуктів для зручних покупок.</p>
+          <button className={styles.addListBtn} onClick={() => setIsCreateModalOpen(true)}>
+            Додати список <Plus size={20} />
+          </button>
+        </div>
+      ) : (
+        <div className={styles.shoppingPageGrid}>
+          <div className={styles.listsColumn}>
+            {sortedLists.map(list => {
+              const createdDate = new Date(list.createdAt).toLocaleDateString("uk-UA", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              });
+
+              return (
+                <div
+                  key={list.id}
+                  className={styles.collectionCard}
+                  onClick={(e) => {
+                    // если клик был на меню, не открываем страницу
+                    if ((e.target as HTMLElement).closest(`.${styles.cardMenu}`)) return;
+
+                    const itemsFromRecipe: ShoppingItem[] = location.state?.ingredientsToAdd || [];
+                    if (itemsFromRecipe.length > 0) {
+                      const updated = lists.map(l =>
+                        l.id === list.id ? { ...l, items: [...l.items, ...itemsFromRecipe] } : l
+                      );
+                      updateLists(updated);
+                      navigate(`/shopping-list/${list.id}`, { replace: true, state: {} });
+                    } else {
+                      navigate(`/shopping-list/${list.id}`);
+                    }
+                  }}
+                >
+                  <div className={styles.cardHeader}>
+                    <h3 className={styles.cardTitle}>{list.name}</h3>
+
+                    <div className={styles.cardMenu}>
+                      <button
+                        className={styles.menuButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(openMenuId === list.id ? null : list.id);
+                        }}
+                      >
+                        <MoreVertical size={20} />
+                      </button>
+
+                      {openMenuId === list.id && (
+                        <div
+                          className={styles.menuDropdown}
+                          onClick={(e) => e.stopPropagation()} // важно, чтобы клики не всплывали
+                        >
+                          <div onClick={() => handleEditList(list)}>Редагувати</div>
+                          <div onClick={() => handleDeleteList(list.id)}>Видалити</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className={styles.createdDate}>{createdDate}</p>
+
+                  <div className={styles.progressLabel}>
+                    <p className={styles.progressTitle}>Прогрес</p>
+                    {list.items.filter(item => item.checked).length} із {list.items.length} продуктів
+                  </div>
+                  <div className={styles.progressBarBackground}>
+                    <div
+                      className={styles.progressBarFill}
+                      style={{
+                        width: `${getListProgress(list)}%`,
+                        backgroundColor: list.color,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {isCreateModalOpen && (
+        <CreateListModal
+          onClose={() => setIsCreateModalOpen(false)}
+          onCreate={handleCreateList}
+        />
+      )}
+
+      {editingList && (
+        <CreateListModal
+          initialName={editingList.name}
+          initialDescription={editingList.description || ""}
+          initialColor={editingList.color || "#4caf50"}
+          onClose={() => setEditingList(null)}
+          onCreate={(name, description, color) =>
+            handleUpdateList(editingList.id, name, description, color)
+          }
+        />
+      )}
     </main>
   );
 };

@@ -111,28 +111,6 @@ if (!authorData) {
   const targetCategory = location.state?.category || "Сніданок";
   const selectedDate = location.state?.date; // дата, выбранная в MealPlannerPage
 
-const handleSaveRecipe = () => {
-  // Получаем текущие сохранённые рецепты
-  const saved: SavedItem[] = JSON.parse(localStorage.getItem("savedRecipes") || "[]");
-
-  // Проверяем, есть ли уже этот рецепт
- const exists = saved.some(item => item.id === recipe.id);
-  if (exists) {
-    alert("Рецепт вже збережено!");
-    return;
-  }
-  const newItem: SavedItem = {
-    id: recipe.id,
-    title: recipe.title,
-    category: targetCategory, // категория текущего рецепта
-    dateSaved: new Date().toLocaleDateString(),
-  };
-    const updated = [...saved, newItem];
-  localStorage.setItem("savedRecipes", JSON.stringify(updated));
-     // Перейти на страницу Збережене
-  navigate("/saved");
-};
-
 // Тип для элемента списка покупок
 type ShoppingItem = {
   id: string;
@@ -142,9 +120,9 @@ type ShoppingItem = {
   recipeTitle?: string; // Позначаємо як обов'язкове, якщо це завжди буде з рецептом
 };
 
-// Функция добавления выбранных ингредиентов в список покупок
+// Функция добавления выбранных ингредиентов в список покупок //
+
 const handleAddToShoppingList = () => {
-  // Выбираем отмеченные ингредиенты
   const selectedItems: ShoppingItem[] = details.ingredients
     .filter((_, index) => selectedIngredients[index])
     .map((ingredient) => ({
@@ -160,22 +138,25 @@ const handleAddToShoppingList = () => {
     return;
   }
 
-  // Загружаем текущие продукты
-  const savedProducts: ShoppingItem[] = JSON.parse(
-    localStorage.getItem("shoppingProducts") || "[]"
-  );
-
-  // Добавляем новые
-  const updatedProducts = [...savedProducts, ...selectedItems];
-
-  // Сохраняем в localStorage
-  localStorage.setItem("shoppingProducts", JSON.stringify(updatedProducts));
-
-  console.log("Products saved:", updatedProducts); // ✅ лог для проверки
-
-  alert("Інгредієнти додані до списку покупок!");
-  navigate("/shopping-list");
+  navigate("/shopping-list", { state: { ingredientsToAdd: selectedItems } });
 };
+
+const handleSaveRecipe = () => {
+  const saved: SavedItem[] = JSON.parse(localStorage.getItem("savedRecipes") || "[]");
+
+  const newItem: SavedItem = {
+    id: recipe.id,
+    title: recipe.title,
+    category: targetCategory,
+    dateSaved: new Date().toLocaleDateString(),
+  };
+
+  localStorage.setItem("savedRecipes", JSON.stringify([...saved, newItem]));
+
+  // Переходим на SavedPage и передаем ID рецепта
+  navigate("/saved", { state: { addedRecipeId: recipe.id } });
+};
+
 
   return (
     <main className={styles.main}>

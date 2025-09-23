@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./AddMealModal.module.scss";
-import { ChevronRight, X, ChevronDown } from "lucide-react";
+import { ChevronRight, X, ChevronDown, Trash } from "lucide-react";
 import type { Recipe } from "../data/recipes";
 import SelectRecipeModal from "./SelectRecipeModal";
 
@@ -137,22 +137,46 @@ const AddMealModal: React.FC<AddMealModalProps> = ({
         </div>
 
         {/* Рецепт */}
-        <div className={styles.formRow}>
-          <label>Рецепт</label>
-          <div
-            className={`${styles.pseudoInput} ${selectedRecipe ? styles.filled : ""}`}
-            onClick={() => setIsSelectRecipeOpen(true)}
-          >
-            <span className={styles.pseudoText}>
-              {selectedRecipe ? selectedRecipe.title : "Оберіть рецепт..."}
-            </span>
-            <ChevronRight
-              className={styles.pseudoChevron}
-              size={18}
-              onClick={() => setIsSelectRecipeOpen(true)}
-            />
-          </div>
-        </div>
+       {/* Рецепт */}
+<div className={styles.formRow}>
+  <label>Рецепт</label>
+
+  {/* Если выбран рецепт, показываем его название и картинку */}
+  {selectedRecipe && (
+   <div className={styles.selectedRecipeInfo}>
+    <div className={styles.selectedBlock}>
+    <div
+      className={styles.selectedRecipeImage}
+      style={{ backgroundImage: `url(${selectedRecipe.image})` }}
+    ></div>
+    <span className={styles.selectedRecipeName}>
+      {selectedRecipe.title}
+    </span>
+    </div>
+    <button
+      className={styles.deleteRecipeBtn}
+      onClick={() => setSelectedRecipe(null)}
+    >
+      <Trash size={18} />
+    </button>
+  </div>
+  )}
+
+  <div
+    className={`${styles.pseudoInput}`}
+    onClick={() => setIsSelectRecipeOpen(true)}
+  >
+    <span className={styles.pseudoText}>
+      {!selectedRecipe ? "Оберіть рецепт..." : "Змінити рецепт"}
+    </span>
+    <ChevronRight
+      className={styles.pseudoChevron}
+      size={18}
+      onClick={() => setIsSelectRecipeOpen(true)}
+    />
+  </div>
+</div>
+
 
         {/* Категорія */}
         <div className={styles.formRow}>
@@ -255,7 +279,7 @@ const AddMealModal: React.FC<AddMealModalProps> = ({
 
 
         {/* Кнопка сохранить */}
-        <button className={styles.saveBtn} onClick={handleAddMeal}>
+        <button  className={`${styles.saveBtn} ${selectedRecipe ? styles.active : ""}`} onClick={handleAddMeal}>
           Додати страву
         </button>
 

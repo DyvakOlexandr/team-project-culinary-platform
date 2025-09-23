@@ -13,7 +13,6 @@
 
 .modal {
   width: 728px;
-  height: 544px;
   background: #fff;
   padding: 24px 32px 24px 32px;
   border-radius: 12px;
@@ -53,6 +52,52 @@ line-height: 33px;
 font-size: 14px;
 font-weight: 500;
 line-height: 19px;
+}
+
+.selectedRecipeInfo {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.selectedBlock{
+  display: flex;
+  flex-direction: row;
+}
+
+.selectedRecipeImage {
+  width: 40px;
+  height: 30px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  margin-right: 8px;
+}
+
+.selectedRecipeName {
+color:  rgba(28, 35, 39, 1);
+font-size: 16px;
+font-weight: 500;
+line-height: 22px;
+}
+
+.deleteRecipeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #e53935; // красный
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.2);
+  }
 }
 
 /* Псевдо-input выбора рецепта */
@@ -140,7 +185,7 @@ line-height: 22px;
 .dateInput {
   width: 100%;
   margin-top: 8px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid #ddd;
   color:  rgba(28, 35, 39, 1);
 font-size: 16px;
@@ -202,6 +247,11 @@ line-height: 22px;
 
   &:hover {
      transform: scale(1.05);
+  }
+
+    &.active {
+    background: rgba(1, 64, 78, 1); // темный фон при выборе
+    color: #fff;                   // белый текст
   }
 }
 

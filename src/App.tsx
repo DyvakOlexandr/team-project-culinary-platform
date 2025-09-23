@@ -18,6 +18,7 @@ import RecommendedRecipesPage from "./pages/RecommendedRecipesPage";
 import PopularRecipesPage from "./pages/PopularRecipesPage";
 import SummerOffersPage from "./pages/SummerOffersPage";
 import AuthorsPage from "./pages/AuthorsPage";
+import PremiumPage from "./pages/PremiumPage";
 
 const App: React.FC = () => {
   return (
@@ -42,6 +43,7 @@ const App: React.FC = () => {
                <Route path="/recipes/popular" element={<PopularRecipesPage />} />
                <Route path="/recipes/summer-offers" element={<SummerOffersPage />} />
                <Route path="/authors" element={<AuthorsPage />} />
+               <Route path="/premium" element={<PremiumPage />} />
             </Routes>
           </main>
         </div>

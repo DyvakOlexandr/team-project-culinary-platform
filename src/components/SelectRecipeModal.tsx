@@ -5,6 +5,7 @@ import type { Recipe } from "../data/recipes";
 import { getAllRecipes } from "../data/recipes";
 import CollectionModal from "./CollectionModal";
 import iconBook from "../assets/menu_icon/icon-park-outline_notebook-one.svg";
+import searchIcon from "../assets/icon-park-outline_search.svg"
 
 interface SavedItem {
   id: string;
@@ -26,7 +27,7 @@ interface SelectRecipeModalProps {
   onSelectRecipe?: (recipe: Recipe) => void;
 }
 
-const MAX_SUGGESTIONS = 5;
+const MAX_SUGGESTIONS = 10;
 
 const SelectRecipeModal: React.FC<SelectRecipeModalProps> = ({
   isOpen,
@@ -78,26 +79,42 @@ const SelectRecipeModal: React.FC<SelectRecipeModalProps> = ({
     <div className={styles.overlay}>
       <div className={styles.modal}>
         {/* Header главной модалки */}
-        <div className={styles.header}>
-          {onBack && (
-            <button className={styles.backBtn} onClick={onBack}>
-              <ChevronLeft size={20} />
-            </button>
-          )}
-          <h2 className={styles.title}>Пошук рецепту</h2>
-          <button className={styles.closeBtn} onClick={onClose}>
-            <X size={20} />
-          </button>
-        </div>
+       <div className={styles.header}>
+<button
+  className={styles.backTextBtn}
+  onClick={() => {
+    if (onBack) {
+      onBack();   // открываем предыдущее окно
+    } else {
+      onClose();  // если onBack не передали — просто закрыть
+    }
+  }}
+>
+  <ChevronLeft size={18} />
+  Назад
+</button>
+
+  <h2 className={styles.title}>Додати страву</h2>
+
+  <div className={styles.rightButtons}>
+    <button className={styles.closeBtn} onClick={onClose}>
+      <X size={20} />
+    </button>
+  </div>
+</div>
 
         {/* Поисковое поле */}
-        <input
-          type="text"
-          placeholder="Введіть назву рецепту..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className={styles.searchInput}
-        />
+    <div className={styles.searchWrapperBlock}>
+      <div className={styles.searchWrapper}>
+       <img className={styles.searchIcon} src={searchIcon} alt="search"/>
+  <input
+    type="text"
+    placeholder="Введіть назву рецепту"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className={styles.searchInput}
+  />
+   </div>
 
         {/* Результаты поиска */}
         {search && (
@@ -120,6 +137,7 @@ const SelectRecipeModal: React.FC<SelectRecipeModalProps> = ({
             )}
           </div>
         )}
+        </div>
 
         {/* Сохранённые коллекции */}
         <div className={styles.savedBlock}>

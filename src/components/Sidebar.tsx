@@ -90,10 +90,13 @@ const Sidebar: React.FC = () => {
           <p className={styles.premiumText}>
             Ексклюзивні рецепти та <br /> додаткові можливості
           </p>
-          <button className={styles.premiumButton}>
-            Оновити
-            <span className={styles.buttonIcon}></span>
-          </button>
+         <button
+  className={styles.premiumButton}
+  onClick={() => navigate("/premium")}
+>
+  Оновити
+  <span className={styles.buttonIcon}></span>
+</button>
         </div>
       </div>
     </aside>

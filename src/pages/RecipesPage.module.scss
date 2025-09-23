@@ -154,3 +154,36 @@ line-height: 22px;
     justify-content: flex-end;
     align-items: center;
 }
+
+.selectedFilters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.clearFiltersButton {
+color: rgba(1, 64, 78, 1);
+font-size: 16px;
+font-weight: 600;
+line-height: 22px;
+border: none;
+background: none;
+  cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+    &:hover{
+      transform: scale(1.05);
+    }
+  
+}
+
+.filterTag {
+border-radius: 12px;
+background:  rgba(252, 253, 253, 1);
+padding: 10px 16px 10px 16px;
+color:  rgba(58, 65, 69, 1);
+font-size: 16px;
+font-weight: 500;
+line-height: 22px;
+}

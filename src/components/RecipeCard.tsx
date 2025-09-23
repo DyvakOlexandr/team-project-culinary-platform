@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import styles from "./RecipeCard.module.scss";
 import flagIcon from "../assets/icon-park-outline_tag.svg";
 import type { Recipe } from "../data/recipes";
+import iconTime from "../assets/icon-park-outline_time.svg";
+import iconStar from "../assets/icon-park-outline_star.svg";
 
 interface RecipeCardProps extends Recipe {
   highlightedTitle?: React.ReactNode;
@@ -55,17 +57,18 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
       <h2 className={styles.title}>{highlightedTitle ?? title}</h2>
 
       <div className={styles.cardInfo}>
-        {time && <p className={styles.time}>⏱ {time}</p>}
+        {time && <p className={styles.time}>
+          <img src={iconTime} alt="time"/> {time}</p>}
         <div
           className={styles.rating}
           onClick={() => setCurrentRating((prev) => (prev + 5) / 2)}
         >
-          <span className={styles.star}>★</span>
+          <span className={styles.star}>
+            <img src={iconStar} alt="star"/>
+          </span>
           <span className={styles.ratingValue}>{currentRating.toFixed(1)}</span>
         </div>
       </div>
-
-      <hr />
 
       <div className={styles.authorBlock}>
         <div

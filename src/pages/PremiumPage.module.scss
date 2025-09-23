@@ -1,0 +1,85 @@
+.main { 
+  flex: 1;
+  height: 100vh;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow-y: auto;
+  gap: 1.5rem;
+}
+
+.headerTittle{
+    color: rgba(28, 35, 39, 1);
+font-size: 28px;
+font-weight: 700;
+line-height: 38px;
+}
+
+.headerDiscription{
+    color: rgba(58, 65, 69, 1);
+font-size: 18px;
+font-weight: 400;
+line-height: 25px;
+text-align: left;
+}
+
+.headerBlock{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    box-sizing: border-box;
+border: rgba(192, 224, 225, 1);
+border-radius: 16px;
+box-shadow: 0px 2px 7px 0px rgba(84, 112, 120, 0.1);
+background: rgba(215, 234, 235, 1);
+}
+
+.headerButton{
+    width: 213px;
+    height: 48px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(51, 113, 121, 1);
+    color:  rgba(252, 253, 253, 1);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+
+  &:hover {
+     transform: scale(1.05);
+  } 
+}
+
+.mainText{
+    margin-top: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.mainTittle{
+    color: rgba(28, 35, 39, 1);
+font-size: 28px;
+font-weight: 700;
+line-height: 38px;
+}
+
+.mainDiscription{
+    color: rgba(58, 65, 69, 1);
+font-size: 18px;
+font-weight: 400;
+line-height: 25px;
+text-align: left;
+}

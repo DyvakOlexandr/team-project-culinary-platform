@@ -225,10 +225,15 @@
 }
 
 .collectionNameBlock{
+  box-sizing: border-box;
+  margin-top: 4px;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 4px;
+}
+.collectionCount{
+  margin: 0;
 }
 
 .emptyPage {
@@ -293,13 +298,14 @@ color: rgba(31, 41, 51, 1);
 font-size: 24px;
 font-weight: 700;
 line-height: 33px;
+margin-bottom: 1rem;
 }
 
 .inputTitle{
-  color:  rgba(58, 65, 69, 1);
 font-size: 14px;
 font-weight: 500;
 line-height: 19px;
+text-align: left;
 }
 
 .modalInput {
@@ -333,6 +339,7 @@ line-height: 22px;
       transform: scale(1.02);
     }
 }
+
 
 .modalHeader{
  display: flex;
