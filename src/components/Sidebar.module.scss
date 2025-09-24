@@ -1,47 +1,50 @@
 .sidebar {
-  background:  rgba(252, 253, 253, 1);
+  background: rgba(252, 253, 253, 1);
   border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 
+  .logo {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #e5e7eb;
+  }
 
-.logo{
-  padding: 1.5rem;
-  text-align: center;
-  border-bottom: 1px solid #e5e7eb;
-}
+  .groupTitle {
+    color: rgba(41, 90, 97, 1);
+    margin-bottom: 0.5rem;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 19px;
+    text-align: left;
+  }
 
-.groupTitle{
-  color: rgba(95, 104, 109, 1);
-font-size: 14px;
-font-weight: 500;
-line-height: 19px;
-text-align: left;
-}
+  .label {
+    color: rgba(28, 35, 39, 1);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    transition: color 0.2s;
+  }
 
-.label{
-  color: rgba(28, 35, 39, 1);
-font-size: 16px;
-font-weight: 500;
-line-height: 22px;
-}
-  /* Навигация растягивается на всё доступное пространство */
+  /* Навигация */
   .nav {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    padding: 1.5rem;
-  
-    .navGroup{
+    gap: 0.5rem;
+    padding: 0 1.5rem;
+
+    .navGroup {
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
     }
+    
 
     .navButton {
       width: 224px;
-     height: 48px;
+      height: 48px;
       display: flex;
       align-items: center;
       gap: 0.75rem;
@@ -50,88 +53,70 @@ line-height: 22px;
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-      transition: transform 0.3s ease-in-out;
+      transition: background 0.2s, transform 0.3s ease-in-out;
 
       &:hover {
-        box-sizing: border-box;
-border-radius: 12px;
-background: rgba(241, 243, 244, 1);
-   transform: scale(1.02);
-      }
+        background: rgba(215, 234, 235, 1);
+        transform: scale(1.02);
 
-      .iconWrapper {
-        font-size: 1.2rem;
-        display: flex;
-        align-items: center;
+        .label {
+          color: rgba(41, 90, 97, 1);
+        }
       }
 
       &.active {
-    color: rgba(1, 64, 78, 1);
-border-radius: 12px;
-background:  rgba(217, 224, 227, 1);
-
-        .iconWrapper {
-           color: rgba(1, 64, 78, 1);
+        background: rgba(215, 234, 235, 1);
+        .label {
+          color: rgba(41, 90, 97, 1);
         }
       }
     }
   }
 
-  /* Premium-блок всегда прижат к низу */
+  /* Premium-блок */
   .premiumBlock {
     align-self: center;
-    margin-top: auto; /* прижимаем к низу */
+    margin-top: auto;
     margin-bottom: 2rem;
-    width: 224px;
-    height: 178px;
     border-radius: 16px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 2px solid  rgba(227, 230, 232, 1);
-box-sizing: border-box;
-border-right: 1px solid  rgba(227, 230, 232, 1);
-background:  rgba(234, 239, 240, 1);
+    padding: 1rem;
+    border: 2px solid rgba(227, 230, 232, 1);
+    background: rgba(235, 241, 242, 1);
 
     .premiumTitle {
-      font-size: 1.125rem; /* 18px */
+      font-size: 18px;
       font-weight: 600;
       line-height: 1.4;
       margin: 0;
-      color: #000000;
-      width: auto;
+      color: #000;
+      text-align: center;
     }
 
     .premiumText {
       margin-top: 0.5rem;
-      font-size: 0.875rem; /* 14px */
+      font-size: 14px;
       font-weight: 400;
       line-height: 1.4;
-      color: #000000;
-      
+      color: #000;
+      text-align: left;
     }
 
     .premiumButton {
-      margin-top: 1.5rem;
       width: 192px;
       height: 48px;
-      padding: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       border: none;
-      gap: 0.5rem;
       border-radius: 12px;
-      background: rgba(1, 64, 78, 1);
+      background: rgba(51, 113, 121, 1);
       font-size: 16px;
       font-weight: 600;
       line-height: 22px;
-      color: rgba(252, 253, 253, 1);
+      color: #fcfdfd;
       cursor: pointer;
-      transition: background 0.2s;
-      transition: transform 0.3s ease-in-out;
+      transition: background 0.2s, transform 0.3s ease-in-out;
 
       &:hover {
         background-color: rgba(31, 83, 94, 1);

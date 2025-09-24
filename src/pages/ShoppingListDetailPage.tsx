@@ -259,16 +259,16 @@ const ShoppingListDetailPage: React.FC = () => {
                         </div>
                       ) : (
                         <>
-                          <div className={styles.itemNameBlock}>
-                            <label className={styles.checkboxWrapper}>
-                              <input
-                                type="checkbox"
-                                checked={item.checked || false}
-                                onChange={() => toggleChecked(item.id)}
+                  <div className={styles.itemNameBlock}>
+                          <input
+                          type="checkbox"
+                        checked={item.checked || false}
+                         onChange={() => toggleChecked(item.id)}
+                            className={styles.checkbox}
                               />
-                              <span className={styles.customCheck}></span>
-                            </label>
-                            <span className={item.checked ? styles.checkedItem : styles.itemName}>{item.name}</span>
+                        <span className={item.checked ? styles.checkedItem : styles.itemName}>
+                             {item.name}
+                            </span>
                           </div>
                           <div className={styles.itemAmountBlock}>
                             {item.amount && (

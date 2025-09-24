@@ -638,8 +638,9 @@ line-height: 22px;
 
 .ingredientLabel {
   display: flex;
-  align-items: center;
   gap: 8px;
+  margin-top: auto;
+
 }
 
 .ingredientCheckbox {

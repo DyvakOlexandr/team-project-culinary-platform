@@ -267,21 +267,20 @@ cursor: pointer;
 }
 
 .ingredientItem {
-  box-sizing: border-box;
+  padding: 8px 16px 8px 16px;
   display: flex;
   flex-direction: row;
   align-items: center;
+  height: 56px;
   gap: 0.5rem; // расстояние между чекбоксом и текстом
-  padding: 0.5rem 0;          // вертикальный отступ
-  border-bottom: 1px solid #e5e7eb;
+ border: 1px solid rgba(235, 241, 242, 1);
+ border-radius: 8px;
 }
 
 .ingredientCheckbox {
-  box-sizing: border-box;
   height: 24px;
   width: 24px;
   cursor: pointer;
-  vertical-align: middle;  // ✅ центрируем по линии текста
 }
 
 
@@ -290,11 +289,11 @@ cursor: pointer;
 }
 
 .ingredientLabel {
-  box-sizing: border-box;
   display: flex;
+  align-items: center;
   justify-content: space-between; 
   flex: 1; 
-  margin-bottom: 14px;
+  margin-top: 0;
 }
 
 
@@ -305,11 +304,13 @@ cursor: pointer;
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
-letter-spacing: 0%;
 text-align: left;
 }
 
 .ingredientsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   list-style: none;   
   padding: 0;         
   margin: 0;         

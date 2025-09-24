@@ -72,7 +72,12 @@
 .recipeCountBlock{
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 4px;
+}
+
+.recipeCount{
+  margin: 0;
 }
 
 .titleBlock{
@@ -149,7 +154,7 @@
     }
   }
 
-  emptyTitle {
+  .emptyTitle {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 12px;

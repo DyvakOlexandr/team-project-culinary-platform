@@ -259,6 +259,7 @@ line-height: 22px;
   width: 20px;
   height: 20px;
   margin-right: 10px;
+  margin-top: auto;
   cursor: pointer;
 
   input {
@@ -267,40 +268,11 @@ line-height: 22px;
     height: 0;
     position: absolute;
   }
+}
 
-  .customCheck {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 20px;
-    width: 20px;
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
-    transition: all 0.2s;
-
-    &::after {
-      content: "";
-      position: absolute;
-      display: none;
-      left: 6px;
-      top: 2px;
-      width: 5px;
-      height: 10px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
-    }
-  }
-
-  input:checked + .customCheck {
-    background-color: #4a90e2;
-    border-color: #4a90e2;
-
-    &::after {
-      display: block;
-    }
-  }
+.checkbox{
+  width: 24px;
+height: 24px;
 }
 
 .checkedItem {

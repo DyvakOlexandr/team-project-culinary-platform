@@ -183,6 +183,7 @@ const Header: React.FC<HeaderProps> = ({
         <div
   className={styles.avatar}
   style={{ backgroundImage: `url(${avatar})` }}
+  onClick={() => navigate("/profile")}
 ></div>
       </div>
     </header>
