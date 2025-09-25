@@ -22,6 +22,8 @@ html, body {
   height: 100%;
   overflow: hidden;
   font-family: 'Noto Sans', sans-serif;
+    min-width: 1024px; /* минимальная ширина вашего сайта */
+  overflow-x: auto;   /* разрешаем горизонтальный скролл */
 }
 
 #root {
