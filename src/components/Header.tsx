@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect, type ChangeEvent, type KeyboardEvent } from "react";
-import searchIcon from "../assets/icon-park-outline_search.svg"
+import searchIcon from "../assets/icon-park-outline_search.svg";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
 import type { Recipe, Author } from "../data/recipes";
 import { getAllRecipes, getAllAuthors } from "../data/recipes";
-import iconBell from "../assets/iconBellDufault.svg"
-import avatar from "../assets/avatar.webp"
+import iconBell from "../assets/iconBellDufault.svg";
+import avatar from "../assets/avatar.webp";
+import type { Message } from "../data/messagesService";
+import { getMessages} from "../data/messagesService"
 
 interface HeaderProps {
   showSearch?: boolean;
@@ -31,8 +33,24 @@ const Header: React.FC<HeaderProps> = ({
   const [recipeSuggestions, setRecipeSuggestions] = useState<Recipe[]>([]);
   const [authorSuggestions, setAuthorSuggestions] = useState<Author[]>([]);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const [hasUnread, setHasUnread] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  // Проверка непрочитанных сообщений
+  useEffect(() => {
+    const checkUnread = () => {
+      const messages: Message[] = getMessages();
+      const activeIdsStr = localStorage.getItem("activeMessages");
+      const activeIds = activeIdsStr ? new Set(JSON.parse(activeIdsStr)) : new Set<string>();
+      const unread = messages.some(msg => !activeIds.has(msg.id));
+      setHasUnread(unread);
+    };
+
+    checkUnread();
+    window.addEventListener("messagesUpdated", checkUnread);
+    return () => window.removeEventListener("messagesUpdated", checkUnread);
+  }, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -177,14 +195,19 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className={styles.rightSection}>
-        <button className={styles.bellButton}>
+        <button
+          className={styles.bellButton}
+          onClick={() => navigate("/mesage")}
+          style={{ position: "relative" }}
+        >
           <img className={styles.bellImage} src={iconBell} alt="iconBell" />
+          {hasUnread && <span className={styles.redDot}></span>}
         </button>
         <div
-  className={styles.avatar}
-  style={{ backgroundImage: `url(${avatar})` }}
-  onClick={() => navigate("/profile")}
-></div>
+          className={styles.avatar}
+          style={{ backgroundImage: `url(${avatar})` }}
+          onClick={() => navigate("/profile")}
+        ></div>
       </div>
     </header>
   );

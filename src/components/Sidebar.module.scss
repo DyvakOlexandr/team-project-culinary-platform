@@ -56,12 +56,8 @@
       transition: background 0.2s, transform 0.3s ease-in-out;
 
       &:hover {
-        background: rgba(215, 234, 235, 1);
         transform: scale(1.02);
 
-        .label {
-          color: rgba(41, 90, 97, 1);
-        }
       }
 
       &.active {
@@ -124,4 +120,9 @@
       }
     }
   }
+}
+
+
+.activeIcon {
+  stroke: rgba(31, 83, 94, 1); 
 }

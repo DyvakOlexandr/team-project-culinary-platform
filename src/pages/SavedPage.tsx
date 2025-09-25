@@ -9,6 +9,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import iconBook from "../assets/menu_icon/icon-park-outline_notebook-one.svg";
 import iconEmpty from "../assets/EmptyPage.png";
 import iconRedact from "../assets/redactCollelection.svg";
+import { getMessages, addMessage } from "../data/messagesService";
+import type { Message } from "../data/messagesService";
 
 interface SavedItem {
   id: string;
@@ -23,8 +25,6 @@ interface Collection {
   recipes: SavedItem[];
 }
 
-// Throttle утилита
-
 
 const SavedPage: React.FC = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -32,7 +32,8 @@ const SavedPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [editCollectionId, setEditCollectionId] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-
+  const messagesCreatedRef = useRef<Set<string>>(new Set());
+  const [, setMessages] = useState<Message[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollDirectionRef = useRef<"up" | "down" | null>(null);
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -201,6 +202,27 @@ const SavedPage: React.FC = () => {
 
     navigate(`/collection/${col.id}`, { state: {} });
   };
+
+useEffect(() => {
+  if (savedRecipes.length === 0) return;
+
+  const lastSaved = savedRecipes[savedRecipes.length - 1];
+
+  if (messagesCreatedRef.current.has(lastSaved.id)) return; // уже есть сообщение
+
+  const recipeDetails = getAllRecipes().find(r => r.id === lastSaved.id);
+  if (!recipeDetails) return;
+
+  addMessage({
+    title: "Рекомендація нового рецепту",
+    text: `На основі ваших останніх збережених рецептів, ми вважаємо, що вам сподобається цей рецепт ${recipeDetails.title}!`,
+    source: "Рекомендації",
+  });
+
+  messagesCreatedRef.current.add(lastSaved.id); // отмечаем, что сообщение создано
+  setMessages(getMessages());
+}, [savedRecipes]);
+
 
   return (
     <main

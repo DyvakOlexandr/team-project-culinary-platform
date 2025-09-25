@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 const ProfilePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"drafts" | "recipes">("recipes");
   const navigate = useNavigate();
+  const savedProfile = localStorage.getItem("profileData");
+ const profile = savedProfile ? JSON.parse(savedProfile) : null;
 
   const userStats = {
     recipes: 24,
@@ -20,11 +22,14 @@ const ProfilePage: React.FC = () => {
       <Header />
       <div className={styles.mainBlock}>
         <div className={styles.headerBlock}>
-          <div className={styles.mainImage}></div>
+          <div
+            className={styles.profileImage}
+           style={{ backgroundImage: `url(${profile?.avatar})` }}
+           ></div>
           <div className={styles.headerInfo}>
             <div className={styles.profileNameBlock}>
-              <h1 className={styles.profileName}>My name</h1>
-              <p className={styles.userName}>_user.name</p>
+              <h1 className={styles.profileName}>{profile?.firstName || "My name"}</h1>
+              <p className={styles.userName}>{profile?.username || "_user.name"}</p>
             </div>
             <div className={styles.userStats}>
               <div className={styles.statItem}>
@@ -40,7 +45,7 @@ const ProfilePage: React.FC = () => {
                 <span className={styles.statLabel}>Підписок</span>
               </div>
             </div>
-            <div className={styles.biography}>my_biography</div>
+            <div className={styles.biography}>{profile?.bio || "my_biography"}</div>
           </div>
           <div className={styles.headerButtons}>
             <button

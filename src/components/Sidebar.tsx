@@ -3,18 +3,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.scss";
 import logoIcon from "../assets/Logo.svg";
 
-// Іконки
-import iconHome from "../assets/SidebarIcons/icon-park-outline_home.svg";
-import iconBook from "../assets/SidebarIcons/icon-park-outline_book-open.svg";
-import iconBookmark from "../assets/SidebarIcons/icon-park-outline_bookmark-one.svg";
-import iconCalendarAlt from "../assets/SidebarIcons/icon-park-outline_calendar.svg";
-import iconCart from "../assets/SidebarIcons/icon-park-outline_shopping-bag-one.svg";
-import iconCog from "../assets/SidebarIcons/icon-park-outline_setting-two.svg";
-import iconCircle from "../assets/SidebarIcons/icon-park-outline_helpcenter.svg";
+// Импортируем нужные иконки из lucide-react
+import {
+  Home,
+  BookOpen,
+  Bookmark,
+  Calendar,
+  ShoppingBag,
+  Settings,
+  HelpCircle,
+} from "lucide-react";
 
 interface NavItem {
   label: string;
-  image: string;
+  Icon: React.ComponentType<{ size?: number; className?: string }>;
   path: string;
 }
 
@@ -31,23 +33,23 @@ const Sidebar: React.FC = () => {
     {
       title: "Основне",
       items: [
-        { label: "Головна", image: iconHome, path: "/" },
-        { label: "Рецепти", image: iconBook, path: "/recipes" },
-        { label: "Збережене", image: iconBookmark, path: "/saved" },
+        { label: "Головна", Icon: Home, path: "/" },
+        { label: "Рецепти", Icon: BookOpen, path: "/recipes" },
+        { label: "Збережене", Icon: Bookmark, path: "/saved" },
       ],
     },
     {
       title: "Організація",
       items: [
-        { label: "Планувальник страв", image: iconCalendarAlt, path: "/planner" },
-        { label: "Список покупок", image: iconCart, path: "/shopping-list" },
+        { label: "Планувальник страв", Icon: Calendar, path: "/planner" },
+        { label: "Список покупок", Icon: ShoppingBag, path: "/shopping-list" },
       ],
     },
     {
       title: "Інше",
       items: [
-        { label: "Налаштування", image: iconCog, path: "/settings" },
-        { label: "Допомога", image: iconCircle, path: "/help" },
+        { label: "Налаштування", Icon: Settings, path: "/settings" },
+        { label: "Допомога", Icon: HelpCircle, path: "/help" },
       ],
     },
   ];
@@ -73,7 +75,10 @@ const Sidebar: React.FC = () => {
                   onClick={() => navigate(item.path)}
                 >
                   <span className={styles.iconWrapper}>
-                    <img src={item.image} alt={item.label} className={styles.icon} />
+                             <item.Icon
+  size={20}
+  className={`${styles.icon} ${isActive ? styles.activeIcon : ""}`}
+/>
                   </span>
                   <span className={styles.label}>{item.label}</span>
                 </button>
@@ -90,13 +95,13 @@ const Sidebar: React.FC = () => {
           <p className={styles.premiumText}>
             Ексклюзивні рецепти та <br /> додаткові можливості
           </p>
-         <button
-  className={styles.premiumButton}
-  onClick={() => navigate("/premium")}
->
-  Оновити
-  <span className={styles.buttonIcon}></span>
-</button>
+          <button
+            className={styles.premiumButton}
+            onClick={() => navigate("/premium")}
+          >
+            Оновити
+            <span className={styles.buttonIcon}></span>
+          </button>
         </div>
       </div>
     </aside>

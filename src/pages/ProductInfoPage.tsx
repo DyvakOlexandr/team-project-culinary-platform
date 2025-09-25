@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import styles from "./ProductInfoPage.module.scss";
@@ -17,7 +18,8 @@ import { recipeDetails } from "../data/recipeDetails"
 import { getAllRecipes, getAllAuthors  } from "../data/recipes";
 import { FaArrowRight } from "react-icons/fa";
 import RecipeCard from "../components/RecipeCard";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react"; 
+import { addMessage } from "../data/messagesService";
 
 interface SavedItem {
   id: string;
@@ -50,7 +52,7 @@ const ProductInfoPage: React.FC = () => {
 };
   const [rating, setRating] = useState(0);
 const [hoverRating, setHoverRating] = useState(0);
-
+ const messagesCreatedRef = useRef<Set<string>>(new Set());
   // Получаем ID рецепта из URL
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -138,6 +140,16 @@ const handleAddToShoppingList = () => {
     return;
   }
 
+  // Добавляем сообщение только один раз на рецепт
+  if (!messagesCreatedRef.current.has(recipe.id)) {
+    addMessage({
+      title: "Список покупок оновлено",
+      text: `Інгредієнти для «${recipe.title}» успішно додано у ваш список покупок.`,
+      source: "Список покупок",
+    });
+    messagesCreatedRef.current.add(recipe.id);
+  }
+
   navigate("/shopping-list", { state: { ingredientsToAdd: selectedItems } });
 };
 
@@ -156,6 +168,8 @@ const handleSaveRecipe = () => {
   // Переходим на SavedPage и передаем ID рецепта
   navigate("/saved", { state: { addedRecipeId: recipe.id } });
 };
+
+
 
 
   return (

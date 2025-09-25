@@ -18,6 +18,7 @@ import personIcon from "../assets/menu_icon/icon-park-outline_user.svg";
 import emptyPlan from "../assets/Empty_state.png"
 import iconRedact from "../assets/icon-park-outline_edit.svg"
 import AddMealModal from "../components/AddMealModal";
+import { addMessage } from "../data/messagesService";
 
 
 const daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
@@ -344,35 +345,52 @@ useEffect(() => {
   document.addEventListener("mousedown", handleClickOutside);
   return () => document.removeEventListener("mousedown", handleClickOutside);
 }, [showActionsMenu]);
-  
-const handleSaveMeal = (data: {
-  recipeObj: Recipe;   // вместо строки теперь передаём весь объект рецепта
-  category: string;
-  date: string;
-  portions: number;
-}) => {
-  const calories =
-    recipeDetails.find(d => d.id === data.recipeObj.id)?.nutrition?.find(n => n.name === "Калорії")?.amount ?? 0;
 
+const countNewMealsForWeek = (date: Date, mealCardsList: MealCard[]) => {
+  const startOfWeek = new Date(date);
+  startOfWeek.setDate(date.getDate() - ((startOfWeek.getDay() + 6) % 7)); // понедельник
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6); // воскресенье
+
+  return mealCardsList.filter(c => {
+    const d = new Date(c.date);
+    return d >= startOfWeek && d <= endOfWeek;
+  }).length;
+};
+  
+const handleSaveMeal = (data: { recipeObj: Recipe; category: string; date: string; portions: number }) => {
   const newCard: MealCard = {
     id: data.recipeObj.id + "_" + Date.now(),
     title: data.recipeObj.title,
     category: data.category,
     date: data.date,
-    calories,
+    calories: recipeDetails.find(d => d.id === data.recipeObj.id)
+      ?.nutrition?.find(n => n.name === "Калорії")?.amount,
     image: data.recipeObj.image,
     servings: data.portions,
-     time: data.recipeObj.time
+    time: data.recipeObj.time
   };
 
   setMealCardsList(prev => {
     const updated = [...prev, newCard];
     localStorage.setItem("mealPlanner", JSON.stringify(updated));
+
+    // ✅ Создаём сообщение о готовности плана
+    const count = countNewMealsForWeek(new Date(data.date), updated);
+    addMessage({
+      title: "Тижневий план харчування готовий",
+      text: `Ваш план харчування на наступний тиждень складено з урахуванням ваших уподобань. Він включає ${count} нових рецептів, які варто спробувати!`,
+      source: "Планувальник страв",
+    });
+
     return updated;
   });
 };
-const handleAddMealIngredients = (mealIngredients: { name: string; amount?: number; unit?: string }[], recipeTitle: string) => {
-  // формируем элементы так же, как в ProductInfoPage
+
+const handleAddMealIngredients = (
+  mealIngredients: { name: string; amount?: number; unit?: string }[],
+  recipeTitle: string
+) => {
   const items = mealIngredients.map((ingredient) => ({
     id: `${Date.now()}-${ingredient.name}-${Math.random()}`,
     name: ingredient.name,
@@ -386,11 +404,19 @@ const handleAddMealIngredients = (mealIngredients: { name: string; amount?: numb
     return;
   }
 
-  // передаём в ShoppingListPage
+  // Навигация на список покупок
   navigate("/shopping-list", {
     state: { ingredientsToAdd: items },
   });
+
+  // ✅ Добавляем сообщение об обновлении списка
+  addMessage({
+    title: "Список покупок оновлено",
+    text: `${items.length} товар${items.length === 1 ? "" : "и"} були автоматично додані до вашого списку покупок з вашого плану харчування.`,
+    source: "Список покупок",
+  });
 };
+
 
 
 

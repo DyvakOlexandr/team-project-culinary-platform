@@ -8,14 +8,17 @@ import iconZero from "../assets/Frame_298.svg";
 import iconBell from "../assets/Frame_299.svg";
 import iconPhones from "../assets/Frame_300.svg";
 import iconSend from "../assets/icon-park-outline_send-one.svg"
+import { useNavigate } from "react-router-dom";
 
 const HelpPage: React.FC = () => {
+
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
    const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
-
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     alert(
@@ -26,6 +29,7 @@ const HelpPage: React.FC = () => {
     setSubject("");
     setDescription("");
 };
+
 
   return (
     <main className={styles.main}>
@@ -53,7 +57,7 @@ const HelpPage: React.FC = () => {
   <h2 className={styles.sectionTitle}>Поширені запитання</h2>
 
   <div className={styles.faqGrid}>
-    <button className={styles.faqButton} onClick={() => alert("Категорія: Обліковий запис")}>
+    <button className={styles.faqButton}  onClick={() => navigate("/account")}>
       <div className={styles.faqButtonItem}>
         <img src={iconPeople}/>
         <div className={styles.faqButtonTextBlock}>
@@ -71,16 +75,16 @@ const HelpPage: React.FC = () => {
         </div>
         </div>
     </button>
-    <button className={styles.faqButton} onClick={() => alert("Категорія: Списки покупок")}>
+    <button className={styles.faqButton} onClick={() => navigate("/premium")}>
       <div className={styles.faqButtonItem}>
         <img src={iconZero}/>
         <div className={styles.faqButtonTextBlock}>
           <h1 className={styles.faqButtonTitle}>Оплата та підписка</h1>
-           <p className={styles.faqButtonText}>Налаштуйте сповіщення та вирішуйте проблеми</p>  
+           <p className={styles.faqButtonText}>Легко керуйте тарифами, оплатою та передплатою</p>  
         </div>
         </div>
     </button>
-    <button className={styles.faqButton} onClick={() => alert("Категорія: Платформа")}>
+    <button className={styles.faqButton} onClick={() => navigate("/mesage")}>
              <div className={styles.faqButtonItem}>
         <img src={iconBell}/>
         <div className={styles.faqButtonTextBlock}>

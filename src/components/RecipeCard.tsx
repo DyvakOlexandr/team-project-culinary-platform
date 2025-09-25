@@ -9,6 +9,7 @@ import iconStar from "../assets/icon-park-outline_star.svg";
 interface RecipeCardProps extends Recipe {
   highlightedTitle?: React.ReactNode;
   isModalView?: boolean;
+   onSave?: () => void;
 }
 
 const RecipeCard: React.FC<RecipeCardProps> = ({
