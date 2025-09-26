@@ -3,11 +3,9 @@ import { useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import styles from "./ProductInfoPage.module.scss";
-import flagIcon from "../assets/icon-park-outline_tag.svg";
-import exportIcon from "../assets/icon-park-outline_export.svg";
+import flagIcon from "../assets/icon-park-outline_tag_1.svg";
+import exportIcon from "../assets/icon-park-outline_export_1.svg";
 import iconComplexity from "../assets/icon-park-outline_hamburger-button.svg";
-import iconTime from "../assets/icon-park-outline_time.svg";
-import iconStar from "../assets/icon-park-outline_star.svg";
 import iconCalendar from "../assets/icon-park-outline_calendar.svg";
 import iconPrinter from "../assets/icon-park-outline_printer-one.svg";
 import iconCamera from "../assets/icon-park-outline_camera.svg";
@@ -18,8 +16,15 @@ import { recipeDetails } from "../data/recipeDetails"
 import { getAllRecipes, getAllAuthors  } from "../data/recipes";
 import { FaArrowRight } from "react-icons/fa";
 import RecipeCard from "../components/RecipeCard";
-import { ChevronRight } from "lucide-react"; 
+import { ChevronRight, ChevronLeft } from "lucide-react"; 
 import { addMessage } from "../data/messagesService";
+import timeBlue from "../assets/icon-park-outline_time_blue.svg";
+import starBlue from "../assets/icon-park-outline_star_blue.svg";
+import minus from "../assets/icon-park-outline_minus.svg";
+import plus from "../assets/icon-park-outline_plus.svg";
+import autor1 from "../assets/autors/autor_8.webp";
+import autor2 from "../assets/autors/autor_5.webp";
+import autor3 from "../assets/autors/autor_4.webp";
 
 interface SavedItem {
   id: string;
@@ -31,9 +36,10 @@ interface SavedItem {
 const ProductInfoPage: React.FC = () => {
   // Состояние для комментариев
   const [comments, setComments] = useState([
-    { author: "Марія Коваленко", email: "@marriKoval",likes: 3, dislikes: 0, date: "05.09.2025",rating: 4, text: "Дуже смачно! Готувала на обід для сім’ї — усі були у захваті. Сир додав страві ніжності, а капуста залишилася соковитою." },
-  { author: "Андрій Коваленко", email: "@andriKoval",likes: 5, dislikes: 6, date: "04.09.2025",rating: 2, text: "Додав трохи більше спецій, вийшло супер!" },
-    { author: "Ірина Савіна", email: "@savinaIrina",likes: 10, dislikes: 15, date: "1 місяць тому ",rating: 3, text: "Відмінний варіант для тих, хто слідкує за харчуванням. Легко, смачно і корисно. Наступного разу спробую ще з іншими спеціями." },
+    { author: "Юлія Пастушенко", avatar: autor1 ,likes: 3, dislikes: 0, date: "05.09.2025",rating: 4, text: "Дуже смачно! Готувала на обід для сім’ї — усі були у захваті. Сир додав страві ніжності, а капуста залишилася соковитою."},
+     
+  { author: "Максим Петренко",likes: 5,avatar: autor2, dislikes: 6, date: "04.09.2025",rating: 2, text: "Швидкий і простий рецепт, ідеально для буднього дня. Додав трохи чилі — вийшло ще смачніше!" },
+    { author: "Анастасія Гончар",likes: 10, avatar: autor3, dislikes: 15, date: "1 місяць тому ",rating: 3, text: "Відмінний варіант для тих, хто слідкує за харчуванням. Легко, смачно і корисно. Наступного разу спробую ще з іншими спеціями." },
 ]);
   // Обработчик лайков/дизлайков
   const handleLike = (index: number, type: "like" | "dislike") => {
@@ -81,8 +87,6 @@ const [hoverRating, setHoverRating] = useState(0);
   // Выбрать все ингредиенты
   const selectAll = () => setSelectedIngredients(details.ingredients.map(() => true));
 
-  // Очистить все ингредиенты
-  const clearAll = () => setSelectedIngredients(details.ingredients.map(() => false));
 
  let authorData = getAllAuthors().find(
   (a) => a.name.trim().toLowerCase() === recipe.author.trim().toLowerCase()
@@ -168,30 +172,24 @@ const handleSaveRecipe = () => {
   // Переходим на SavedPage и передаем ID рецепта
   navigate("/saved", { state: { addedRecipeId: recipe.id } });
 };
-
+const isActive = selectedIngredients.some((v) => v);
 
 
 
   return (
     <main className={styles.main}>
-      <Header
-        showSearch={true}
-          showBackButton
-          backButtonLabel="До списку рецептів"   // 👈 свой текст
-          onBackClick={() => navigate(-1)}
-      />
-
+      <Header/>
+       <div className={styles.mainBlock}>
+        <button className={styles.backButton} onClick={() => navigate("/recipes")}>
+          <ChevronLeft /> До рецептів
+        </button>
       <section className={styles.productInfo}>
         <div className={styles.imagePlaceholder}   style={{
     backgroundImage: recipe.image ? `url(${recipe.image})` : "none",
   }}>
           <div className={styles.imageTopButton}>
-            <button className={styles.exportButton}>
-              <img src={exportIcon} alt="export" />
-            </button>
-            <button className={styles.flagButton}>
-              <img src={flagIcon} alt="flag" />
-            </button>
+           <button className={styles.exportButton}></button>
+           <button className={styles.flagButton}></button>
           </div>
 
           <div className={styles.productImageInfo}>
@@ -207,7 +205,7 @@ const handleSaveRecipe = () => {
 
             <div className={styles.productTime}>
               <div className={styles.iconComplexity}>
-                <img src={iconTime} alt="time" />
+                <img src={timeBlue} alt="time" />
               </div>
               <div className={styles.textComplexity}>
                 <div className={styles.details}>{recipe.time}</div>
@@ -217,11 +215,12 @@ const handleSaveRecipe = () => {
 
             <div className={styles.productRating}>
               <div className={styles.iconComplexity}>
-                <img src={iconStar} alt="star" />
+                <img src={starBlue} alt="star" />
               </div>
               <div className={styles.texComplexity}>
-                <div className={styles.details}>{recipe.rating}</div>
                 <p className={styles.titleComplexity}>Рейтинг</p>
+                <div className={styles.details}>{recipe.rating}</div>
+                
               </div>
             </div>
           </div>
@@ -238,18 +237,21 @@ const handleSaveRecipe = () => {
             <div className={styles.ingredientsTitle}>
               <h2 className={styles.titleIngredients}>Інгредієнти</h2>
               <div className={styles.portion}>
-                <p className={styles.textPortion}>порцій:</p>
+                <p className={styles.textPortion}>Порцій:</p>
                 <div className={styles.servingsControl}>
-                  <button onClick={handleDecrease} className={styles.servingBtn}>-</button>
+                  <button onClick={handleDecrease} className={styles.servingBtn}>
+                    <img src={minus} alt="minus"/>
+                  </button>
                   <span className={styles.servingsValue}>{servings}</span>
-                  <button onClick={handleIncrease} className={styles.servingBtn}>+</button>
+                  <button onClick={handleIncrease} className={styles.servingBtn}>
+                    <img src={plus} alt="plus"/>
+                  </button>
                 </div>
               </div>
             </div>
 
             {/* Кнопки выбора/очистки ингредиентов */}
             <div className={styles.monipulateIngredients}>
-              <button onClick={clearAll} className={styles.cleartAll}>Очистити</button>
               <button onClick={selectAll} className={styles.checkAll}>Обрати все</button>
             </div>
 
@@ -265,8 +267,8 @@ const handleSaveRecipe = () => {
           type="checkbox"
           id={`ingredient-${index}`}
           className={styles.ingredientCheckbox}
-          checked={selectedIngredients[index]}       // ✅ связываем с состоянием
-          onChange={() => toggleIngredient(index)}   // ✅ переключение состояния при клике
+          checked={selectedIngredients[index]}       
+          onChange={() => toggleIngredient(index)}   
         />
         <label htmlFor={`ingredient-${index}`} className={styles.ingredientLabel}>
           <span className={styles.ingredientName}>{ingredient.name}</span>
@@ -281,9 +283,10 @@ const handleSaveRecipe = () => {
   })}
 </ul>
 
-        <button
-  className={styles.addToListButton}
-  onClick={handleAddToShoppingList}   // ✅ здесь вызываем нашу функцию
+<button
+  className={`${styles.addToListButton} ${isActive ? styles.active : ""}`}
+  onClick={handleAddToShoppingList}
+  disabled={!isActive} 
 >
   Додати до списку покупок
 </button>
@@ -305,6 +308,7 @@ const handleSaveRecipe = () => {
             </div>
           </div>
         </div>
+
             {/* Блок с шагами приготовления */}
         <section className={styles.recipeSteps}>
   <h2 className={styles.stepsTitle}>Як приготувати</h2>
@@ -312,8 +316,9 @@ const handleSaveRecipe = () => {
     {details.steps.map((step, idx) => (
       <li key={idx} className={styles.stepItem}>
         <div className={styles.stepHeader}>
+          <div className={styles.stepNumberBlock}>
           <span className={styles.stepNumber}>{idx + 1}</span>
-        
+           </div>
 
         <p className={styles.stepDescription}>{step.description}</p>
         </div>
@@ -369,7 +374,7 @@ const handleSaveRecipe = () => {
           <h2 className={styles.titleTags}>Теги</h2>
          <div className={styles.recipeTags}>
         {details.tags?.map((tag, index) => (
-        <span key={index} className={styles.tag}>
+        <span key={index} className={styles.tag}>#
           {tag}
         </span>
         ))}
@@ -435,7 +440,6 @@ const handleSaveRecipe = () => {
 </div>
     </div>
   </div>
-  <hr />
 
   {/* Форма для добавления нового комментария */}
   <form
@@ -445,12 +449,6 @@ const handleSaveRecipe = () => {
       const target = e.target as typeof e.target & {
         commentInput: { value: string };
       };
-      const text = target.commentInput.value.trim();
-      if (!text) return;
-      setComments((prev) => [
-        ...prev,
-        { author: "Ви", email: "", likes: 0, dislikes: 0, date: new Date().toLocaleDateString(), rating, text },
-      ]);
       target.commentInput.value = "";
     }}
   >
@@ -474,17 +472,16 @@ const handleSaveRecipe = () => {
     {comments.map((comment, idx) => (
       <li key={idx} className={styles.commentItem}>
         <div className={styles.commentMainBlock}>
-        <div className={styles.avatarComment}></div>
+        <div 
+      className={styles.avatarComment}
+      style={{ backgroundImage: `url(${comment.avatar})` }}
+     ></div>
         <div className={styles.commentContent}>
         <div className={styles.commentHeader}>
           <div className={styles.commentAuthorBlock}>
             <div className={styles.authorInfoBlock}>
             <span className={styles.commentAuthor}>{comment.author}</span>
-            <span className={styles.commentEmail}>{comment.email}</span>
-            </div>
-            <span className={styles.commentDate}>{comment.date}</span>
-            </div>
-            <div className={styles.commentRating}>
+               <div className={styles.commentRating}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <span
                   key={star}
@@ -495,6 +492,9 @@ const handleSaveRecipe = () => {
                   ★
                 </span>
               ))}
+            </div>
+            </div>
+            <span className={styles.commentDate}>{comment.date}</span>
             </div>
           </div>
         
@@ -528,7 +528,7 @@ const handleSaveRecipe = () => {
    {/* Блок Схожі страви */}
 <section className={styles.similarRecipesBlock}>
   <div className={styles.similarHeader}>
-  <h2 className={styles.similarTitle}>Схожі страви</h2>
+  <h2 className={styles.similarTitle}>Схожі рецепти</h2>
    <button className={styles.allButton}  onClick={() => navigate("/recipes")}>
             Всі <ChevronRight size={18} />
           </button>
@@ -546,6 +546,7 @@ const handleSaveRecipe = () => {
 
 
       </section>
+      </div>
     </main>
   );
 };

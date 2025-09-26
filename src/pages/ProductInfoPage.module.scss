@@ -1,14 +1,52 @@
 .main {
-  padding: 3rem;
-   flex: 1;
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
-  box-sizing: border-box;
-  overflow-y: auto;
+  height: 100vh;
+  overflow: hidden; 
 }
 
+.mainBlock {
+  flex: 1; // занимает всё оставшееся место после Header
+  box-sizing: border-box;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; // скроллим только тут
+    &::-webkit-scrollbar {
+    width: 8px; /* ширина скролла */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f0f0f0; /* фон дорожки */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color:  rgba(51, 113, 121, 1);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+.backButton {
+    width: 150px;
+    background: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5rem;
+    border: none;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  
+     transition: transform 0.3s ease-in-out;
+     color: rgba(51, 113, 121, 1);
+     font-size: 16px;
+     font-weight: 600;
+     line-height: 22px;
+    &:hover{
+      transform: scale(1.01);
+    }
+  }
 //** Верхня частина з пошуком та зображенням продукту **//
 
 .imagePlaceholder {
@@ -16,15 +54,15 @@
   flex-direction: column;
   align-items: end;
   padding: 1rem;
-  margin-top: 40px;
+  margin-top: 1rem;
   width: 100%;
-  height: 32rem;
+  height: 500px;
   border-radius: 24px;
   justify-content: space-between;
   box-sizing: border-box;
-  background-size: cover; /* Розмір, щоб заповнити весь контейнер */
-  background-position: center; /* Центрування зображення */
-  background-repeat: no-repeat; /* Заборона повторення */
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
 }
 
 .productInfo {
@@ -34,33 +72,36 @@
 
 .imageTopButton{
  display: flex;
- flex-direction: row;
+ flex-direction: row-reverse;
  gap: 0.5rem;
 }
 
-.exportButton{
-  width: 32px;
-height: 32px;
-border-radius: 8px;
-background: rgba(255, 255, 255, 1);
-border: none;
-cursor: pointer;
-    transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.1);
+.exportButton,
+.flagButton {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: #fff;
+  border-radius: 8px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  cursor: pointer;
+}
+
+.exportButton {
+  background-image: url("../assets/icon-park-outline_export.svg");
+   transition: transform 0.3s ease-in-out;
+     &:hover{
+      transform: scale(1.05);
     }
 }
 
-.flagButton{
-    width: 32px;
-height: 32px;
-border-radius: 8px;
-background: rgba(255, 255, 255, 1);
-border: none;
-cursor: pointer;
+.flagButton {
+  background-image: url("../assets/icon-park-outline_tag.svg");
     transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.1);
+     &:hover{
+      transform: scale(1.05);
     }
 }
 
@@ -71,7 +112,7 @@ cursor: pointer;
 }
 
 .productComplexity{
-padding: 0.5rem;
+padding: 8px 12px 8px 8px;
 border-radius: 12px;
 background: rgba(255, 255, 255, 1);
 display: flex;
@@ -82,10 +123,10 @@ gap: 0.5rem;
 }
 
 .iconComplexity{
-  width: 32px;
-height: 32px;
+width: 44px;
+height: 44px;
 border-radius: 8px;
-background: rgba(217, 217, 217, 1);
+background:  rgba(232, 242, 242, 1);
 display: flex;
 justify-content: center;
 align-items: center;
@@ -98,26 +139,22 @@ align-items: center;
 
 .details{
   margin: 0;
-  color: rgba(25, 22, 22, 1);
-font-size: 14px;
-font-weight: 500;
-line-height: 19px;
-letter-spacing: 0%;
-text-align: left;
+color: rgba(58, 65, 69, 1);
+font-size: 18px;
+font-weight: 600;
+line-height: 25px;
 }
 
 .titleComplexity{
   margin: 0;
-color: rgba(70, 70, 70, 1);
-font-size: 12px;
-font-weight: 400;
-line-height: 16px;
-letter-spacing: 0%;
-text-align: left;
+color: rgba(95, 104, 109, 1);
+font-size: 14px;
+font-weight: 500;
+line-height: 19px;
 }
 
 .productTime{
-padding: 0.5rem;
+padding: 8px 12px 8px 8px;
 border-radius: 12px;
 background: rgba(255, 255, 255, 1);
 display: flex;
@@ -128,7 +165,7 @@ gap: 0.5rem;
 }
 
 .productRating{
-padding: 0.5rem;
+padding: 8px 12px 8px 8px;
 border-radius: 12px;
 background: rgba(255, 255, 255, 1);
 display: flex;
@@ -138,55 +175,30 @@ align-items: center;
 gap: 0.5rem;
 }
 
-.customSearchWrapper {
-  position: relative;
-  flex: 1 1 300px;
-  max-width: 680px;
-
-  .searchIcon {
-    position: absolute;
-    top: 50%;
-    left: 1rem;
-    transform: translateY(-50%);
-    color: #9ca3af;
-    font-size: 1rem;
-    pointer-events: none;
-  }
-
-  .customSearch {
-    width: 100%;
-    height: 48px;
-    padding: 0.5rem 1rem 0.5rem 2.5rem; // отступ под иконку
-    border: 1.5px solid rgba(235, 235, 235, 1);
-    border-radius: 12px;
-    background: #fff;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-
-    &:focus {
-      border-color: #0d9488;
-      box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
-    }
-  }
-}
-
 //** Заголовок та опис продукту **/
 
 .productTitle{
   box-sizing: border-box;
   width: 100%;
   margin-top: 24px;
-  border-radius: 12px;
+  border-radius: 24px;
 background: rgba(255, 255, 255, 1);
-padding: 1rem;
+padding: 1.5rem;
+}
+
+.title{
+  color: rgba(28, 35, 39, 1);
+font-size: 28px;
+font-weight: 700;
+line-height: 38px;
+text-align: left;
 }
 
 .textMain{
-  color: rgba(0, 0, 0, 1);
-font-size: 16px;
+color: rgba(58, 65, 69, 1);
+font-size: 18px;
 font-weight: 400;
-line-height: 22px;
-letter-spacing: 0%;
+line-height: 25px;
 text-align: left;
 }
 
@@ -195,16 +207,30 @@ text-align: left;
 .ingredientsTitle{
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #e5e7eb; // серая полоска под заголовком
   margin-bottom: 0.5rem; // отступ до списка
 }
 
-.monipulateIngredients{
+.titleIngredients{
+  margin: 0;
+  color: rgba(28, 35, 39, 1);
+font-size: 24px;
+font-weight: 700;
+line-height: 33px;
+text-align: left;
+}
+
+.portion{
+  margin: 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  cursor: pointer;
+  align-items: center;
+}
+
+.monipulateIngredients{
+  margin-top: 1rem;
+   margin-bottom: 1.5rem;
 }
 
 .servingsControl{
@@ -215,15 +241,28 @@ text-align: left;
   margin-left: 1rem;
 }
 
+.textPortion{
+  margin: 0;
+  color: rgba(28, 35, 39, 1);
+font-size: 14px;
+font-weight: 600;
+line-height: 19px;
+}
+
+.servingsValue{
+  margin: 0;
+  color: rgba(28, 35, 39, 1);
+font-size: 20px;
+font-weight: 700;
+line-height: 27px;
+}
+
+
 .servingBtn{
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(232, 232, 232, 1);
+  display: flex;
+  align-items: center;
   border: none;
-  color: rgba(49, 49, 49, 1);
-  font-size: 20px;
-  font-weight: 400;
+  background: none;
   cursor: pointer;
     transition: transform 0.3s ease-in-out;
     &:hover{
@@ -231,25 +270,12 @@ text-align: left;
     }
 }
 
-.cleartAll{color: rgba(161, 101, 102, 1);
-font-size: 14px;
-font-weight: 600;
-line-height: 19px;
-border: none;
-text-align: left;
-background: none;
-cursor: pointer;
-    transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.05);
-    }
-}
 
 .checkAll{
-  color: rgba(3, 102, 168, 1);
-font-size: 14px;
+color: rgba(51, 113, 121, 1);
+font-size: 16px;
 font-weight: 600;
-line-height: 19px;
+line-height: 22px;
 text-align: left;
 border: none;
 background: none;
@@ -267,26 +293,23 @@ cursor: pointer;
 }
 
 .ingredientItem {
-  padding: 8px 16px 8px 16px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  height: 56px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 56px;
   gap: 0.5rem; // расстояние между чекбоксом и текстом
  border: 1px solid rgba(235, 241, 242, 1);
  border-radius: 8px;
 }
 
 .ingredientCheckbox {
-  height: 24px;
-  width: 24px;
+  height: 22px;
+  width: 22px;
   cursor: pointer;
 }
 
-
-.ingredientItem:last-child {
-  border-bottom: none;
-}
 
 .ingredientLabel {
   display: flex;
@@ -298,13 +321,10 @@ cursor: pointer;
 
 
 .ingredientAmount {
-  margin-left: 1rem;
-  white-space: nowrap;
-  color: rgba(49, 49, 49, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 16px;
-font-weight: 600;
+font-weight: 400;
 line-height: 22px;
-text-align: left;
 }
 
 .ingredientsList {
@@ -317,9 +337,9 @@ text-align: left;
 }
 
 .ingredientName{
-  color: rgba(49, 49, 49, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 16px;
-font-weight: 400;
+font-weight: 500;
 line-height: 22px;
 }
 
@@ -334,21 +354,24 @@ line-height: 22px;
 .addToListButton{
 margin-top: 2rem;
 height: 54px;
-color: rgba(37, 48, 62, 1);
+color: rgba(128, 138, 142, 1);
 font-size: 18px;
 font-weight: 600;
 line-height: 25px;
 text-align: center;
 border: none;
 box-sizing: border-box;
-border: 2px solid rgba(240, 240, 241, 1);
 border-radius: 12px;
-background: rgba(249, 249, 249, 1);
+background: rgba(232, 242, 242, 1);
 width: 100%;
 cursor: pointer;
+ &.active {
+    background: rgba(51, 113, 121, 1);
+    color: rgba(252, 253, 253, 1);
+ }
     transition: transform 0.3s ease-in-out;
     &:hover{
-      transform: scale(1.05);
+      transform: scale(1.02);
     }
 }
 
@@ -360,10 +383,10 @@ cursor: pointer;
 }
 
 .nutritionBlock {
+  align-self: flex-start; 
   box-sizing: border-box;
   width: 100%;
-  height: 50%;
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 12px;
   background-color: #f9fafb;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
@@ -378,58 +401,69 @@ cursor: pointer;
   flex-direction: row;
   align-items: center;
   gap: 0.75rem;
-  border-bottom: 1px solid #e5e7eb;
 }
 
 .nutritionTitle{
   margin: 0;
+  color: rgba(28, 35, 39, 1);
+font-size: 24px;
+font-weight: 700;
+line-height: 33px;
+}
+
+.nutritionSubtitle{
+  margin: 0;
+  color:rgba(95, 104, 109, 1);
+font-size: 16px;
+font-weight: 500;
+line-height: 22px;
 }
 
 .nutritionGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .nutritionItem {
   border-radius: 12px;
-  background: rgba(243, 243, 243, 1);
-  padding: 0.75rem;
+  background:rgba(241, 243, 244, 1);
+  height: 80px;
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 
   .nutritionName {
-    font-size: 12px;
-    color: #6b7280;
-    margin-bottom: 0.25rem;
+   color: rgba(58, 65, 69, 1);
+font-size: 16px;
+font-weight: 500;
+line-height: 22px;
   }
 
   .nutritionAmount {
-    font-size: 16px;
-    font-weight: 600;
-    color: #111827;
+    color: rgba(41, 90, 97, 1);
+font-size: 24px;
+font-weight: 700;
+line-height: 33px;
   }
 }
 
 //** Як приготувати **//
 
 .recipeSteps {
-  margin-top: 2rem;
-  background-color: #f9fafb;
+  margin-top: 1.5rem;
+  background-color: rgba(252, 253, 253, 1);
   padding: 1.5rem;
   border-radius: 24px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 
   .stepsTitle {
-    font-size: 18px;
-    font-weight: 600;
-    color: #111827;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 1rem;
-    margin-bottom: 1.5rem;
+  color: rgba(28, 35, 39, 1);
+font-size: 24px;
+font-weight: 700;
+line-height: 33px;
+margin-bottom: 1.5rem;
   }
 
   .stepsList {
@@ -454,42 +488,37 @@ cursor: pointer;
 
       .stepHeader {
         display: flex;
-        align-items: center;
-        gap: 1.5rem;
+        align-items:start;
+        gap: 0.75rem;
       }
 
-      .stepNumber {
+      .stepNumberBlock{
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: #9c9c9c;
-        color: #fff;
-        font-size: 18px;
-        font-weight: 500;
-        line-height: 25px;
-        flex-shrink: 0;
+       width: 40px;
+     height: 40px;
+     border-radius: 12px;
+     background: rgba(232, 242, 242, 1);
       }
 
-      .stepTitle {
-       color: rgba(0, 0, 0, 1);
-       font-size: 20px;
-       font-weight: 500;
-       line-height: 27px;
-       text-align: left;
+      .stepNumber {
+     color: rgba(51, 113, 121, 1);
+     font-size: 18px;
+     font-weight: 600;
+     line-height: 25px;
 
       }
 
       .stepDescription {
-        width: 800px;
-        color: rgba(0, 0, 0, 1);
+        margin: 0;
+        color: rgba(28, 35, 39, 1);
         font-size: 16px;
         font-weight: 400;
         line-height: 22px;
-        letter-spacing: 0%;
         text-align: left;
+        width: 65%;
+        margin-bottom: 1rem;
       }
 
       .stepImage, 
@@ -518,6 +547,9 @@ cursor: pointer;
     flex-direction: row;
     gap: 1rem;
     margin-top: 1.5rem;
+    border-radius: 24px;
+    padding: 1.5rem;
+    background: rgba(252, 253, 253, 1);
   }
 
 .actionButton{
@@ -525,16 +557,19 @@ cursor: pointer;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-width: 152px;
-height: 48px;
+  padding: 10px 20px 10px 16px;
 box-sizing: border-box;
-border: 2px solid rgba(240, 240, 241, 1);
+border: 2px solid rgba(51, 113, 121, 1);
 border-radius: 12px;
 background: rgba(255, 255, 255, 1);
+color: rgba(27, 60, 64, 1);
+font-size: 16px;
+font-weight: 600;
+line-height: 22px;
   cursor: pointer;
     transition: transform 0.3s ease-in-out;
     &:hover{
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
 }
 
@@ -545,46 +580,34 @@ background: rgba(255, 255, 255, 1);
   box-sizing: border-box;
   width: 100%;
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: 24px;
   background: rgba(255, 255, 255, 1);
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .titleTags{
-color: rgba(0, 0, 0, 1);
+ margin: 0;
+ color: rgba(28, 35, 39, 1);
 font-size: 24px;
-font-weight: 600;
+font-weight: 700;
 line-height: 33px;
-text-align: left;
-padding-bottom: 1rem;
-border-bottom: 1px solid #e5e7eb;
 }
 
 .recipeTags {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-top: 12px;
+  margin-top: 24px;
 }
 
 .tag {
-  height: 40px;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
- box-sizing: border-box;
-border: 1px solid rgba(142, 142, 142, 1);
+padding: 10px 16px 10px 16px;
 border-radius: 100px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background: rgba(235, 235, 235, 1);
-  }
-}
-
-.authorCardWrapper {
-  margin-top: 24px;
+background: rgba(235, 241, 242, 1);
+color: rgba(28, 35, 39, 1);
+font-size: 14px;
+font-weight: 600;
+line-height: 19px;
 }
 
 /* Кастомные стили для AuthorCard только на этой странице */
@@ -599,19 +622,21 @@ border-radius: 100px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 
   .autorcardTitle{
-  color: rgba(0, 0, 0, 1);
- font-size: 24px;
-font-weight: 600;
+    margin: 0;
+  color: rgba(28, 35, 39, 1);
+font-size: 24px;
+font-weight: 700;
 line-height: 33px;
 text-align: left;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 1rem;
+margin-bottom: 1.5rem;
   }
 
  .autocardBlock{
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 1rem;
+
  }
 
  .authorDetails{
@@ -632,71 +657,72 @@ text-align: left;
   }
  
   .name {
-     color: rgba(0, 0, 0, 1);
-     font-size: 20px;
-     font-weight: 500;
-     line-height: 27px;
-     text-align: left;
-
+    margin: 0;
+    color: rgba(28, 35, 39, 1);
+font-size: 20px;
+font-weight: 700;
+line-height: 27px;
+text-align: left;
   }
 
   .email {
-    color: rgba(74, 72, 72, 1);
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 19px;
-    text-align: left;
+    margin: 0;
+   color: rgba(95, 104, 109, 1);
+   font-size: 14px;
+   font-weight: 400;
+   line-height: 19px;
   }
 
   .stats {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem; // расстояние между числами и текстом, и между парами
-  margin-top: 0;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
   align-items: center;
 }
 
 .statsNumber {
-  color: rgba(0, 0, 0, 1);
-font-size: 16px;
-font-weight: 700;
-line-height: 22px;
-text-align: left;
+  margin: 0;
+color: rgba(28, 35, 39, 1);
+font-size: 18px;
+font-weight: 600;
+line-height: 25px;
 }
 
 .statsText {
-  color: rgba(0, 0, 0, 1);
+color: rgba(58, 65, 69, 1);
 font-size: 14px;
-font-weight: 400;
+font-weight: 500;
 line-height: 19px;
+letter-spacing: 0%;
+margin-right: 1rem;
 text-align: left;
-  margin-right: 1rem; 
 
 }
 
 .authorInfo  {
+  width: 100%;
   display: flex;
   flex-direction: row;
-  margin-left: 1rem;
   align-items: center;
-  gap: 12rem;
+  justify-content: space-between;  
 }
 
   .subscribeButton {
-    width: 143px;
-    height: 48px;
-    border-radius: 12px;
-    background: rgba(210, 210, 210, 1);
-    border: none;
-    cursor: pointer;
-    color: rgba(28, 34, 42, 1);
+    background: none;
+     width: 151px;
+     height: 48px;
+     border: 1.5px solid rgba(51, 113, 121, 1);
+     border-radius: 12px;
+     color: rgba(27, 60, 64, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
 text-align: center;
+     cursor: pointer;
     transition: transform 0.3s ease-in-out;
     &:hover{
-      transform: scale(1.05);
+      transform: scale(1.03);
   }
 }
 }
@@ -719,28 +745,20 @@ text-align: center;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 66.5%;
 }
 
-  hr {
-      border: none;
-      height: 1px;
-      width: 100%;
-      background-color: #e5e7eb;
-    }
-
 .commentsTitle{
-  color: rgba(0, 0, 0, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 24px;
-font-weight: 600;
+font-weight: 700;
 line-height: 33px;
 text-align: left;
 }
 
 .ratingLabel{
-  color: rgba(0, 0, 0, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 14px;
-font-weight: 500;
+font-weight: 600;
 line-height: 19px;
 text-align: left;
 }
@@ -762,8 +780,7 @@ text-align: left;
 
   .star {
     font-size: 2rem;
-    color: #fdfdfd; // пустая звезда
-    -webkit-text-stroke: 1px rgba(115, 115, 115, 1); // окантовка
+    color:  rgba(217, 217, 217, 1);
     transition: color 0.2s;
 
     &.filled {
@@ -783,7 +800,7 @@ text-align: left;
 //** Форма додавання коментаря **//
 
 .commentForm {
-  margin-top: 57px;
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -792,7 +809,6 @@ text-align: left;
   .inputWrapper {
   position: relative;
   display: inline-block;
-  width: 66.5%;
   }
 
   
@@ -806,18 +822,24 @@ text-align: left;
     height: 128px;
     padding: 16px 48px 40px 24px;
     border-radius: 24px;
-    background: rgba(235, 235, 235, 1);
+    background: rgba(241, 243, 244, 1);
     resize: none;
     font-size: 1rem;
     border: none;
     box-sizing: border-box;
     width: 100%;
+    outline: none;
     &::placeholder {
       color: rgba(148, 147, 147, 1);
     font-size: 16px;
     font-weight: 400;
      line-height: 19px;
     }
+    &:focus {
+  border: 1.5px solid rgba(84, 112, 120, 1);
+border-radius: 12px;
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
+}
   }
 
   .inputIcon {
@@ -829,23 +851,28 @@ text-align: left;
   pointer-events: none; // чтобы не мешала набору текста
 }
   .commentButton {
-    margin-left: 44%;
+    align-self: end;
     width: 181px;
     height: 48px;
-    border: none;
-    border-radius: 12px;
-    background: rgba(210, 210, 210, 1);
-    cursor: pointer;
+    background: none;
+    border: 1.5px solid rgba(51, 113, 121, 1);
+     border-radius: 12px;
+     color: rgba(27, 60, 64, 1);
+font-size: 16px;
+font-weight: 600;
+line-height: 22px;
+text-align: center;
+     cursor: pointer;
     transition: transform 0.3s ease-in-out;
     &:hover{
-      transform: scale(1.05);
+      transform: scale(1.03);
   }
 }
 }
 
 //** Список коментарів **//
 .commentsBlockPeople {
-  margin-top: 32px;
+  margin-top: 67px;
   width: 100%;
   box-sizing: border-box;
   display: flex;
@@ -871,11 +898,11 @@ text-align: left;
   list-style: none;
   padding: 0;
   margin: 0;
-  width: 100%; // растягиваем ul на всю ширину
+  width: 100%; 
 
   li.commentItem {
     display: flex;
-    flex-direction: column; // каждый комментарий вертикально
+    flex-direction: column; 
     width: 100%;
     padding: 8px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -893,7 +920,7 @@ text-align: left;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  flex: 1; // растягиваем на всю доступную ширину слева
+  flex: 1; 
 }
 
 .commentActionsBlock {
@@ -909,52 +936,47 @@ text-align: left;
   gap: 1rem;
 }
 .commentText {
- color: rgba(0, 0, 0, 1);
-font-size: 14px;
+  width: 60%;
+color: rgba(58, 65, 69, 1);
+font-size: 16px;
 font-weight: 400;
-line-height: 19px;
+line-height: 22px;
 text-align: left;
 }
 
 .avatarComment {
-  width: 32px;
-  height: 32px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background-color: #d9d9d9;
+  background-position: center;
+  background-size: cover;
 }
 
 .commentAuthor {
-  color: rgba(0, 0, 0, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 18px;
-font-weight: 500;
+font-weight: 600;
 line-height: 25px;
 text-align: left;
 }
 
-.commentEmail {
-  color: rgba(74, 72, 72, 1);
-font-size: 14px;
-font-weight: 400;
-line-height: 19px;
-text-align: left;
-}
 
 .commentDate {
-  color: rgba(74, 72, 72, 1);
+color: rgba(128, 138, 142, 1);
 font-size: 14px;
-font-weight: 400;
+font-weight: 600;
 line-height: 19px;
 text-align: left;
 }
 
 .commentRating {
+  margin-left: 1rem;
   display: flex;
   gap: 4px;
 
   .star {
     font-size: 1.2rem;
-    color: #fdfdfd;
-    -webkit-text-stroke: 1px rgba(115, 115, 115, 1);
+    color:  rgba(217, 217, 217, 1);
 
     &.filled {
       color: #f1c40f;
@@ -966,10 +988,11 @@ text-align: left;
 .commentActionButton{
   background: none;
   border: none;
-  color: rgba(0, 0, 0, 1);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 19px;
+  color: rgba(51, 113, 121, 1);
+font-size: 16px;
+font-weight: 600;
+line-height: 22px;
+text-align: center;
   cursor: pointer;
     transition: transform 0.3s ease-in-out;
     &:hover{
@@ -1000,15 +1023,15 @@ text-align: left;
 }
 
 .loadMoreButton{
-  margin-top: 38px;
+  margin-top: 24px;
   justify-self: center;
   display: flex;
-  background-color:rgba(255, 255, 255, 1);
+  background: none;
   border: none;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  color: rgba(28, 34, 42, 1);
+  color: rgba(51, 113, 121, 1);
   font-size: 16px;
   font-weight: 600;
   line-height: 22px;
@@ -1021,7 +1044,7 @@ text-align: left;
 }
 //** Схожі рецепти **//
 .similarRecipesBlock {
-  margin-top: 48px;
+  margin-top: 1rem;
   padding: 1.5rem;
   background-color: #f9fafb;
   border-radius: 24px;
@@ -1031,14 +1054,16 @@ text-align: left;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #e5e7eb;
     margin-bottom: 16px;
     padding-bottom: 8px;
   }
 
   .similarTitle {
-    font-size: 1.5rem;
-    font-weight: 600;
+   color: rgba(28, 35, 39, 1);
+font-size: 24px;
+font-weight: 700;
+line-height: 33px;
+text-align: left;
   }
 
   .similarCardsWrapper {
@@ -1063,19 +1088,21 @@ text-align: left;
   }
 }
 
-.allButton {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #fff;
-  border: none;
-  color: rgba(3, 102, 168, 1);
-  font-size: 18px;
+.allButton{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.5rem;
+    border: none;
+    background: none;
+    color: rgba(51, 113, 121, 1);
   cursor: pointer;
-  transition: transform 0.3s ease-in-out;
+font-size: 16px;
+font-weight: 600;
+line-height: 22px;
+ transition: transform 0.3s ease-in-out;
 
-  &:hover {
-    transform: scale(1.05);
+      &:hover {
+        transform: scale(1.05);
+      }
   }
-}
-

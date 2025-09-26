@@ -39,7 +39,7 @@ const Home: React.FC = () => {
   return (
     <main className={styles.main}>
       <Header  />
-
+       <div className={styles.mainBlock}>
       <FreshProductsBanner />
 
       {filteredSections.map((section, index) => (
@@ -104,6 +104,7 @@ const Home: React.FC = () => {
           )}
         </React.Fragment>
       ))}
+      </div>
     </main>
   );
 };

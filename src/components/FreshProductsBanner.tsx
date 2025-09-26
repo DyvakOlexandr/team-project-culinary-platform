@@ -1,16 +1,16 @@
 import React from "react";
 import styles from "./FreshProductsBanner.module.scss";
-import { FaShoppingBag } from "react-icons/fa"; // импорт иконки
+import { ShoppingBag } from "lucide-react";
 
 const FreshProductsBanner: React.FC = () => {
   return (
     <section className={styles.banner}>
       <div className={styles.text}>
-        <h2>Свіжі товари від Сільпо</h2>
+        <h2>Свіжі продукти від Сільпо</h2>
         <p>Готуй із задоволенням — ми подбаємо, щоб усі інгредієнти були під рукою</p>
         <button className={styles.orderButton}>
           Спробувати зараз
-          <FaShoppingBag className={styles.buttonIcon} />
+          <ShoppingBag className={styles.buttonIcon} />
         </button>
       </div>
     </section>

@@ -3,16 +3,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
+  border-radius: 16px;
+  box-shadow: 0px 4px 7px 0px rgba(84, 112, 120, 0.1);
+  background: rgba(252, 253, 253, 1);
   padding: 1rem;
-  background-color: #ffffff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s;
 
-  &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
 
 .avatar {
   width: 70px;
@@ -34,63 +29,46 @@
   }
 
   .name {
-    font-family: Noto Sans;
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 25px;
-    text-align: center;
     margin: 0;
-    color: rgba(0, 0, 0, 1);
+    color: rgba(28, 35, 39, 1);
+font-size: 18px;
+font-weight: 600;
+line-height: 25px;
+text-align: center;
   }
 
   .profession {
-color: rgba(114, 114, 114, 1);
-font-family: Noto Sans;
+    margin: 0;
+color: rgba(95, 104, 109, 1);
 font-size: 14px;
 font-weight: 400;
 line-height: 19px;
-letter-spacing: 0%;
 text-align: center;
   }
 
   .stats {
-    color: rgba(0, 0, 0, 1);
-font-family: Noto Sans;
-font-size: 12px;
-font-weight: 400;
-line-height: 16px;
+color: rgba(28, 35, 39, 1);
+font-size: 14px;
+font-weight: 500;
+line-height: 19px;
 text-align: center;
   }
 
   .subscribeButton {
-    color: rgba(37, 48, 62, 1);
-font-family: Noto Sans;
-font-size: 14px;
+  width: 226px;
+height: 48px;
+border-radius: 12px;
+background: rgba(51, 113, 121, 1);
+border: none;
+color: rgba(252, 253, 253, 1);
+font-size: 16px;
 font-weight: 600;
-line-height: 19px;
-    width: 208px;
-  height: 48px;
-  margin-top: 8px;
-  padding: 4px 12px;
-  border: none;
-  box-sizing: border-box;
-  border: 2px solid rgba(240, 240, 241, 1);
-  border-radius: 12px;
-  background: rgba(239, 239, 239, 1);
-  font-weight: 500;
+line-height: 22px;
+text-align: center;
   cursor: pointer;
-  transition: background-color 0.2s;
-  
-  &:hover {
-    background-color: #e0a800;
-  }
+  transition: transform 0.3s ease-in-out;
+      &:hover {
+        transform: scale(1.05);
+      }
 }
-
-.subscribed {
-  background-color: #6b7280;
-  &:hover {
-    background-color: #4b5563;
-  }
-}
-
 }

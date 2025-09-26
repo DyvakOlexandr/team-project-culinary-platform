@@ -9,7 +9,7 @@ import iconStar from "../assets/icon-park-outline_star.svg";
 interface RecipeCardProps extends Recipe {
   highlightedTitle?: React.ReactNode;
   isModalView?: boolean;
-   onSave?: () => void;
+  onSave?: () => void;
 }
 
 const RecipeCard: React.FC<RecipeCardProps> = ({
@@ -23,6 +23,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
   image,
   highlightedTitle,
   isModalView,
+  onSave,
 }) => {
   const [currentRating, setCurrentRating] = useState(rating);
   const navigate = useNavigate();
@@ -33,13 +34,15 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     "Складно": "#FF4500",
   };
 
-  const handleFlagClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleCardClick = () => {
     if (id) navigate(`/product/${id}`);
   };
 
   return (
-    <div className={`${styles.recipeCard} ${isModalView ? styles.modalCard : ""}`}>
+    <div
+      className={`${styles.recipeCard} ${isModalView ? styles.modalCard : ""}`}
+      onClick={handleCardClick}
+    >
       <div
         className={styles.image}
         style={{ backgroundImage: image ? `url(${image})` : "none" }}
@@ -50,7 +53,15 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
         >
           {complexity}
         </div>
-        <button onClick={handleFlagClick} className={styles.flag}>
+
+        {/* Флаг теперь работает только для добавления */}
+        <button
+          className={styles.flagButton}
+          onClick={(e) => {
+            e.stopPropagation(); // блокируем переход
+            if (onSave) onSave();
+          }}
+        >
           <img src={flagIcon} alt="flag" />
         </button>
       </div>
@@ -58,14 +69,20 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
       <h2 className={styles.title}>{highlightedTitle ?? title}</h2>
 
       <div className={styles.cardInfo}>
-        {time && <p className={styles.time}>
-          <img src={iconTime} alt="time"/> {time}</p>}
+        {time && (
+          <p className={styles.time}>
+            <img src={iconTime} alt="time" /> {time}
+          </p>
+        )}
         <div
           className={styles.rating}
-          onClick={() => setCurrentRating((prev) => (prev + 5) / 2)}
+          onClick={(e) => {
+            e.stopPropagation(); // чтобы не открывалась карточка
+            setCurrentRating((prev) => (prev + 5) / 2);
+          }}
         >
           <span className={styles.star}>
-            <img src={iconStar} alt="star"/>
+            <img src={iconStar} alt="star" />
           </span>
           <span className={styles.ratingValue}>{currentRating.toFixed(1)}</span>
         </div>
@@ -74,7 +91,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
       <div className={styles.authorBlock}>
         <div
           className={styles.avatar}
-          style={{ backgroundImage: authorImage ? `url(${authorImage})` : "none" }}
+          style={{
+            backgroundImage: authorImage ? `url(${authorImage})` : "none",
+          }}
         />
         <p className={styles.author}>{author}</p>
       </div>

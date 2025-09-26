@@ -2,19 +2,20 @@
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem; // rounded-lg
   padding: 1rem; // p-4
-  background-color: #ffffff;
+  background-color: #fff;
   display: flex;
   flex-direction: column;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.2s;
-
-  &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+      &:hover {
+        transform: scale(1.02);
+      }
 
 .image {
   width: 100%;
-  aspect-ratio: 16 / 9; /* ✅ автоматически вычислит высоту */
+  height: 180px;
   border-radius: 0.5rem;
   position: relative;
 
@@ -32,60 +33,33 @@
   .complexity {
     margin-top: 8px;
     margin-left: 8px;
-    width: 69px;
-    height: 25px;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 4px 8px;
+   padding: 4px 8px 4px 8px;
     border-radius: 50px;
-    background: rgba(255, 255, 255, 1);
-    color:#fff;
-    font-family: Noto Sans;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 16px;
+   color: rgba(255, 255, 255, 1);
+font-size: 12px;
+font-weight: 600;
+line-height: 16px;
   }
 
-  .flag {
-    position: absolute; // делаем абсолютным
-    top: 8px;           // отступ сверху
-    right: 8px;         // отступ справа
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out;
-    &:hover{
-      transform: scale(1.1);
-    }
-    img {
-      width: 16px;
-      height: 16px;
-      object-fit: contain;
-    }
-  }
 }
 
    
 
   .title {
-    margin: 0.5rem;
-height: 100px;
-    color: rgba(36, 36, 36, 1);
-   font-size: 18px;
-   font-weight: 600;
-   line-height: 25px;
-   text-align: left;
+    margin-top: 8px;
+   color: rgba(28, 35, 39, 1);
+font-size: 18px;
+font-weight: 600;
+line-height: 25px;
+text-align: left;
+  height: 96px;
   }
 
   .cardInfo{
-height: 20px;
+    height: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -181,3 +155,14 @@ text-align: left;
   box-shadow: none;
  
 }
+
+  .flagButton {
+    border: none;
+    background: none;
+    position: absolute; // делаем абсолютным
+    top: 4px;           // отступ сверху
+    right: 12px;         // отступ справа
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+  }

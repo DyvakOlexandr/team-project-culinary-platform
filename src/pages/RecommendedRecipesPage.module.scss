@@ -1,15 +1,34 @@
 .main {
-  flex: 1;
-  height: 100vh;
-  padding: 3rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  height: 100vh;
+  overflow: hidden; 
+}
+
+.mainBlock {
+  flex: 1; // занимает всё оставшееся место после Header
   box-sizing: border-box;
-  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; // скроллим только тут
+    &::-webkit-scrollbar {
+    width: 8px; /* ширина скролла */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f0f0f0; /* фон дорожки */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color:  rgba(51, 113, 121, 1);
+    border-radius: 4px;
+    cursor: pointer;
+  }
 }
 
 h1{
+  margin: 0;
 color:  rgba(28, 35, 39, 1);
 font-size: 28px;
 font-weight: 700;
@@ -25,7 +44,7 @@ text-align: left;
 }
 
 .grid {
-   margin-top: 2rem;
+   margin-top: 1rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
@@ -93,6 +112,7 @@ text-align: left;
   }
 
   .allButton{
+    margin-top: 1.5rem;
     border: none;
     display: flex;
     align-items: center;
@@ -100,7 +120,7 @@ text-align: left;
     justify-content: center;
     flex-direction: row;
     gap: 0.5rem;
-    color:  rgba(1, 64, 78, 1);
+    color:  rgba(51, 113, 121, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
@@ -141,7 +161,7 @@ font-size: 16px;
 font-weight: 500;
 line-height: 22px;
   &:last-child {
-    border-bottom: none; // Убираем линию у последнего элемента
+    border-bottom: none; 
   }
 
   &:hover {
@@ -186,3 +206,24 @@ font-size: 16px;
 font-weight: 500;
 line-height: 22px;
 }
+
+  .backButton {
+    width: 150px;
+    background: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5rem;
+    border: none;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  
+     transition: transform 0.3s ease-in-out;
+     color: rgba(51, 113, 121, 1);
+     font-size: 16px;
+     font-weight: 600;
+     line-height: 22px;
+    &:hover{
+      transform: scale(1.01);
+    }
+  }

@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.scss";
 import logoIcon from "../assets/Logo.svg";
+import iconDiamand from "../assets/Diamand.svg"
 
 // Импортируем нужные иконки из lucide-react
 import {
@@ -60,7 +61,7 @@ const Sidebar: React.FC = () => {
       <div className={styles.logo}>
         <img src={logoIcon} alt="Logo Icon" className={styles.icon} />
       </div>
-
+      <div className={styles.sidebarBlock}>
       {/* Навигация */}
       <nav className={styles.nav}>
         {navGroups.map((group, idx) => (
@@ -90,10 +91,11 @@ const Sidebar: React.FC = () => {
 
       {/* Блок "Отримати преміум" внизу */}
       <div className={styles.premiumBlock}>
+              <img src={iconDiamand} alt="diamand"/>
         <div className={styles.premiumTextBlock}>
-          <h1 className={styles.premiumTitle}> Активуй преміум 🚀</h1>
+          <h1 className={styles.premiumTitle}>Станьте Преміум</h1>
           <p className={styles.premiumText}>
-            Ексклюзивні рецепти та <br /> додаткові можливості
+            Отримайте доступ до <br/> ексклюзивних функцій
           </p>
           <button
             className={styles.premiumButton}
@@ -103,6 +105,7 @@ const Sidebar: React.FC = () => {
             <span className={styles.buttonIcon}></span>
           </button>
         </div>
+      </div>
       </div>
     </aside>
   );

@@ -1,5 +1,5 @@
 // src/pages/RecipesPage.tsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import Header from "../components/Header";
 import RecipeCard from "../components/RecipeCard";
 import styles from "./RecipesPage.module.scss";
@@ -69,6 +69,29 @@ const RecipesPage: React.FC = () => {
     diet?: string;
   }>({});
 
+  // --- Новый код для клика вне дропдауна ---
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownOpen &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen]);
+  // -----------------------------------------
+
   const sortedRecipes = useMemo(() => {
     return [...allRecipes].sort((a, b) => {
       switch (sortBy) {
@@ -94,42 +117,29 @@ const RecipesPage: React.FC = () => {
   }, [sortBy, allRecipes]);
 
   const filteredRecipes = useMemo(() => {
-  return sortedRecipes.filter((r) => {
-    // Кухня
-    if (filters.cuisines && filters.cuisines.length > 0) {
-      if (!r.cuisine || !filters.cuisines.includes(r.cuisine)) return false;
-    }
-
-    // Категорія
-    if (filters.category) {
-      if (!r.category || !r.category.toLowerCase().includes(filters.category.toLowerCase())) {
-        return false;
+    return sortedRecipes.filter((r) => {
+      if (filters.cuisines && filters.cuisines.length > 0) {
+        if (!r.cuisine || !filters.cuisines.includes(r.cuisine)) return false;
       }
-    }
-
-    // Час (до N хв)
-    if (filters.time) {
-      const match = filters.time.match(/до\s*(\d+)\s*хв/);
-      if (match) {
-        const maxMinutes = parseInt(match[1], 10);
-        if (parseTime(r.time) > maxMinutes) return false;
+      if (filters.category) {
+        if (!r.category || !r.category.toLowerCase().includes(filters.category.toLowerCase())) return false;
       }
-    }
-
-    // Складність
-    if (filters.complexity) {
-      if (!r.complexity || r.complexity !== filters.complexity) return false;
-    }
-
-    // Дієта
-    if (filters.diet) {
-      if (!r.diet || !r.diet.includes(filters.diet)) return false;
-    }
-
-    return true;
-  });
-}, [sortedRecipes, filters]);
-
+      if (filters.time) {
+        const match = filters.time.match(/до\s*(\d+)\s*хв/);
+        if (match) {
+          const maxMinutes = parseInt(match[1], 10);
+          if (parseTime(r.time) > maxMinutes) return false;
+        }
+      }
+      if (filters.complexity) {
+        if (!r.complexity || r.complexity !== filters.complexity) return false;
+      }
+      if (filters.diet) {
+        if (!r.diet || !r.diet.includes(filters.diet)) return false;
+      }
+      return true;
+    });
+  }, [sortedRecipes, filters]);
 
   const displayedRecipes = showAll
     ? filteredRecipes
@@ -158,97 +168,87 @@ const RecipesPage: React.FC = () => {
   return (
     <main className={styles.main}>
       <Header />
+      <div className={styles.mainBlock}>
+        <div className={styles.headerBlock}>
+          <div className={styles.headerButtonBlock}>
+            <div className={styles.sortWrapper}>
+              <button
+                ref={buttonRef}
+                className={styles.SortButton}
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
+                Сортувати за <ChevronDown size={24} />
+              </button>
+              {dropdownOpen && (
+                <div ref={menuRef} className={styles.dropdownMenu}>
+                  {(Object.keys(sortLabels) as SortOption[]).map((option) => (
+                    <div
+                      key={option}
+                      className={`${styles.dropdownItem} ${sortBy === option ? styles.activeItem : ""}`}
+                      onClick={() => {
+                        setSortBy(option);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      {sortLabels[option]}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-      <div className={styles.headerBlock}>
-        <div className={styles.headerButtonBlock}>
-          <div className={styles.sortWrapper}>
-            <button
-              className={styles.SortButton}
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              Сортувати за <ChevronDown size={24} />
+            <button className={styles.filterButton} onClick={() => setFilterModalOpen(true)}>
+              Фільтр
+              <img src={iconFilter} alt="filter" />
             </button>
-            {dropdownOpen && (
-              <div className={styles.dropdownMenu}>
-                {(Object.keys(sortLabels) as SortOption[]).map((option) => (
-                  <div
-                    key={option}
-                    className={`${styles.dropdownItem} ${
-                      sortBy === option ? styles.activeItem : ""
-                    }`}
-                    onClick={() => {
-                      setSortBy(option);
-                      setDropdownOpen(false);
-                    }}
-                  >
-                    {sortLabels[option]}
-              
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
-
-          <button className={styles.filterButton} onClick={() => setFilterModalOpen(true)}>
-            Фільтр
-            <img src={iconFilter} alt="filter" />
-          </button>
         </div>
-      </div>
-      {/* Под кнопкой фильтра, сразу после headerBlock */}
-{filters.cuisines?.length || filters.category || filters.time || filters.complexity || filters.diet ? (
-  <div className={styles.selectedFilters}>
-    <button
-      className={styles.clearFiltersButton}
-      onClick={() =>
-        setFilters({ cuisines: [], category: "", time: "", complexity: "", diet: "" })
-      }
-    >
-      Очистити
-    </button>
 
-    {/* Кухни */}
-    {filters.cuisines?.map(c => (
-      <span key={c} className={styles.filterTag}>{c}</span>
-    ))}
+        {/* Под кнопкой фильтра */}
+        {filters.cuisines?.length || filters.category || filters.time || filters.complexity || filters.diet ? (
+          <div className={styles.selectedFilters}>
+            <button
+              className={styles.clearFiltersButton}
+              onClick={() =>
+                setFilters({ cuisines: [], category: "", time: "", complexity: "", diet: "" })
+              }
+            >
+              Очистити
+            </button>
 
-    {/* Категория */}
-    {filters.category && <span className={styles.filterTag}>{filters.category}</span>}
-
-    {/* Время */}
-    {filters.time && <span className={styles.filterTag}>{filters.time}</span>}
-
-    {/* Сложность */}
-    {filters.complexity && <span className={styles.filterTag}>{filters.complexity}</span>}
-
-    {/* Диета */}
-    {filters.diet && <span className={styles.filterTag}>{filters.diet}</span>}
-  </div>
-) : null}
-
-
-      <div className={styles.grid}>
-        {displayedRecipes.map(recipe => (
-          <div key={recipe.id} onClick={() => handleSelectRecipe(recipe)} style={{ cursor: "pointer" }}>
-            <RecipeCard {...recipe} />
+            {filters.cuisines?.map(c => (
+              <span key={c} className={styles.filterTag}>{c}</span>
+            ))}
+            {filters.category && <span className={styles.filterTag}>{filters.category}</span>}
+            {filters.time && <span className={styles.filterTag}>{filters.time}</span>}
+            {filters.complexity && <span className={styles.filterTag}>{filters.complexity}</span>}
+            {filters.diet && <span className={styles.filterTag}>{filters.diet}</span>}
           </div>
-        ))}
+        ) : null}
+
+        <div className={styles.grid}>
+          {displayedRecipes.map(recipe => (
+            <div key={recipe.id} onClick={() => handleSelectRecipe(recipe)} style={{ cursor: "pointer" }}>
+              <RecipeCard {...recipe} />
+            </div>
+          ))}
+        </div>
+
+        {!showAll && filteredRecipes.length > 9 && (
+          <button className={styles.allButton} onClick={() => setShowAll(true)}>
+            Показати більше <ArrowDown size={24} />
+          </button>
+        )}
+
+        <FilterModal
+          isOpen={filterModalOpen}
+          onClose={() => setFilterModalOpen(false)}
+          onApply={(f) => {
+            setFilters(f);
+            setFilterModalOpen(false);
+          }}
+        />
       </div>
-
-      {!showAll && filteredRecipes.length > 9 && (
-        <button className={styles.allButton} onClick={() => setShowAll(true)}>
-          Показати більше <ArrowDown size={24} />
-        </button>
-      )}
-
-      <FilterModal
-        isOpen={filterModalOpen}
-        onClose={() => setFilterModalOpen(false)}
-        onApply={(f) => {
-          setFilters(f);
-          setFilterModalOpen(false);
-        }}
-      />
     </main>
   );
 };

@@ -41,24 +41,22 @@ const CollectionPage: React.FC = () => {
 
 
 
+const handleAddRecipeToCollection = (recipe: Recipe) => {
+  if (collection.recipes.some(r => r.id === recipe.id)) return;
 
-  const handleAddRecipeToCollection = (recipe: Recipe) => {
-    if (collection.recipes.some(r => r.id === recipe.id)) return;
+  const updatedCollections = collections.map(col => {
+    if (col.id === collection.id) {
+      return {
+        ...col,
+        recipes: [...col.recipes, { id: recipe.id, dateSaved: new Date().toISOString() }],
+      };
+    }
+    return col;
+  });
 
-    const updatedCollections = collections.map(col => {
-      if (col.id === collection.id) {
-        return {
-          ...col,
-          recipes: [...col.recipes, { id: recipe.id, dateSaved: new Date().toISOString() }],
-        };
-      }
-      return col;
-    });
-
-    localStorage.setItem("savedCollections", JSON.stringify(updatedCollections));
-    setCollections(updatedCollections);
-  };
-
+  localStorage.setItem("savedCollections", JSON.stringify(updatedCollections));
+  setCollections(updatedCollections);
+};
   // useEffect для создания сообщения только для последнего добавленного рецепта
 useEffect(() => {
   if (!collection || collection.recipes.length === 0) return;
@@ -250,13 +248,13 @@ useEffect(() => {
         </div>
       ) : (
         <div className={styles.recipesGrid}>
-          {savedRecipes.map(recipe => (
-            <RecipeCard
-              key={recipe.id}
-              {...recipe}
-              onSave={() => handleAddRecipeToCollection(recipe)}
-            />
-          ))}
+         {savedRecipes.map(recipe => (
+  <RecipeCard
+    key={recipe.id}
+    {...recipe}
+    onSave={() => handleAddRecipeToCollection(recipe)}
+  />
+))}
         </div>
       )}
     </main>

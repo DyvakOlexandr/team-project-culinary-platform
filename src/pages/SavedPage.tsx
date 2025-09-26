@@ -151,11 +151,23 @@ const SavedPage: React.FC = () => {
     setOpenMenuId(null);
   };
 
-  const onDelete = (id: string) => {
-    const updatedCollections = collections.filter(col => col.id !== id);
-    updateCollections(updatedCollections);
-    setOpenMenuId(null);
-  };
+const onDelete = (id: string) => {
+  const collectionToDelete = collections.find(col => col.id === id);
+  if (!collectionToDelete) return;
+
+  // Удаляем рецепты коллекции из savedRecipes
+  const remainingRecipes = savedRecipes.filter(
+    r => !collectionToDelete.recipes.some(rc => rc.id === r.id)
+  );
+  setSavedRecipes(remainingRecipes);
+  localStorage.setItem("savedRecipes", JSON.stringify(remainingRecipes));
+
+  // Удаляем коллекцию
+  const updatedCollections = collections.filter(col => col.id !== id);
+  updateCollections(updatedCollections);
+
+  setOpenMenuId(null);
+};
 
   const handleSortSelect = (option: string) => {
     setSortOption(option);

@@ -1,11 +1,11 @@
 // src/pages/RecommendedRecipesPage.tsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import Header from "../components/Header";
 import RecipeCard from "../components/RecipeCard";
 import { recommendedRecipes } from "../data/recipes";
 import styles from "./RecommendedRecipesPage.module.scss";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, ArrowDown, Check } from "lucide-react";
+import { ChevronDown, ArrowDown, ChevronLeft } from "lucide-react";
 import iconFilter from "../assets/icon-park-outline_center-alignment.svg";
 import FilterModal from "../components/FilterModal";
 
@@ -48,7 +48,29 @@ const RecommendedRecipesPage: React.FC = () => {
     diet?: string;
   }>({});
 
-  // Сортировка
+  // --- Новый код для клика вне дропдауна ---
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownOpen &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen]);
+  // -----------------------------------------
+
   const sortedRecipes = useMemo(() => {
     return [...recommendedRecipes].sort((a, b) => {
       switch (sortBy) {
@@ -67,7 +89,6 @@ const RecommendedRecipesPage: React.FC = () => {
     });
   }, [sortBy]);
 
-  // Фильтрация
   const filteredRecipes = useMemo(() => {
     return sortedRecipes.filter(r => {
       if (filters.cuisines?.length && !filters.cuisines.includes(r.cuisine || "")) return false;
@@ -86,78 +107,79 @@ const RecommendedRecipesPage: React.FC = () => {
 
   return (
     <main className={styles.main}>
-      <Header
-        showSearch={true}
-        showBackButton
-        backButtonLabel="До списку рецептів"
-        onBackClick={() => navigate(-1)}
-      />
-
-      <div className={styles.headerBlock}>
-        <h1>Рекомендовано для тебе</h1>
-        <div className={styles.headerButtonBlock}>
-          <div className={styles.sortWrapper}>
-            <button className={styles.SortButton} onClick={() => setDropdownOpen(!dropdownOpen)}>
-              Сортувати за  <ChevronDown size={24} />
-            </button>
-            {dropdownOpen && (
-              <div className={styles.dropdownMenu}>
-                {(Object.keys(sortLabels) as SortOption[]).map(option => (
-                  <div
-                    key={option}
-                    className={`${styles.dropdownItem} ${sortBy === option ? styles.activeItem : ""}`}
-                    onClick={() => { setSortBy(option); setDropdownOpen(false); }}
-                  >
-                    {sortLabels[option]}
-                    {sortBy === option && <Check size={16} />}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <button className={styles.filterButton} onClick={() => setFilterModalOpen(true)}>
-            Фільтр
-            <img src={iconFilter} alt="filter" />
-          </button>
-        </div>
-      </div>
-
-      {/* Выбранные фильтры в виде тегов */}
-      {filters.cuisines?.length || filters.category || filters.time || filters.complexity || filters.diet ? (
-        <div className={styles.selectedFilters}>
-          <button
-            className={styles.clearFiltersButton}
-            onClick={() => setFilters({ cuisines: [], category: "", time: "", complexity: "", diet: "" })}
-          >
-            Очистити
-          </button>
-
-          {filters.cuisines?.map(c => <span key={c} className={styles.filterTag}>{c}</span>)}
-          {filters.category && <span className={styles.filterTag}>{filters.category}</span>}
-          {filters.time && <span className={styles.filterTag}>{filters.time}</span>}
-          {filters.complexity && <span className={styles.filterTag}>{filters.complexity}</span>}
-          {filters.diet && <span className={styles.filterTag}>{filters.diet}</span>}
-        </div>
-      ) : null}
-
-      <div className={styles.grid}>
-        {displayedRecipes.map(recipe => (
-          <RecipeCard key={recipe.id} {...recipe} />
-        ))}
-      </div>
-
-      {!showAll && filteredRecipes.length > 12 && (
-        <button className={styles.allButton} onClick={() => setShowAll(true)}>
-          Показати більше <ArrowDown size={24} />
+      <Header/>
+      <div className={styles.mainBlock}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
+          <ChevronLeft /> До рецептів
         </button>
-      )}
+        <div className={styles.headerBlock}>
+          <h1>Рекомендовано для тебе</h1>
+          <div className={styles.headerButtonBlock}>
+            <div className={styles.sortWrapper}>
+              <button
+                ref={buttonRef}
+                className={styles.SortButton}
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
+                Сортувати за  <ChevronDown size={24} />
+              </button>
+              {dropdownOpen && (
+                <div ref={menuRef} className={styles.dropdownMenu}>
+                  {(Object.keys(sortLabels) as SortOption[]).map(option => (
+                    <div
+                      key={option}
+                      className={`${styles.dropdownItem} ${sortBy === option ? styles.activeItem : ""}`}
+                      onClick={() => { setSortBy(option); setDropdownOpen(false); }}
+                    >
+                      {sortLabels[option]}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-      <FilterModal
-        isOpen={filterModalOpen}
-        onClose={() => setFilterModalOpen(false)}
-        onApply={(f) => { setFilters(f); setFilterModalOpen(false); }}
-      />
+            <button className={styles.filterButton} onClick={() => setFilterModalOpen(true)}>
+              Фільтр
+              <img src={iconFilter} alt="filter" />
+            </button>
+          </div>
+        </div>
+
+        {filters.cuisines?.length || filters.category || filters.time || filters.complexity || filters.diet ? (
+          <div className={styles.selectedFilters}>
+            <button
+              className={styles.clearFiltersButton}
+              onClick={() => setFilters({ cuisines: [], category: "", time: "", complexity: "", diet: "" })}
+            >
+              Очистити
+            </button>
+
+            {filters.cuisines?.map(c => <span key={c} className={styles.filterTag}>{c}</span>)}
+            {filters.category && <span className={styles.filterTag}>{filters.category}</span>}
+            {filters.time && <span className={styles.filterTag}>{filters.time}</span>}
+            {filters.complexity && <span className={styles.filterTag}>{filters.complexity}</span>}
+            {filters.diet && <span className={styles.filterTag}>{filters.diet}</span>}
+          </div>
+        ) : null}
+
+        <div className={styles.grid}>
+          {displayedRecipes.map(recipe => (
+            <RecipeCard key={recipe.id} {...recipe} />
+          ))}
+        </div>
+
+        {!showAll && filteredRecipes.length > 12 && (
+          <button className={styles.allButton} onClick={() => setShowAll(true)}>
+            Показати більше <ArrowDown size={24} />
+          </button>
+        )}
+
+        <FilterModal
+          isOpen={filterModalOpen}
+          onClose={() => setFilterModalOpen(false)}
+          onApply={(f) => { setFilters(f); setFilterModalOpen(false); }}
+        />
+      </div>
     </main>
   );
 };
