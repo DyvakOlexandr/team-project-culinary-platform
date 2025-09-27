@@ -1,18 +1,36 @@
 .main {
-   flex: 1;
-  height: 100vh;
-  padding: 3rem;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow: hidden; 
+}
+
+.mainBlock {
+  flex: 1; // занимает всё оставшееся место после Header
   box-sizing: border-box;
-  overflow-y: auto;
-    overflow-y: auto; /* Включаем вертикальный скролл */
-    overflow-x: hidden; /* Скрываем горизонтальный скролл */
-    height: 100vh
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto; // скроллим только тут
+  scroll-behavior: smooth;
+    &::-webkit-scrollbar {
+    width: 8px; /* ширина скролла */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f0f0f0; /* фон дорожки */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color:  rgba(51, 113, 121, 1);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
 }
 
 .savePageButtons{
-  margin-top: 60px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -51,12 +69,12 @@
     gap: 0.5rem;
     width: 218px;
     height: 48px;
-    color: rgba(37, 48, 62, 1);
+    color: rgba(252, 253, 253, 1);
     font-size: 16px;
     font-weight: 600;
     line-height: 22px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 1);
+    background: rgba(51, 113, 121, 1);
     cursor: pointer;
      transition: transform 0.3s ease-in-out;
     &:hover{
@@ -111,6 +129,7 @@
 }
 
 .collectionCard {
+  position: relative;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 1rem;
@@ -123,6 +142,10 @@
 
   &:hover {
     transform: scale(1.02);
+    .menuWrapper {
+      opacity: 1;   // показываем кнопку
+      pointer-events: auto;
+    }
   }
 }
 
@@ -239,7 +262,6 @@
 .emptyPage {
     flex: 1;
   height: 100vh;
-  padding: 3rem;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -250,19 +272,19 @@
 }
 
 .emptyTitle {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  margin: 0;
+color: rgba(28, 35, 39, 1);
+font-size: 28px;
+font-weight: 700;
+line-height: 38px;
+text-align: center;
 }
 
 .emptyText {
-  margin: 0;
-  font-size: 16px;
-  color: #666;
-  width: 365px;
-  text-align: center;
-  margin-bottom: 2rem;
+color: rgba(58, 65, 69, 1);
+font-size: 18px;
+font-weight: 400;
+line-height: 25px;
+text-align: center;
 }
 
 .emptyBlock{
@@ -429,7 +451,10 @@ line-height: 22px;
   position: absolute;
   top: 24px;
   right: 24px;
-  z-index: 20;
+  z-index: 200;
+    opacity: 0;          // по умолчанию скрыта
+  pointer-events: none; // чтобы не мешала кликам
+  transition: opacity 0.2s ease;
 }
 
 .menuPopup {

@@ -51,8 +51,6 @@ interface Collection {
 const RecipesPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const targetCategory = location.state?.category || "Сніданок";
-  const selectedDate = location.state?.date;
   const collectionId = location.state?.collectionId;
 
   const allRecipes = getAllRecipes();
@@ -158,11 +156,7 @@ const RecipesPage: React.FC = () => {
       });
       localStorage.setItem("savedCollections", JSON.stringify(updatedCollections));
       navigate(`/collection/${collectionId}`);
-    } else {
-      navigate("/planner", {
-        state: { addedRecipe: recipe, category: targetCategory, date: selectedDate },
-      });
-    }
+    } 
   };
 
   return (

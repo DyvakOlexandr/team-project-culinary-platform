@@ -423,7 +423,7 @@ const handleAddMealIngredients = (
   return (
     <main className={styles.main}>
       <Header />
-
+      <div className={styles.mainBlock}>
       <section className={styles.calendarBlock}>
         <div className={styles.calendarHeader}>
           <button onClick={handlePrevMonth}><ChevronLeft size={18} /></button>
@@ -980,7 +980,7 @@ const handleAddMealIngredients = (
 
 
 
-
+     </div>
     </main>
   );
 };

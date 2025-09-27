@@ -6,25 +6,9 @@
   box-sizing: border-box;
   border-bottom: 1px solid rgba(227, 230, 232, 1);
   background: rgba(252, 253, 253, 1);
+  padding: 1rem;
   
 
-  .backButton {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap:0.5rem;
-    border: none;
-    cursor: pointer;
-    background: none;
-     transition: transform 0.3s ease-in-out;
-     color: rgba(37, 48, 62, 1);
-     font-size: 14px;
-     font-weight: 500;
-     line-height: 19px;
-    &:hover{
-      transform: scale(1.02);
-    }
-  }
 
 .searchWrapper {
   position: relative;

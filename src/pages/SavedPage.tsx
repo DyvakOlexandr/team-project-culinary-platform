@@ -243,7 +243,7 @@ useEffect(() => {
       onDragEnd={handleDragEnd}
     >
       <Header />
-
+      <div className={styles.mainBlock}>
       {!isEmpty && (
         <div className={styles.savePageButtons}>
           <div className={styles.sortWrapper}>
@@ -411,6 +411,7 @@ useEffect(() => {
           </div>
         </div>
       )}
+      </div>
     </main>
   );
 };

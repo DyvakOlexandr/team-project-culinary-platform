@@ -6,8 +6,8 @@ import RecipeCard from "../components/RecipeCard";
 import Header from "../components/Header";
 import styles from "./CollectionPage.module.scss";
 import iconBook from "../assets/menu_icon/icon-park-outline_notebook-one.svg";
-import iconEmpty from "../assets/EmptyPage.png"; 
-import { Plus, ChevronDown } from "lucide-react";
+import iconEmpty from "../assets/EmptyPage.png";
+import { Plus, ChevronDown, ChevronLeft } from "lucide-react";
 import iconEdit from "../assets/icon-park-outline_edit.svg";
 import { addMessage } from "../data/messagesService";
 
@@ -39,52 +39,45 @@ const CollectionPage: React.FC = () => {
 
   const isEmptyCollection = savedRecipes.length === 0;
 
+  const handleAddRecipeToCollection = (recipe: Recipe) => {
+    if (collection.recipes.some(r => r.id === recipe.id)) return;
 
+    const updatedCollections = collections.map(col => {
+      if (col.id === collection.id) {
+        return {
+          ...col,
+          recipes: [...col.recipes, { id: recipe.id, dateSaved: new Date().toISOString() }],
+        };
+      }
+      return col;
+    });
 
-const handleAddRecipeToCollection = (recipe: Recipe) => {
-  if (collection.recipes.some(r => r.id === recipe.id)) return;
+    localStorage.setItem("savedCollections", JSON.stringify(updatedCollections));
+    setCollections(updatedCollections);
+  };
 
-  const updatedCollections = collections.map(col => {
-    if (col.id === collection.id) {
-      return {
-        ...col,
-        recipes: [...col.recipes, { id: recipe.id, dateSaved: new Date().toISOString() }],
-      };
+  useEffect(() => {
+    if (!collection || collection.recipes.length === 0) return;
+
+    const processed = JSON.parse(localStorage.getItem("messagesCreated") || "[]") as string[];
+    const lastRecipe = [...collection.recipes].sort(
+      (a, b) => new Date(b.dateSaved).getTime() - new Date(a.dateSaved).getTime()
+    )[0];
+
+    if (lastRecipe && !processed.includes(lastRecipe.id)) {
+      const recipeDetails = getAllRecipes().find(recipe => recipe.id === lastRecipe.id);
+      if (recipeDetails) {
+        addMessage({
+          title: "Рецепт успішно збережено",
+          text: `Ви зберегли «${recipeDetails.title}» у своїй колекції. Тепер він доступний у ваших збережених рецептах`,
+          source: "Збережені рецепти",
+        });
+
+        processed.push(lastRecipe.id);
+        localStorage.setItem("messagesCreated", JSON.stringify(processed));
+      }
     }
-    return col;
-  });
-
-  localStorage.setItem("savedCollections", JSON.stringify(updatedCollections));
-  setCollections(updatedCollections);
-};
-  // useEffect для создания сообщения только для последнего добавленного рецепта
-useEffect(() => {
-  if (!collection || collection.recipes.length === 0) return;
-
-  // Достаём список обработанных рецептов
-  const processed = JSON.parse(localStorage.getItem("messagesCreated") || "[]") as string[];
-
-  // Находим последний добавленный рецепт (по дате)
-  const lastRecipe = [...collection.recipes].sort(
-    (a, b) => new Date(b.dateSaved).getTime() - new Date(a.dateSaved).getTime()
-  )[0];
-
-  if (lastRecipe && !processed.includes(lastRecipe.id)) {
-    const recipeDetails = getAllRecipes().find(recipe => recipe.id === lastRecipe.id);
-    if (recipeDetails) {
-      addMessage({
-        title: "Рецепт успішно збережено",
-        text: `Ви зберегли «${recipeDetails.title}» у своїй колекції. Тепер він доступний у ваших збережених рецептах`,
-        source: "Збережені рецепти",
-      });
-
-      // Добавляем id рецепта в список обработанных
-      processed.push(lastRecipe.id);
-      localStorage.setItem("messagesCreated", JSON.stringify(processed));
-    }
-  }
-}, [collection]);
-
+  }, [collection]);
 
   const handleDeleteRecipe = (recipeId: string) => {
     const updatedCollections = collections.map(col => {
@@ -142,121 +135,124 @@ useEffect(() => {
 
   return (
     <main className={styles.main}>
-      <Header
-        showSearch
-        showBackButton
-        backButtonLabel="До колекцій"
-        onBackClick={() => navigate("/saved")}
-      />
-      <div className={styles.collectionInfoLine}>
-        <div className={styles.collectionNameBlock}>
-          <div className={styles.collectionTitleBlock}>
-            <div className={styles.titleBlock}>
-              <h1 className={styles.collectionName}>{collection.name}</h1>
+      <Header />
+      <div className={styles.mainBlock}>
+        <button className={styles.backButton} onClick={() => navigate("/collection")}>
+          <ChevronLeft /> До колекцій
+        </button>
 
-              <div className={styles.menuWrapper}>
-                <button
-                  className={styles.menuButton}
-                  onClick={() => setOpenMenu(prev => !prev)}
-                >
-                  <img src={iconEdit} alt="edit" />
-                </button>
+        <div className={styles.collectionInfoLine}>
+          <div className={styles.collectionNameBlock}>
+            <div className={styles.collectionTitleBlock}>
+              <div className={styles.titleBlock}>
+                <h1 className={styles.collectionName}>{collection.name}</h1>
 
-                {openMenu && (
-                  <div className={styles.menuPopup}>
+                <div className={styles.menuWrapper}>
+                  <button
+                    className={styles.menuButton}
+                    onClick={() => setOpenMenu(prev => !prev)}
+                  >
+                    <img src={iconEdit} alt="edit" />
+                  </button>
+
+                  {openMenu && (
+                    <div className={styles.menuPopup}>
+                      <button
+                        onClick={() =>
+                          navigate("/recipes", { state: { collectionId: collection.id } })
+                        }
+                      >
+                        Додати рецепт
+                      </button>
+
+                      {savedRecipes.length > 0 && (
+                        <div>
+                          {savedRecipes.map(r => (
+                            <button key={r.id} onClick={() => handleDeleteRecipe(r.id)}>
+                              Видалити {r.title}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {!isEmptyCollection && (
+                <div className={styles.savePageButtons}>
+                  <div className={styles.sortWrapper}>
                     <button
-                      onClick={() =>
-                        navigate("/recipes", { state: { collectionId: collection.id } })
-                      }
+                      className={styles.allButton}
+                      onClick={e => {
+                        e.stopPropagation();
+                        setSortMenuOpen(prev => !prev);
+                      }}
                     >
-                      Додати рецепт
+                      Сортувати за <ChevronDown size={16} />
                     </button>
 
-                    {savedRecipes.length > 0 && (
-                      <div>
-                        {savedRecipes.map(r => (
-                          <button key={r.id} onClick={() => handleDeleteRecipe(r.id)}>
-                            Видалити {r.title}
-                          </button>
-                        ))}
+                    {sortMenuOpen && (
+                      <div
+                        className={styles.dropdownMenu}
+                        onClick={e => e.stopPropagation()}
+                      >
+                        {["За популярністю", "За кількістю рецептів", "За новизною", "За залученістю"].map(
+                          option => (
+                            <div
+                              key={option}
+                              className={`${styles.dropdownItem} ${
+                                sortOption === option ? styles.activeItem : ""
+                              }`}
+                              onClick={() => handleSortSelect(option as typeof sortOption)}
+                            >
+                              {option}
+                            </div>
+                          )
+                        )}
                       </div>
                     )}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
-            <div className={styles.savePageButtons}>
-              <div className={styles.sortWrapper}>
-                <button
-                  className={styles.allButton}
-                  onClick={e => {
-                    e.stopPropagation();
-                    setSortMenuOpen(prev => !prev);
-                  }}
-                >
-                  Сортувати за <ChevronDown size={16} />
-                </button>
-
-                {sortMenuOpen && (
-                  <div
-                    className={styles.dropdownMenu}
-                    onClick={e => e.stopPropagation()}
-                  >
-                    {["За популярністю", "За кількістю рецептів", "За новизною", "За залученістю"].map(
-                      option => (
-                        <div
-                          key={option}
-                          className={`${styles.dropdownItem} ${
-                            sortOption === option ? styles.activeItem : ""
-                          }`}
-                          onClick={() => handleSortSelect(option as typeof sortOption)}
-                        >
-                          {option}
-                        </div>
-                      )
-                    )}
-                  </div>
-                )}
-              </div>
+            <div className={styles.recipeCountBlock}>
+              <img src={iconBook} alt="book" />
+              <p className={styles.recipeCount}>
+                {savedRecipes.length}{" "}
+                {savedRecipes.length === 1 ? "рецепт" : "рецептів"}
+              </p>
             </div>
           </div>
+        </div>
 
-          <div className={styles.recipeCountBlock}>
-            <img src={iconBook} alt="book" />
-            <p className={styles.recipeCount}>
-              {savedRecipes.length}{" "}
-              {savedRecipes.length === 1 ? "рецепт" : "рецептів"}
+        {isEmptyCollection ? (
+          <div className={styles.emptyBlock}>
+            <img className={styles.emptyImage} src={iconEmpty} alt="empty" />
+            <h2 className={styles.emptyTitle}>Ваша колекція порожня</h2>
+            <p className={styles.emptyText}>
+              Збирайте свої улюблені рецепти <br /> разом в одному місці
             </p>
+            <button
+              className={styles.ingredientsAddButton}
+              onClick={() => navigate("/recipes", { state: { collectionId: collection.id } })}
+            >
+              Додати рецепт <Plus size={16} />
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className={styles.recipesGrid}>
+            {savedRecipes.map(recipe => (
+              <RecipeCard
+                key={recipe.id}
+                {...recipe}
+                onSave={() => handleAddRecipeToCollection(recipe)}
+              />
+            ))}
+          </div>
+        )}
       </div>
-
-      {isEmptyCollection ? (
-        <div className={styles.emptyBlock}>
-          <img className={styles.emptyImage} src={iconEmpty} alt="empty" />
-          <h2 className={styles.emptyTitle}>Ваша колекція порожня</h2>
-          <p className={styles.emptyText}>
-            Збирайте свої улюблені рецепти <br /> разом в одному місці
-          </p>
-          <button
-            className={styles.ingredientsAddButton}
-            onClick={() => navigate("/recipes", { state: { collectionId: collection.id } })}
-          >
-            Додати рецепт <Plus size={16} />
-          </button>
-        </div>
-      ) : (
-        <div className={styles.recipesGrid}>
-         {savedRecipes.map(recipe => (
-  <RecipeCard
-    key={recipe.id}
-    {...recipe}
-    onSave={() => handleAddRecipeToCollection(recipe)}
-  />
-))}
-        </div>
-      )}
     </main>
   );
 };

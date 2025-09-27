@@ -1,13 +1,53 @@
 .main {
-   flex: 1;
-  height: 100vh;
-  padding: 3rem;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  overflow-y: auto;
+  height: 100vh;
+  overflow: hidden; 
 }
 
+.mainBlock {
+  flex: 1; // занимает всё оставшееся место после Header
+  box-sizing: border-box;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; // скроллим только тут
+   scroll-behavior: smooth;
+    &::-webkit-scrollbar {
+    width: 8px; /* ширина скролла */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f0f0f0; /* фон дорожки */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color:  rgba(51, 113, 121, 1);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+.backButton {
+    width: 150px;
+    background: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5rem;
+    border: none;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  
+     transition: transform 0.3s ease-in-out;
+     color: rgba(51, 113, 121, 1);
+     font-size: 16px;
+     font-weight: 600;
+     line-height: 22px;
+    &:hover{
+      transform: scale(1.01);
+    }
+  }
 
 
 
@@ -31,7 +71,7 @@
 
 /* Сетка с рецептами */
 .recipesGrid {
-   margin-top: 2rem;
+  margin-top: 2rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
@@ -46,19 +86,8 @@
 
   // Если только 1 карточка
   > *:only-child {
-    grid-column: 1 / -1; // растянуть на весь контейнер
-  }
-
-  // Если только 2 карточки
-  > *:first-child:nth-last-child(2),
-  > *:nth-child(2):last-child {
-    grid-column: span 1; // каждая по одной колонке
-  }
-
-  // Центрируем 2 карточки в сетке
-  &:has(> *:first-child:nth-last-child(2)) {
-    grid-template-columns: repeat(2, 1fr);
-    justify-content: center;
+    grid-column: auto; // не растягиваем
+    
   }
 }
 
@@ -155,19 +184,20 @@
   }
 
   .emptyTitle {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  margin: 0;
+color: rgba(28, 35, 39, 1);
+font-size: 28px;
+font-weight: 700;
+line-height: 38px;
+text-align: center;
+margin: 0;
 }
 
 .emptyText {
-  margin: 0;
-  font-size: 16px;
-  color: #666;
-  width: 365px;
-  text-align: center;
-  margin-bottom: 2rem;
+color: rgba(58, 65, 69, 1);
+font-size: 18px;
+font-weight: 400;
+line-height: 25px;
+text-align: center;
 }
 
 .emptyBlock{
@@ -188,12 +218,12 @@
     gap: 0.5rem;
     width: 218px;
     height: 48px;
-    color: rgba(37, 48, 62, 1);
+    color: rgba(252, 253, 253, 1);
     font-size: 16px;
     font-weight: 600;
     line-height: 22px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 1);
+    background: rgba(51, 113, 121, 1);
     cursor: pointer;
      transition: transform 0.3s ease-in-out;
     &:hover{

@@ -22,7 +22,8 @@ import PremiumPage from "./pages/PremiumPage";
 import ProfilePage from "./pages/ProfilePage";
 import EditProfilePage from "./pages/EditProfilePage";
 import AccountPage from "./pages/AccountPage";
-import MesagePage from "./pages/MessagesPage"
+import MesagePage from "./pages/MessagesPage";
+import CollectionsPage from "./pages/SavedPage";
 
 const App: React.FC = () => {
   return (
@@ -52,6 +53,7 @@ const App: React.FC = () => {
                 <Route path="/edit-profile" element={<EditProfilePage />} />
                 <Route path="/account" element={<AccountPage />} />
                 <Route path="/mesage" element={<MesagePage/>} />
+                <Route path="/collection" element={<CollectionsPage />} />
             </Routes>
           </main>
         </div>
