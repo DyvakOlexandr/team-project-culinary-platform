@@ -122,7 +122,7 @@ const ShoppingListPage: React.FC = () => {
   return (
     <main className={styles.main}>
       <Header />
-
+      <div className={styles.mainBlock}>
       {!noLists && (
         <div className={styles.savePageButtons}>
           <div className={styles.sortWrapper}>
@@ -267,6 +267,7 @@ const ShoppingListPage: React.FC = () => {
           }
         />
       )}
+      </div>
     </main>
   );
 };

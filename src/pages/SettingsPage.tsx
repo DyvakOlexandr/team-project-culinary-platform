@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import styles from "./SettingsPage.module.scss";
-import iconPeople from "../assets/icon-park-outline_people.svg";
-import iconTrash from "../assets/icon-park-outline_delete.svg";
 import iconAllert from "../assets/icon-park-outline_caution.svg";
 import saveButton from "../assets/Group.svg";
-import { ChevronDown, Plus } from "lucide-react";
-import iconEnd from "../assets/icon-park-outline_logout.svg"
-import iconPlat from "../assets/icon-park-outline_afferent-four.svg"
+import { Check, ChevronDown, Plus } from "lucide-react";
+import iconEnd from "../assets/icon-park-outline_logout.svg";
+import iconPlat from "../assets/icon-park-outline_afferent-four.svg";
+import deleteIcon from "../assets/icon-park-outline_delete_white.svg";
 
 const sections = [
   "Обліковий запис",
@@ -199,12 +198,9 @@ const [settings, setSettings] = useState<SettingsData>(() => {
       case "Обліковий запис":
         return (
           <>
-            <h2 className={styles.contentTitle}>
-              <img src={iconPeople} alt="people" /> {activeSection}
-            </h2>
             {["email", "phone", "password"].map(field => (
               <div key={field} className={styles.inputGroup}>
-                <label htmlFor={field}>
+                <label  htmlFor={field}>
                   {field === "email" ? "Адреса електронної пошти" : field === "phone" ? "Номер телефону" : "Пароль"}
                 </label>
                 <div className={styles.inputRow}>
@@ -216,7 +212,7 @@ const [settings, setSettings] = useState<SettingsData>(() => {
                       onChange={e => updateSetting(field as keyof SettingsData, e.target.value)}
                       placeholder={field === "email" ? "example@gmail.com" : field === "phone" ? "+38 (050) 557 57 57" : "**********"}
                     />
-                    {(settings[field as keyof SettingsData] as string) && <span className={styles.checkmark}>✔</span>}
+                    {(settings[field as keyof SettingsData] as string) && <span className={styles.checkmark}><Check/></span>}
                   </div>
                   <button
                     className={styles.saveButton}
@@ -231,12 +227,13 @@ const [settings, setSettings] = useState<SettingsData>(() => {
               </div>
             ))}
             <h2 className={styles.deletetTitle}>
-              <img src={iconTrash} alt="trash" /> Видалити обліковий запис
+               Видалити обліковий запис
             </h2>
             <div className={styles.alertGroup}>
               <img src={iconAllert} alt="allert" />
               <p className={styles.alertText}>
-                Попередження: цю дію неможливо скасувати. Видалення облікового запису призведе до остаточного видалення всіх ваших даних.
+               Попередження: цю дію неможливо скасувати.<br/>
+Видалення облікового запису призведе до остаточного видалення всіх ваших даних, <br/> включаючи збережені рецепти, плани харчування та списки покупок.
               </p>
             </div>
             <div className={styles.checkboxGroup}>
@@ -246,7 +243,7 @@ const [settings, setSettings] = useState<SettingsData>(() => {
               </label>
             </div>
             <button className={styles.deleteButton} disabled={!confirmDelete} onClick={handleDeleteAccount}>
-              Видалити мій обліковий запис
+              Видалити мій обліковий запис <img src={deleteIcon} alt="delete"/>
             </button>
           </>
         );
@@ -616,6 +613,7 @@ const [settings, setSettings] = useState<SettingsData>(() => {
   return (
     <main className={styles.main}>
       <Header />
+      <div className={styles.mainBlock}>
       <div className={styles.settingsWrapper}>
         <aside className={styles.sidebar}>
           <ul>
@@ -627,6 +625,7 @@ const [settings, setSettings] = useState<SettingsData>(() => {
           </ul>
         </aside>
         <section className={styles.content}>{renderSectionContent()}</section>
+      </div>
       </div>
     </main>
   );

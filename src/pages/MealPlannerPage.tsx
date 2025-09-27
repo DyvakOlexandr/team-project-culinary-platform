@@ -1,7 +1,7 @@
 import React, { useState, useEffect , useRef} from "react";
 import styles from "./MealPlannerPage.module.scss";
 import Header from "../components/Header";
-import { ChevronRight, ChevronLeft, Plus,  MoreVertical, ChevronDown, Check } from "lucide-react";
+import { ChevronRight, ChevronLeft, Plus,  MoreVertical, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BreakfastIcon from "../assets/menu_icon/icon-park-outline_snacks.svg";
 import LunchIcon from "../assets/menu_icon/icon-park-outline_bowl.svg";
@@ -186,6 +186,8 @@ useEffect(() => {
 
   const handleSelectDate = (d: Date) => setSelectedDate(d);
 
+  
+
   // Подсчёт количества блюд на дату
   const mealsCountOnDate = (d: Date) =>
     mealCardsList.filter(c => c.date === formatDateKey(d)).length;
@@ -239,6 +241,8 @@ const progress = {
   fat: Math.min(Math.round((dailyTotals.fat / nutritionGoals.fat) * 100), 100),
   carbs: Math.min(Math.round((dailyTotals.carbs / nutritionGoals.carbs) * 100), 100),
 };
+
+
 
 const handleEditAllGoals = () => {
   const newCalories = prompt("Введіть нову ціль калорій:", nutritionGoals.calories.toString());
@@ -417,6 +421,19 @@ const handleAddMealIngredients = (
   });
 };
 
+const getWeekLabel = (date: Date) => {
+  const startOfWeek = new Date(date);
+  startOfWeek.setDate(date.getDate() - ((date.getDay() + 6) % 7));
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+  const monthName = monthNames[startOfWeek.getMonth()];
+  const year = startOfWeek.getFullYear();
+
+  return `${monthName} ${startOfWeek.getDate()}–${endOfWeek.getDate()}, ${year}`;
+};
+
 
 
 
@@ -427,7 +444,11 @@ const handleAddMealIngredients = (
       <section className={styles.calendarBlock}>
         <div className={styles.calendarHeader}>
           <button onClick={handlePrevMonth}><ChevronLeft size={18} /></button>
-          <span>{monthNames[currentMonth]} {currentYear}</span>
+          <span className={styles.monthNames}>
+  {viewMode === "month"
+    ? `${monthNames[currentMonth]} ${currentYear}`
+    : getWeekLabel(selectedDate)}
+</span>
           <button onClick={handleNextMonth}><ChevronRight size={18} /></button>
           <div className={styles.switchWrapper}>
             <label className={styles.switch}>
@@ -568,7 +589,7 @@ const handleAddMealIngredients = (
         className={styles.addButton}
         onClick={() => setIsModalOpen(true)}
       >
-        <Plus size={18} /> Додати
+       Додати страву<Plus size={18} />
       </button>
   
        )}
@@ -614,7 +635,7 @@ const handleAddMealIngredients = (
     className={styles.addButton}
     onClick={() => setIsModalOpen(true)}
   >
-    <Plus size={18} /> Додати
+       Додати страву<Plus size={18} />
   </button>
    <AddMealModal
   isOpen={isModalOpen}
@@ -859,7 +880,7 @@ const handleAddMealIngredients = (
                   }}
                 >
                   {sortLabels[option]}
-                  {sortMode === option && <Check size={16} />}
+                  {sortMode === option }
                 </div>
               ))}
             </div>
@@ -867,8 +888,10 @@ const handleAddMealIngredients = (
         </div>
 
         {/* 🔽 Кнопка "Додати у список" */}
-        <button
-  className={styles.ingredientsAddButton}
+       <button
+  className={`${styles.ingredientsAddButton} ${
+    crossedIngredients.length > 0 ? styles.active : ""
+  }`}
   onClick={() => {
     // Берем только выбранные ингредиенты
     const selectedIngredients = allIngredients.filter((_, index) =>
@@ -887,7 +910,7 @@ const handleAddMealIngredients = (
         amount: ing.amount,
         unit: ing.unit,
       })),
-      "Інгредієнти на день" // название блока или можно любой другой label
+      "Інгредієнти на день"
     );
 
     // Сбрасываем вычеркнутые
@@ -897,7 +920,6 @@ const handleAddMealIngredients = (
   Додати у список
   <Plus size={18} />
 </button>
-
 
 
       </div>
@@ -946,7 +968,7 @@ const handleAddMealIngredients = (
                         textDecoration: crossedIngredients.includes(index)
                           ? "line-through"
                           : "none",
-                        color: crossedIngredients.includes(index) ? "#888" : "#000",
+                        color: crossedIngredients.includes(index) ? "rgba(128, 138, 142, 1)" : "rgba(28, 35, 39, 1)",
                       }}
                     >
                       {ingredient.name}
@@ -956,12 +978,7 @@ const handleAddMealIngredients = (
                   <div className={styles.ingredientAmountBlock}>
                     <span
                       className={styles.ingredientAmount}
-                      style={{
-                        textDecoration: crossedIngredients.includes(index)
-                          ? "line-through"
-                          : "none",
-                        color: crossedIngredients.includes(index) ? "#888" : "#000",
-                      }}
+                     
                     >
                       {ingredient.amount ?? ""} {ingredient.unit ?? ""}
                     </span>

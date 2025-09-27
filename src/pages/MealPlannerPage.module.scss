@@ -57,6 +57,14 @@
   }
 }
 
+.monthNames{
+  color: rgba(28, 35, 39, 1);
+font-size: 20px;
+font-weight: 700;
+line-height: 27px;
+text-align: center;
+}
+
 .switchWrapper { margin-left: auto; }
 
 .switch {
@@ -71,13 +79,13 @@
     position: absolute;
     inset: 0;
     border-radius: 16px;
-    background: #d5d5d5;
+    background:  rgba(227, 230, 232, 1);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 14px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
 
     .labelMonth, .labelWeek { flex: 1; text-align: center; z-index: 1; }
 
@@ -91,13 +99,19 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-weight: 500;
       z-index: 2;
       transition: all 0.3s;
+      color:  rgba(41, 90, 97, 1);
+font-size: 16px;
+font-weight: 600;
+line-height: 22px;
     }
   }
 
-  input:checked + .slider::before { transform: translateX(92px); content: "Тиждень"; }
+  input:checked + .slider::before {
+    transform: translateX(92px); 
+    content: "Тиждень"; 
+  }
 }
 
 /* Week & Month common */
@@ -106,12 +120,12 @@
   grid-template-columns: repeat(7, 1fr);
   text-align: right;
   gap: 1.5rem;
-  color: rgba(0, 0, 0, 1);
-   font-size: 20px;
-  font-weight: 500;
-  line-height: 27px;
   margin-bottom: 20px;
   padding-right: 1.5rem;
+  color:  rgba(28, 35, 39, 1);
+font-size: 18px;
+font-weight: 600;
+line-height: 25px;
 }
 
 .monthGrid, .weekGrid {
@@ -136,7 +150,8 @@
   padding: 1rem;
   font-size: 16px;
   font-weight: 500;
-  color: rgba(0, 0, 0, 1);
+  line-height: 22px;
+  color: rgba(28, 35, 39, 1);
 
   &:nth-child(7n) { border-right: none; }
   &:nth-last-child(-n+7) { border-bottom: none; }
@@ -145,9 +160,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
+   width: 36px;
+height: 36px;
+border-radius: 12px;
     background: transparent;
     transition: all 0.3s;
     z-index: 2; /* число поверх dots */
@@ -172,19 +187,16 @@
 }
   /* Сегодняшнее число */
 .today {
-    border: 2px solid #4caf50 ;
-    color: black;
+    border: 2px solid rgba(51, 113, 121, 1);
+    color: rgba(51, 113, 121, 1);
+    font-weight: 600;
   }
 
   /* Выбранная дата */
 .selectedDay {
-  background: #4caf50 !important;
- color: rgba(255, 255, 255, 1);
-}
-
-.selectedToday{
-  background: #4caf50 !important;
- color: rgba(255, 255, 255, 1);
+  background: rgba(232, 242, 242, 1) !important;
+ color:rgba(51, 113, 121, 1);
+ font-weight: 600;
 }
 
 
@@ -210,11 +222,11 @@
   margin-bottom: 20px;
 
   h2 {
-    color: rgba(0, 0, 0, 1);
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 27px;
-    
+  color: rgba(28, 35, 39, 1);
+font-size: 24px;
+font-weight: 700;
+line-height: 33px;
+text-align: right;
   }
 }
 
@@ -227,8 +239,8 @@
    width: 196px;
    height: 48px;
    border-radius: 12px;
-   background: rgba(228, 228, 228, 1);
-   color: rgba(37, 48, 62, 1);
+   background: rgba(51, 113, 121, 1);
+   color: rgba(252, 253, 253, 1);
    font-size: 16px;
    font-weight: 600;
   line-height: 22px;
@@ -236,11 +248,11 @@
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
    &:disabled {
-    background-color: #ccc;
-    color: #666;
+    background-color: rgba(232, 242, 242, 1);
+    color: rgba(128, 138, 142, 1);
     opacity: 0.7;
   }
 }
@@ -248,12 +260,12 @@
 .mealCategories {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 40px;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .categoryButton {
-  color: rgba(114, 114, 114, 1);
+  color: rgba(95, 104, 109, 1);
 font-size: 16px;
 font-weight: 500;
 line-height: 22px;
@@ -271,8 +283,8 @@ line-height: 22px;
 }
 
 .active {
-border-bottom: 2px solid rgba(96, 96, 96, 1);
-color: rgba(37, 48, 62, 1);
+border-bottom: 2px solid  rgba(51, 113, 121, 1);
+color:  rgba(51, 113, 121, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
@@ -281,10 +293,10 @@ line-height: 22px;
  /* Карты */
 
 .mealCards {
-  margin-top: 3rem;
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1.5rem;
 } 
 
 .mealCardHeader{
@@ -297,14 +309,17 @@ line-height: 22px;
 .mealCard {
   border-bottom: 1px solid #e5e7eb;
   padding-bottom: 1.5rem;
-  padding-top: 1rem;
+
 
   h3 {
-    font-size: 16px;
-    font-weight: 600;
+color: rgba(28, 35, 39, 1);
+font-size: 18px;
+font-weight: 600;
+line-height: 25px;
+text-align: left;
   }
   &:last-child {
-    border-bottom: none; // прибираємо в останньої картки
+    border-bottom: none;
   }
 
 }
@@ -327,19 +342,20 @@ height: 88px;
 }
 
 .categoryName{
-  margin-left: 0.5rem;
-  color: rgba(0, 0, 0, 1);
+  color: rgba(28, 35, 39, 1);
 font-size: 20px;
-font-weight: 600;
+font-weight: 700;
 line-height: 27px;
+text-align: left;
 }
 
 .caloriesHeader{
-  margin-left: 1.5rem;
-  color: rgba(161, 161, 161, 1);
-font-size: 12px;
+  margin-left: 1rem;
+color: rgba(128, 138, 142, 1);
+font-size: 14px;
 font-weight: 500;
-line-height: 16px;
+line-height: 19px;
+text-align: left;
 }
 
 .mealTitle{
@@ -357,14 +373,11 @@ line-height: 16px;
 }
 
 .mealInfo{
+  margin-top: 0.5rem;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 1rem;
-  color: rgba(161, 161, 161, 1);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 19px;
 }
 
 .mealCardActionsWrapper {
@@ -375,18 +388,17 @@ line-height: 16px;
 }
 
 .menuToggleBtn {
+  width: 40px;
+  height: 40px;
   background: none;
   border: none;
   cursor: pointer;
-  transition: transform 0.3s ease-in-out;
-
+  border-radius: 0; 
+  transition: background 0.3s ease-in-out, border-radius 0.3s ease-in-out;
 
   &:hover {
-    transform: scale(1.2);
-  }
-
-  svg {
-    color: #555;
+    border-radius: 12px;
+    background: rgba(235, 241, 242, 1);
   }
 }
 
@@ -439,17 +451,28 @@ line-height: 16px;
 }
 
 .time{
+  margin: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.25rem;
+  color: rgba(128, 138, 142, 1);
+font-size: 14px;
+font-weight: 500;
+line-height: 19px;
 }
 
 .caloriesRow {
+  margin: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.25rem;
+  color: rgba(128, 138, 142, 1);
+font-size: 14px;
+font-weight: 500;
+line-height: 19px;
+
 }
 
 .servingsControlCard{
@@ -457,6 +480,10 @@ line-height: 16px;
   flex-direction: row;
   align-items: center;
   gap: 0.25rem;
+  color: rgba(128, 138, 142, 1);
+  font-size: 14px;
+font-weight: 500;
+line-height: 19px;
 }
 
 /*Дневной план*/
@@ -470,26 +497,32 @@ line-height: 16px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-     border-bottom: 1px solid #e5e7eb;
+  }
+
+  .dailiTitle{
+    color: rgba(28, 35, 39, 1);
+font-size: 24px;
+font-weight: 700;
+line-height: 33px;
+text-align: left;
   }
 
   .dailyPlanInfo {
-    margin-top: 40px;
-  display: flex;
-  gap: 40px; /* расстояние между блоками */
-  flex-wrap: wrap; /* перенос на новую строку, если не помещается */
+    margin-top: 2rem;
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 40px;
 
   .goalRow {
-    flex: 1 1 200px; /* блок растет и сжимается, базовая ширина 200px */
+    flex: 1 1 200px; 
     display: flex;
     flex-direction: column;
-    align-items: start; /* центрируем контент внутри блока */
-    gap: 12px;
+    align-items: start;
 
 
     .progressBar {
       width: 100%;
-      height: 10px;
+      height: 8px;
       background: #e6e6e6;
       border-radius: 6px;
       overflow: hidden;
@@ -497,7 +530,7 @@ line-height: 16px;
 
       .progressFill {
   height: 8px;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: width 0.3s ease;
 }
 
@@ -520,38 +553,37 @@ line-height: 16px;
 }
 
 .nutrient {
+  margin: 0;
  display: flex;
   justify-content: space-between;
-  width: 100%; /* добавляем ширину, чтобы space-between сработал */
-  font-size: 14px;
+  width: 100%; 
+  margin-bottom: 0.5rem;
 
   .nutrientName {
-    color: rgba(0, 0, 0, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 14px;
-font-weight: 500;
+font-weight: 600;
 line-height: 19px;
+text-align: left;
   }
 
   .nutrientValue {
-    color: rgba(0, 0, 0, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
+text-align: left;
   }
 }
 
 .dailyTarget {
-  color: rgba(117, 117, 118, 1);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 19px;
-}
-
-.dailiTitle{
-  color: rgba(0, 0, 0, 1);
-font-size: 20px;
-font-weight: 600;
-line-height: 27px;
+  margin: 0;
+  margin-top: 0.5rem;
+  color: rgba(95, 104, 109, 1);
+font-size: 14px;
+font-weight: 400;
+line-height: 19px;
+text-align: left;
 }
 
  //*Інгредієнти*//
@@ -573,10 +605,11 @@ line-height: 27px;
 }
 
 .ingredientsTitle{
-  color: rgba(0, 0, 0, 1);;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 27px;
+color: rgba(28, 35, 39, 1);
+font-size: 24px;
+font-weight: 700;
+line-height: 33px;
+text-align: left;
 }
 
 .ingredientsButtons{
@@ -618,8 +651,8 @@ line-height: 22px;
     gap: 0.5rem;
     border-radius: 12px;
     border: none;
-     background: rgba(228, 228, 228, 1);
-     color: rgba(37, 48, 62, 1);
+     background: rgba(232, 242, 242, 1);
+     color: rgba(128, 138, 142, 1);
      font-size: 16px;
      font-weight: 600;
      line-height: 22px;
@@ -628,6 +661,11 @@ line-height: 22px;
   &:hover{
     transform: scale(1.05);
   }
+}
+
+.ingredientsAddButton.active {
+  background-color: rgba(51, 113, 121, 1); 
+  color: #fff;
 }
 
  
@@ -642,6 +680,14 @@ line-height: 22px;
   flex-direction: row;
   gap: 1.5;
   align-items: center;
+}
+
+.ingredientAmount{
+  color:  rgba(28, 35, 39, 1);
+font-size: 16px;
+font-weight: 400;
+line-height: 22px;
+text-align: left;
 }
 
 .ingredientItem {
@@ -670,12 +716,6 @@ line-height: 22px;
 }
 
 
-.ingredientAmount {
-color:  rgba(28, 35, 39, 1);
-font-size: 16px;
-font-weight: 400;
-line-height: 22px;
-}
 
 .ingredientDone {
   text-decoration: line-through;
@@ -683,17 +723,17 @@ line-height: 22px;
 }
 
 .ingredientName{
-  color: rgba(37, 48, 62, 1);
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 25px;
+  font-size: 16px;
+font-weight: 500;
+line-height: 22px;
 }
 
 .ingredientCategoryTitle{
-  color: rgba(104, 104, 104, 1);
-font-size: 16px;
-font-weight: 500;
-line-height: 22px;
+color: rgba(58, 65, 69, 1);
+font-size: 14px;
+font-weight: 600;
+line-height: 19px;
+text-align: left;
 }
 
 .itemList {
@@ -752,25 +792,26 @@ line-height: 22px;
   padding: 40px;
 }
 
-.emptyImage{
-  width: 256px;
-height: 171px;
-}
+
 
 .emptyTitle{
   margin: 0;
-  color:  rgba(28, 35, 39, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 28px;
 font-weight: 700;
 line-height: 38px;
+text-align: center;
 }
 
 .emptyText{
+  margin: 0;
+  margin-top: 0.5rem;
  text-align: center;
- color: rgba(58, 65, 69, 1);
+color: rgba(58, 65, 69, 1);
 font-size: 18px;
 font-weight: 400;
 line-height: 25px;
+text-align: center;
 margin-bottom: 2rem;
 }
 
