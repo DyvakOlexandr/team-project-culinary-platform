@@ -34,6 +34,7 @@ const HelpPage: React.FC = () => {
   return (
     <main className={styles.main}>
       <Header />
+      <div className={styles.mainBlock}>
       <div className={styles.helpWrapper}>
         <h1 className={styles.helpTitle}>Чим ми можемо допомогти?</h1>
         <p className={styles.helpText}>
@@ -46,7 +47,7 @@ const HelpPage: React.FC = () => {
     <img src={iconSearch} alt="search" className={styles.inputIcon} />
     <input
       type="text"
-      placeholder="Введіть тему або проблему…"
+      placeholder="Введіть тему або ключеві слова…"
       value={query}
       onChange={(e) => setQuery(e.target.value)}
       className={styles.searchInput}
@@ -133,8 +134,7 @@ const HelpPage: React.FC = () => {
           className={styles.inputField}
           required
         />
-        <input
-          type="text"
+        <textarea
           placeholder="Опишіть ситуацію або питання"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -146,6 +146,7 @@ const HelpPage: React.FC = () => {
         </button>
       </form>
     </section>
+      </div>
       </div>
     </main>
   );

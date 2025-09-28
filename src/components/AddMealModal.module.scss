@@ -21,18 +21,19 @@
   gap: 24px;
 }
 
-.header h2 {
-  margin: 0;
-  color: rgba(31, 41, 51, 1);
-font-size: 24px;
-font-weight: 700;
-line-height: 33px;
-}
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.headerText{
+  color: rgba(28, 35, 39, 1);
+font-size: 28px;
+font-weight: 700;
+line-height: 38px;
+text-align: left;
 }
 
 .closeBtn {
@@ -48,10 +49,11 @@ line-height: 33px;
 }
 
 .formRow label {
-  color: rgba(58, 65, 69, 1);
+color: rgba(41, 90, 97, 1);
 font-size: 14px;
-font-weight: 500;
+font-weight: 600;
 line-height: 19px;
+text-align: left;
 }
 
 .selectedRecipeInfo {
@@ -116,10 +118,12 @@ line-height: 22px;
   justify-content: space-between;
 
   &:hover {
-    border-color: rgba(1, 64, 78, 1);
+     border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
   }
   &:active {
-    border-color: rgba(1, 64, 78, 1);
+     border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
   }
 }
 
@@ -159,12 +163,13 @@ line-height: 22px;
   cursor: pointer;
 
   &:hover {
-    border-color: rgba(1, 64, 78, 1);
+      border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
   }
 
   &:focus {
-    border-color: rgba(1, 64, 78, 1);
-    outline: none;
+     border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
   }
 }
 
@@ -196,12 +201,13 @@ line-height: 22px;
   cursor: pointer;
 
   &:hover {
-    border-color: rgba(1, 64, 78, 1);
+     border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
   }
 
   &:focus {
-    border-color: rgba(1, 64, 78, 1);
-    outline: none;
+     border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
   }
 }
 
@@ -236,8 +242,8 @@ line-height: 22px;
   width: 168px;
   height: 48px;
   border-radius: 12px;
-  background:  rgba(217, 224, 227, 1);
-  color: rgba(128, 138, 142, 1);
+ background: rgba(51, 113, 121, 1);
+color: rgba(252, 253, 253, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
@@ -248,11 +254,12 @@ line-height: 22px;
   &:hover {
      transform: scale(1.05);
   }
-
-    &.active {
-    background: rgba(1, 64, 78, 1); // темный фон при выборе
-    color: #fff;                   // белый текст
+  &:disabled {
+    background: rgba(232, 242, 242, 1);
+  color:  rgba(128, 138, 142, 1);
+    cursor: not-allowed;
   }
+
 }
 
 .numberInput {

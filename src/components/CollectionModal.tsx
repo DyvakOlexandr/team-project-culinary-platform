@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styles from "./CollectionModal.module.scss";
 import { X, ChevronLeft } from "lucide-react";
 import type { Recipe } from "../data/recipes";
@@ -33,6 +33,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
   onSelectRecipe,
 }) => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   if (!isOpen || !collection) return null;
 
@@ -40,9 +41,24 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
     .map(item => getAllRecipes().find(r => r.id === item.id))
     .filter((r): r is Recipe => r !== undefined);
 
+  // сброс выделения при клике внутри модалки, но не по карточке
+  const handleModalClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest(`.${styles.recipeCard}`)) {
+      setSelectedRecipe(null);
+    }
+  };
+
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
+    <div className={styles.overlay} onClick={onClose}>
+      <div
+        className={styles.modal}
+        ref={modalRef}
+        onClick={(e) => {
+          e.stopPropagation(); // блок закрытия модалки
+          handleModalClick(e); // проверяем, был ли клик вне карточки
+        }}
+      >
         {/* Header */}
         <div className={styles.header}>
           {onBack && (
@@ -59,43 +75,43 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
 
         {/* Recipes Grid */}
         <div className={styles.recipesBlock}>
-        <div className={styles.recipesGrid}>
-          {recipesInCollection.map(recipe => (
-            <div
-              key={recipe.id}
-              className={`${styles.recipeCard} ${
-                selectedRecipe?.id === recipe.id ? styles.selected : ""
-              }`}
-              onClick={() => setSelectedRecipe(recipe)}
-            >
+          <div className={styles.recipesGrid}>
+            {recipesInCollection.map(recipe => (
               <div
-                className={styles.recipeImage}
-                style={{ backgroundImage: `url(${recipe.image})` }}
-              ></div>
-              <h4 className={styles.recipeTitle}>{recipe.title}</h4>
-            </div>
-          ))}
-          {recipesInCollection.length === 0 && (
-            <p className={styles.emptyText}>Рецепти відсутні</p>
-          )}
+                key={recipe.id}
+                className={`${styles.recipeCard} ${
+                  selectedRecipe?.id === recipe.id ? styles.selected : ""
+                }`}
+                onClick={() => setSelectedRecipe(recipe)}
+              >
+                <div
+                  className={styles.recipeImage}
+                  style={{ backgroundImage: `url(${recipe.image})` }}
+                ></div>
+                <h4 className={styles.recipeTitle}>{recipe.title}</h4>
+              </div>
+            ))}
+            {recipesInCollection.length === 0 && (
+              <p className={styles.emptyText}>Рецепти відсутні</p>
+            )}
+          </div>
         </div>
-        </div>
-        {/* Always Visible Add Recipe Button */}
-        
-            <button
-    className={`${styles.addRecipeBtn} ${selectedRecipe ? styles.active : ""}`}
-    onClick={() => {
-      if (selectedRecipe && onSelectRecipe) {
-        onSelectRecipe(selectedRecipe);
-        onClose();
-      } else {
-        alert("Оберіть рецепт перед додаванням");
-      }
-    }}
-  >
-    Додати рецепт
-  </button>
-        </div>
+
+        {/* Add Recipe Button */}
+        <button
+          className={`${styles.addRecipeBtn} ${selectedRecipe ? styles.active : ""}`}
+          onClick={() => {
+            if (selectedRecipe && onSelectRecipe) {
+              onSelectRecipe(selectedRecipe);
+              onClose();
+            } else {
+              alert("Оберіть рецепт перед додаванням");
+            }
+          }}
+        >
+          Додати рецепт
+        </button>
+      </div>
     </div>
   );
 };

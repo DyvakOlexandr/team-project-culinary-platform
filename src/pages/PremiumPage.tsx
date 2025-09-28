@@ -23,6 +23,7 @@ const PremiumPage: React.FC = () => {
   return (
     <main className={styles.main}>
       <Header/>
+      <div className={styles.mainBlock}>
       <div className={styles.headerBlock}>
         <div className={styles.headerText}>
           <h1 className={styles.headerTittle}>Перейдіть на преміум-аккаунт</h1>
@@ -133,6 +134,7 @@ const PremiumPage: React.FC = () => {
     </ul>
      <button className={styles.futerButton}>Обрати план</button>
        </div>
+      </div>
       </div>
     </main>
   );

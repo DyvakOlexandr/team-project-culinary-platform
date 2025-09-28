@@ -4,7 +4,8 @@ import styles from "./EditProfilePage.module.scss";
 import avatarDefault from "../assets/avatar.webp";
 import iconEdit from "../assets/icon-park-outline_edit_white.svg";
 import iconDelete from "../assets/icon-park-outline_delete_red.svg";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const allergyOptions = ["Глютен", "Молоко", "Морепродукти", "Яйця", "Горіхи"];
 const foodOptions = ["Вегетаріанець", "Веган", "Безглютенова дієта", "Палео", "Кето"];
@@ -16,6 +17,7 @@ const EditProfilePage: React.FC = () => {
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
+  const navigate = useNavigate();
 
   // --- State для аллергий ---
   const [allergyQuery, setAllergyQuery] = useState("");
@@ -84,8 +86,11 @@ const EditProfilePage: React.FC = () => {
 
   return (
     <main className={styles.main}>
-      <Header showBackButton backButtonLabel="До профілю" onBackClick={() => window.history.back()} />
-
+      <Header/>
+       <div className={styles.mainBlock}>
+        <button className={styles.backButton} onClick={() => navigate("/profile")}>
+          <ChevronLeft /> До рецептів
+        </button>
       {/* --- Фотография профиля --- */}
       <div className={styles.profileImageBlock}>
         <h1 className={styles.title}>Фотографія профілю</h1>
@@ -221,6 +226,7 @@ const EditProfilePage: React.FC = () => {
         <button type="button" className={styles.saveButton} onClick={handleSave}>
           Зберегти зміни
         </button>
+        </div>
       </div>
     </main>
   );

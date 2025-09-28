@@ -141,7 +141,7 @@ const SelectRecipeModal: React.FC<SelectRecipeModalProps> = ({
 
         {/* Сохранённые коллекции */}
         <div className={styles.savedBlock}>
-          <h3>Збережене</h3>
+          <h3 className={styles.savedBlockTitle}>Збережене</h3>
           <div className={styles.collectionsGrid}>
             {collections.map((col) => (
               <div

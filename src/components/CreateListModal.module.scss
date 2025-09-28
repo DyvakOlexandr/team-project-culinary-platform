@@ -88,12 +88,6 @@ line-height: 33px;
   margin-top: 8px;
 }
 
-  label {
-   color: rgba(58, 65, 69, 1);
-font-size: 14px;
-font-weight: 500;
-line-height: 19px;
-  }
 
 .colorCircle {
   width: 40px;
@@ -149,16 +143,15 @@ height: 48px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
+   transition: all 0.3s ease-in-out;
 
   &:hover:not(:disabled) {
     transform: scale(1.05);
-    background: #016176;
   }
 
   &:disabled {
-    background: #d9e0e3;
-    color: #808a8e;
+   background:  rgba(232, 242, 242, 1);
+  color: rgba(128, 138, 142, 1);
     cursor: not-allowed;
     transform: none;
   }

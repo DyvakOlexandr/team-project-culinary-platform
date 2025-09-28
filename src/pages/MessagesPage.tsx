@@ -96,7 +96,7 @@ const MessagesPage: React.FC = () => {
   return (
     <div className={styles.main}>
       <Header />
-
+      <div className={styles.mainBlock}>
       <div className={styles.buttonBlock}>
         <button className={styles.buttonAll} onClick={handleToggleShowAll}>
           {showAll ? "Всі" : "Останнє"} <ChevronDown className={styles.buttonIcon} />
@@ -158,6 +158,7 @@ const MessagesPage: React.FC = () => {
             );
           })
         )}
+      </div>
       </div>
     </div>
   );

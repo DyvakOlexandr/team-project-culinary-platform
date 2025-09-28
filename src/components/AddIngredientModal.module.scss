@@ -64,11 +64,13 @@ line-height: 22px;
   cursor: pointer;
 
   &:hover {
-    border-color: rgba(1, 64, 78, 1);
+ border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
   }
 
   &:focus {
-    border-color: rgba(1, 64, 78, 1);
+   border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
     outline: none;
   }
   &::placeholder{
@@ -80,12 +82,6 @@ line-height: 22px;
 
 }
 
-.modalBody select{
-    color:  rgba(161, 171, 175, 1);
-font-size: 16px;
-font-weight: 500;
-line-height: 22px;
-}
 
 .amountUnitRow {
   display: flex;
@@ -104,10 +100,11 @@ line-height: 22px;
 .cancelButton {
 width: 133px;
 height: 48px;
+background: none;
 box-sizing: border-box;
-border: 1.5px solid  rgba(84, 112, 120, 1);
+border: 1.5px solid  rgba(51, 113, 121, 1);
 border-radius: 12px;
-color:  rgba(1, 55, 67, 1);
+color:  rgba(27, 60, 64, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
@@ -125,7 +122,7 @@ text-align: center;
   width: 197px;
   height: 48px;
   border-radius: 12px;
-  background: rgba(1, 64, 78, 1);
+  background: rgba(51, 113, 121, 1);
   color: rgba(252, 253, 253, 1);
   font-size: 16px;
   font-weight: 600;
@@ -138,7 +135,7 @@ text-align: center;
   }
 
   &:disabled {
-    background: rgba(217, 224, 227, 1);
+    background: rgba(232, 242, 242, 1);
     color: rgba(128, 138, 142, 1);
     cursor: not-allowed;
     transform: none; // убираем анимацию
@@ -182,6 +179,7 @@ text-align: center;
 }
 
 .customSelect {
+  margin-top: 8px;
   padding: 0 12px;
   height: 48px;
   border: 1px solid #ddd;
@@ -197,12 +195,14 @@ text-align: center;
   justify-content: space-between;
 
   &:hover {
-    border-color: rgba(1, 64, 78, 1);
+  border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
   }
 
   &:focus {
     outline: none;
-    border-color: rgba(1, 64, 78, 1);
+  border: 1.5px solid rgba(84, 112, 120, 1);
+box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
   }
 }
 
@@ -233,6 +233,27 @@ text-align: center;
   z-index: 10;
   list-style: none;
   padding: 0;
+   scroll-behavior: smooth;
+    &::-webkit-scrollbar {
+    width: 8px; /* ширина скролла */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f0f0f0; /* фон дорожки */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color:  rgba(51, 113, 121, 1);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+.placeholderText {
+  color: #999; // серый для подсказки
+}
+
+.selectedText {
+  color: #222; // обычный тёмный текст (или можно #4caf50, если нужен зелёный)
 }
 
 .customOptions li {

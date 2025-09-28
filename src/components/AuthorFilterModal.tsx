@@ -85,12 +85,6 @@ const AuthorFilterModal: React.FC<AuthorFilterModalProps> = ({
                 {cuisines.map(c => (
                   <span key={c} className={styles.cuisineTag}>
                     {c}
-                    <button
-                      className={styles.removeTag}
-                      onClick={() => setCuisines(cuisines.filter(x => x !== c))}
-                    >
-                      ×
-                    </button>
                   </span>
                 ))}
               </div>

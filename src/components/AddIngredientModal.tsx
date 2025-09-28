@@ -126,6 +126,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
                 {filteredIngredients.map((ing) => (
                   <li
                     key={ing.name}
+                    className={name === ing.name ? styles.activeOption : ""}
                     onClick={() => {
                       setName(ing.name);
                       setShowList(false);
@@ -140,17 +141,18 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
           <label>Категорія</label>
           <div className={styles.customSelectWrapper} ref={categoryRef}>
-            <div
-              className={styles.customSelect}
-              onClick={() => setShowCategoryOptions(!showCategoryOptions)}
-            >
-              {category || "Оберіть категорію інгредієнта"}
-            </div>
+           <div
+  className={`${styles.customSelect} ${category ? styles.selectedText : styles.placeholderText}`}
+  onClick={() => setShowCategoryOptions(!showCategoryOptions)}
+>
+  {category || "Оберіть категорію інгредієнта"}
+</div>
             {showCategoryOptions && (
               <ul className={styles.customOptions}>
                 {categories.map((cat) => (
                   <li
                     key={cat}
+                    className={category === cat ? styles.activeOption : ""}
                     onClick={() => {
                       setCategory(cat);
                       setShowCategoryOptions(false);
@@ -175,17 +177,18 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
             />
 
             <div className={styles.customSelectWrapper} ref={unitRef}>
-              <div
-                className={styles.customSelect}
-                onClick={() => setShowUnitOptions(!showUnitOptions)}
-              >
-                {unit || "Одиниця виміру"}
-              </div>
+            <div
+  className={`${styles.customSelect} ${unit ? styles.selectedText : styles.placeholderText}`}
+  onClick={() => setShowUnitOptions(!showUnitOptions)}
+>
+  {unit || "Одиниця виміру"}
+</div>
               {showUnitOptions && (
                 <ul className={styles.customOptions}>
                   {units.map((u) => (
                     <li
                       key={u}
+                      className={unit === u ? styles.activeOption : ""}
                       onClick={() => {
                         setUnit(u);
                         setShowUnitOptions(false);
@@ -204,13 +207,13 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           <button className={styles.cancelButton} onClick={onClose}>
             Скасувати
           </button>
-       <button
-  className={styles.addButton}
-  onClick={handleAdd}
-  disabled={!name || !category || !unit}
->
-  Додати інгредієнт 
-</button>
+          <button
+            className={styles.addButton}
+            onClick={handleAdd}
+            disabled={!name || !category || !unit}
+          >
+            Додати інгредієнт
+          </button>
         </div>
       </div>
     </div>

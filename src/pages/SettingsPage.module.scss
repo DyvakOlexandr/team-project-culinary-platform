@@ -52,13 +52,12 @@
     margin: 0;
     width: 100%;
     flex-direction: row;
-     justify-content: space-around;
+     justify-content: space-between;
   }
 }
 
 .navItem {
   padding-bottom: 1rem;
-  display: flex;
   color: rgba(95, 104, 109, 1);
 font-size: 14px;
 font-weight: 600;
@@ -81,6 +80,7 @@ line-height: 19px;
   color: rgba(51, 113, 121, 1);
   font-weight: 600;
 }
+
 
 
 .inputGroup{
@@ -449,15 +449,15 @@ input:checked + .customRadio::after {
 
 /* Сімейний акаунт */
 .familyBlock{
-  width: 656px;
   margin-top: 40px;
 }
 
 .familyTitle{
-  color: rgba(114, 114, 114, 1);
+color:  rgba(41, 90, 97, 1);
 font-size: 14px;
 font-weight: 600;
 line-height: 19px;
+text-align: left;
 }
 
 .familyList {
@@ -475,12 +475,21 @@ line-height: 19px;
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: #ccc;
   object-fit: cover;
 }
+
+.previewAvatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(51, 113, 121, 0.6);
+  margin-top: 0.5rem;
+}
+
 
 .memberInfo {
   display: flex;
@@ -488,17 +497,19 @@ line-height: 19px;
 }
 
 .memberName {
-color: rgba(0, 0, 0, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
+text-align: left;
 }
 
 .memberRole {
-  color: rgba(49, 49, 49, 1);
+color: rgba(58, 65, 69, 1);
 font-size: 14px;
 font-weight: 400;
 line-height: 19px;
+text-align: left;
 }
 
 .removeMember {
@@ -510,13 +521,39 @@ line-height: 19px;
 }
 
 .addMemberBlock{
+  width: 33%;
+  border-radius: 12px;
+  gap: 0.75rem;
+  padding: 1rem;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+   border: 1px solid rgba(227, 230, 232, 1);
+   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
+.photoUploadButton {
+  display: inline-block;
+  padding: 1rem 1rem;
+  background: rgba(51, 113, 121, 1);
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.photoUploadButton:hover {
+  transform: scale(1.05);
+}
+
+
 .addMemberButton{
+  background: rgba(51, 113, 121, 1);
+  color: #fff;
 height: 48px;
+font-weight: 500;
+font-size: 15px;
 cursor: pointer;
 border-radius: 12px;
 border: none;
@@ -525,10 +562,21 @@ border: none;
     &:hover{
       transform: scale(1.05);
     }
+    
+}
+
+.disabledButton {
+  background: rgba(232, 242, 242, 1);
+  color:  rgba(128, 138, 142, 1);
+  cursor: not-allowed; // курсор запрещён
 }
 
 .cancelButton{
+   background: rgba(51, 113, 121, 1);
+  color: #fff;
+  font-size: 15px;
 height: 48px;
+font-weight: 500;
 cursor: pointer;
 border-radius: 12px;
 border: none;
@@ -541,6 +589,7 @@ border: none;
 
 .removeMember{
     cursor: pointer;
+    
      transition: transform 0.3s ease-in-out;
     &:hover{
       transform: scale(1.2);
@@ -549,6 +598,7 @@ border: none;
 
 .addMemberMainButton{
   margin-top: 2rem;
+  margin-bottom: 3rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -558,8 +608,8 @@ border: none;
   height: 48px;
   border-radius: 12px;
   border: none;
-background: rgba(228, 228, 228, 1);
- color: rgba(37, 48, 62, 1);
+background: rgba(51, 113, 121, 1);
+ color: #fff;
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
@@ -583,9 +633,11 @@ line-height: 22px;
 .sharedListsBlock{
   display: flex;
   flex-direction: row;
-  align-items: center;
-  padding-bottom: 1.5rem;
+  align-items: start;
   border-bottom: 1px solid rgba(233, 233, 233, 1);
+  &:last-child{
+      border-bottom:none;
+  }
 }
 
 .sharedListsTextBlock{
@@ -594,24 +646,24 @@ line-height: 22px;
 }
 
 .sharedListsTitle{
-  color: rgba(0, 0, 0, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 18px;
 font-weight: 600;
 line-height: 25px;
+text-align: left;
 }
 
 .sharedListsText{
-  color: rgba(114, 114, 114, 1);
+color: rgba(95, 104, 109, 1);
 font-size: 16px;
 font-weight: 400;
 line-height: 22px;
+text-align: left;
 }
-
 /* Безпека */
 
 .securityBlock{
   margin-top: 40px;
-  width: 656px;
 }
 
 .deviceList {
@@ -621,10 +673,11 @@ line-height: 22px;
 }
 
 .securityTitle{
-  color: rgba(114, 114, 114, 1);
+color: rgba(41, 90, 97, 1);
 font-size: 14px;
 font-weight: 600;
 line-height: 19px;
+text-align: left;
 }
 
 .deviceInfo{
@@ -641,24 +694,27 @@ line-height: 19px;
 }
 
 .deviceName{
-  color: rgba(0, 0, 0, 1);
-font-size: 16px;
+color: rgba(28, 35, 39, 1);
+font-size: 18px;
 font-weight: 600;
-line-height: 22px;
+line-height: 25px;
+text-align: left;
 }
 
 .deviceOS{
-  color: rgba(49, 49, 49, 1);
+color: rgba(58, 65, 69, 1);
 font-size: 14px;
 font-weight: 400;
 line-height: 19px;
+text-align: left;
 }
 
 .deviceRegion{
-  color: rgba(139, 139, 139, 1);
+color: rgba(128, 138, 142, 1);
 font-size: 14px;
 font-weight: 400;
 line-height: 19px;
+text-align: left;
 }
 
 .logoutAllButton{
@@ -668,13 +724,13 @@ height: 48px;
   align-items: center;
   justify-content: center;
  border: none;
-border: 2px solid rgba(222, 222, 222, 1);
+ background-color: rgba(51, 113, 121, 1);
 border-radius: 12px;
 gap: 0.5rem;
-color: rgba(49, 49, 49, 1);
-font-size: 14px;
+color: #fff;
+font-size: 16px;
 font-weight: 600;
-line-height: 19px;
+line-height: 22px;
 margin-top: 1.5rem;
 margin-bottom: 1.5rem;
  cursor: pointer;
@@ -685,10 +741,11 @@ margin-bottom: 1.5rem;
 }
 
 .currentSession{
-  color: rgba(0, 0, 0, 1);
+color:  rgba(51, 113, 121, 1);
 font-size: 14px;
-font-weight: 500;
+font-weight: 600;
 line-height: 19px;
+text-align: left;
 }
 
 .logoutButton{
@@ -711,17 +768,19 @@ border-bottom: 1px solid rgba(233, 233, 233, 1);
 }
 
 .infoTitle{
-  color: rgba(0, 0, 0, 1);
+color:  rgba(28, 35, 39, 1);
 font-size: 18px;
 font-weight: 600;
 line-height: 25px;
+text-align: left;
 }
 
 .infoDescription{
-  color: rgba(0, 0, 0, 1);
+color: rgba(95, 104, 109, 1);
 font-size: 16px;
 font-weight: 400;
 line-height: 22px;
+text-align: left;
 }
 
 .activityBlock{
@@ -739,17 +798,20 @@ line-height: 22px;
 }
 
 .activityTitle{
-  color: rgba(114, 114, 114, 1);
+color: rgba(41, 90, 97, 1);
 font-size: 14px;
 font-weight: 600;
 line-height: 19px;
+text-align: left;
+padding-bottom: 0.5rem;
 }
 
 .activityItem{
-  color: rgba(49, 49, 49, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 16px;
 font-weight: 400;
 line-height: 22px;
+text-align: left;
 }
 
 /* Інтеграції */
@@ -757,14 +819,20 @@ line-height: 22px;
 .integrationsBlock{
   margin-top: 40px;
   margin-bottom: 526px;
-  width: 656px;
 }
 
 .integrationsTitle{
-  color: rgba(0, 0, 0, 1);
+color: rgba(41, 90, 97, 1);
 font-size: 14px;
-font-weight: 500;
+font-weight: 600;
 line-height: 19px;
+text-align: left;
+margin-bottom: 1rem;
+}
+
+.connectedAppAvatar{
+  width: 40px;
+height: 40px;
 }
 
 .integrationList {
@@ -780,8 +848,6 @@ line-height: 19px;
 .integrationAvatar{
   width: 40px;
 height: 40px;
-background: rgba(217, 217, 217, 1);
-border-radius: 100%;
 }
 
 .integrationInfo{
@@ -795,6 +861,11 @@ border-radius: 100%;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+   border-bottom: 1px solid rgba(241, 243, 244, 1);
+   padding-bottom: 1rem;
+   &:last-child{
+    border-bottom: none;
+   }
 }
 
 .integrationText{
@@ -804,14 +875,15 @@ border-radius: 100%;
 }
 
 .integrationName{
-  color: rgba(0, 0, 0, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
+text-align: left;
 }
 
 .integrationConnected{
-  color: rgba(0, 0, 0, 1);
+  color: rgba(28, 35, 39, 1);
 font-size: 14px;
 font-weight: 400;
 line-height: 19px;
@@ -825,7 +897,7 @@ line-height: 19px;
 }
 
 .toggleIntegrationButton{
-  color: rgba(0, 0, 0, 1);
+  color: rgba(28, 35, 39, 1);
 font-size: 14px;
 font-weight: 400;
 line-height: 19px;
@@ -836,6 +908,11 @@ line-height: 19px;
     &:hover{
       transform: scale(1.1);
     }
+
+}
+
+.disconnectMode {
+  color: rgba(229, 57, 53, 1); 
 }
 
 .connectedAppsBlock{
@@ -849,13 +926,18 @@ line-height: 19px;
   margin: 0; 
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 }
 
 .connectedAppInfo{
   display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.connectedAppInfoText{
+  display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .connectedAppItem{
@@ -866,10 +948,11 @@ line-height: 19px;
 }
 
 .connectedAppName{
-  color: rgba(0, 0, 0, 1);
+color:  rgba(28, 35, 39, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
+text-align: left;
 }
 
 .connectedAppSync{
@@ -884,7 +967,7 @@ line-height: 19px;
 .aboutPlatformBlock{
   margin-top: 40px;
   margin-bottom: 456px;
-  width: 568px;
+  width: 50%;
 }
 
 .platformInfoItem{
@@ -900,17 +983,19 @@ line-height: 19px;
 }
 
 .platformInfoLabel{
-  color: rgba(0, 0, 0, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 16px;
 font-weight: 400;
 line-height: 22px;
+text-align: left;
 }
 
 .platformInfoValue{
-  color: rgba(0, 0, 0, 1);
+color: rgba(0, 0, 0, 1);
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
+text-align: left;
 }
 
 .platformButtonsBlock{
@@ -944,16 +1029,17 @@ padding-right: 1rem;
 }
 
 .platformButtonLabel{
-  color: rgba(36, 36, 36, 1);
+color: rgba(28, 35, 39, 1);
 font-size: 16px;
-font-weight: 400;
-line-height: 22px;
+font-weight: 500;
+text-align: left;
 }
 
 .footerText{
-  margin-top: 40px;
-  color: rgba(0, 0, 0, 1);
+  margin-top: 1.5rem;
+color: rgba(58, 65, 69, 1);
 font-size: 16px;
 font-weight: 400;
-line-height: 22px;
+line-height: 22px;;
+text-align: left;
 }

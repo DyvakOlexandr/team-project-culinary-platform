@@ -365,7 +365,7 @@ useEffect(() => {
         <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h2>{editCollectionId ? "Редагування колекції" : "Створення колекції"}</h2>
+              <h2 className={styles.modalHeaderTitle} >{editCollectionId ? "Редагування колекції" : "Створення колекції"}</h2>
               <button className={styles.modalClose} onClick={() => setShowModal(false)}>✖</button>
             </div>
 
@@ -405,9 +405,13 @@ useEffect(() => {
               </div>
             </label>
 
-            <button onClick={handleSaveCollection} className={styles.modalCreate}>
-              {editCollectionId ? "Зберегти зміни" : "Створити колекцію"}
-            </button>
+           <button
+  onClick={handleSaveCollection}
+  className={styles.modalCreate}
+  disabled={!newCollectionName.trim()} 
+>
+  {editCollectionId ? "Зберегти зміни" : "Створити колекцію"}
+</button>
           </div>
         </div>
       )}

@@ -130,7 +130,7 @@ const AddMealModal: React.FC<AddMealModalProps> = ({
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h2>Додати страву</h2>
+          <h2 className={styles.headerText}>Додати страву</h2>
           <button className={styles.closeBtn} onClick={onClose}>
             <X size={20} />
           </button>
@@ -279,9 +279,13 @@ const AddMealModal: React.FC<AddMealModalProps> = ({
 
 
         {/* Кнопка сохранить */}
-        <button  className={`${styles.saveBtn} ${selectedRecipe ? styles.active : ""}`} onClick={handleAddMeal}>
-          Додати страву
-        </button>
+     <button
+  className={`${styles.saveBtn} ${selectedRecipe ? styles.active : ""}`}
+  onClick={handleAddMeal}
+  disabled={!selectedRecipe}
+>
+  Додати страву
+</button>
 
         {/* Модалка выбора рецепта */}
         {isSelectRecipeOpen && (

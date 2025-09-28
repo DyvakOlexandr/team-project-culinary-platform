@@ -20,6 +20,7 @@ const ProfilePage: React.FC = () => {
   return (
     <main className={styles.main}>
       <Header />
+      <div className={styles.mainBlock1}>
       <div className={styles.mainBlock}>
         <div className={styles.headerBlock}>
           <div
@@ -91,6 +92,7 @@ const ProfilePage: React.FC = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
     </main>
   );

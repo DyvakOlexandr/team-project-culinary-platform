@@ -5,7 +5,7 @@ import AuthorCard from "../components/AuthorCard";
 import { popularAuthors, getAllRecipes } from "../data/recipes";
 import styles from "./AuthorsPage.module.scss";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronLeft } from "lucide-react";
 import iconFilter from "../assets/icon-park-outline_center-alignment.svg";
 import AuthorFilterModal from "../components/AuthorFilterModal";
 
@@ -63,13 +63,11 @@ const AuthorsPage: React.FC = () => {
 
   return (
     <main className={styles.main}>
-      <Header
-        showSearch={true}
-        showBackButton
-        backButtonLabel="До списку рецептів"
-        onBackClick={() => navigate(-1)}
-      />
-
+        <Header />
+      <div className={styles.mainBlock}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
+          <ChevronLeft /> До головної
+        </button>
       <div className={styles.header}>
         <h1>Популярні автори</h1>
         <div className={styles.headerButtons}>
@@ -151,6 +149,7 @@ const AuthorsPage: React.FC = () => {
           )
         )}
       />
+      </div>
     </main>
   );
 };

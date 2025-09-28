@@ -314,18 +314,21 @@ text-align: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.modal h2 {
-margin: 0;
-color: rgba(31, 41, 51, 1);
-font-size: 24px;
+.modalHeaderTitle{
+  color: rgba(28, 35, 39, 1);
+font-size: 28px;
 font-weight: 700;
-line-height: 33px;
-margin-bottom: 1rem;
+line-height: 38px;
+text-align: left;
 }
 
 .inputTitle{
+  margin: 0;
+  margin-top: 1rem;
+  margin-bottom: 8px;
+color: rgba(41, 90, 97, 1);
 font-size: 14px;
-font-weight: 500;
+font-weight: 600;
 line-height: 19px;
 text-align: left;
 }
@@ -335,7 +338,7 @@ text-align: left;
   padding: 0.75rem;
   margin-bottom: 1rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 
@@ -349,8 +352,8 @@ width: 208px;
 height: 48px;
 border: none;
 border-radius: 12px;
-background: rgba(217, 224, 227, 1);
-color:  rgba(128, 138, 142, 1);
+background: rgba(51, 113, 121, 1);
+color:  #fff;
 font-size: 16px;
 font-weight: 600;
 line-height: 22px;
@@ -358,15 +361,22 @@ line-height: 22px;
   cursor: pointer;
     transition: transform 0.3s ease-in-out;
     &:hover{
-      transform: scale(1.02);
+      transform: scale(1.03);
     }
-}
+      &:disabled {
+    background: rgba(232, 242, 242, 1);
+    color: rgba(128, 138, 142, 1);
+    cursor: not-allowed;
+  }
 
+}
 
 .modalHeader{
  display: flex;
  flex-direction: row;
+ align-items: center;
  justify-content: space-between;
+ margin-bottom: 1rem;
 }
 
 .modalClose{
@@ -388,13 +398,13 @@ line-height: 22px;
   cursor: pointer;
   user-select: none;
   position: relative;
-
   input {
-    display: none; // скрываем стандартный чекбокс
+    display: none; 
   }
 }
 
 .customCheckbox {
+  align-self: start;
  width: 24px;
 height: 24px;
   border: 2px solid rgba(142, 142, 142, 1);
@@ -420,17 +430,11 @@ height: 24px;
 }
 
 input:checked + .customCheckbox {
-  background: #4caf50;
-  border-color: #4caf50;
+  background: rgba(51, 113, 121, 1);
 
   &::after {
     opacity: 1;
   }
-}
-
-.checkboxLabel {
-  font-size: 14px;
-  color: #333;
 }
 
 .checkboxTitle{

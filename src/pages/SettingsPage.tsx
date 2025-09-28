@@ -7,6 +7,7 @@ import { Check, ChevronDown, Plus } from "lucide-react";
 import iconEnd from "../assets/icon-park-outline_logout.svg";
 import iconPlat from "../assets/icon-park-outline_afferent-four.svg";
 import deleteIcon from "../assets/icon-park-outline_delete_white.svg";
+import fitnessIcon from "../assets/Fitness.png"
 
 const sections = [
   "Обліковий запис",
@@ -31,6 +32,7 @@ interface FamilyMember {
   name: string;
   role: string;
   avatar?: string;
+  photo?: string | null;
 }
 
 interface Device {
@@ -102,7 +104,7 @@ const defaultSettings: SettingsData = {
    integrations: [
     {
       id: "1",
-      name: "Facebook",
+      name: "Instagram",
       connected: true,
     },
     {
@@ -119,7 +121,7 @@ const SettingsPage: React.FC = () => {
   const [newMemberName, setNewMemberName] = useState("");
   const [newMemberRole, setNewMemberRole] = useState("");
   const [showInput, setShowInput] = useState(false);
-
+  const [newMemberPhoto, setNewMemberPhoto] = useState<string | null>(null);
   // Загружаем настройки из localStorage, если пусто — подставляем дефолтные
 const [settings, setSettings] = useState<SettingsData>(() => {
   const saved = localStorage.getItem("appSettings");
@@ -151,20 +153,25 @@ const [settings, setSettings] = useState<SettingsData>(() => {
   const updateSetting = (field: keyof SettingsData, value: any) => {
     setSettings(prev => ({ ...prev, [field]: value }));
   };
+const handleAddMember = () => {
+  if (!newMemberName.trim() || !newMemberRole.trim()) return;
 
-  const handleAddMember = () => {
-    if (!newMemberName.trim() || !newMemberRole.trim()) return;
-    setSettings(prev => ({
-      ...prev,
-      familyMembers: [
-        ...prev.familyMembers,
-        { id: (Date.now() + Math.random()).toString(), name: newMemberName.trim(), role: newMemberRole.trim() },
-      ],
-    }));
-    setNewMemberName("");
-    setNewMemberRole("");
-    setShowInput(false);
+  const newMember: FamilyMember = {
+    id: Date.now().toString(),
+    name: newMemberName,
+    role: newMemberRole,
+    photo: newMemberPhoto || undefined, // если фото нет, ставим undefined
   };
+
+  // Обновляем список
+  updateSetting("familyMembers", [...settings.familyMembers, newMember]);
+
+  // Сбрасываем форму
+  setNewMemberName("");
+  setNewMemberRole("");
+  setNewMemberPhoto(null);
+  setShowInput(false);
+};
 
   const handleRemoveMember = (id: string) => {
     setSettings(prev => ({
@@ -335,36 +342,110 @@ const [settings, setSettings] = useState<SettingsData>(() => {
         return (
           <div className={styles.familyBlock}>
             <h2 className={styles.familyTitle}>Члени родини</h2>
-            <ul className={styles.familyList}>
-              {settings.familyMembers.map(member => (
-                <li key={member.id} className={styles.familyItem}>
-                  <img className={styles.avatar} />
-                  <div className={styles.memberInfo}>
-                    <span className={styles.memberName}>{member.name}</span>
-                    <span className={styles.memberRole}>{member.role}</span>
-                  </div>
-                  <button className={styles.removeMember} onClick={() => handleRemoveMember(member.id)}>
-                    ✕
-                  </button>
-                </li>
-              ))}
-            </ul>
-            {showInput ? (
-              <div className={styles.addMemberBlock}>
-                <input type="text" placeholder="Ім’я" value={newMemberName} onChange={e => setNewMemberName(e.target.value)} className={styles.addMemberInput} />
-                <input type="text" placeholder="Роль (напр. Мама)" value={newMemberRole} onChange={e => setNewMemberRole(e.target.value)} className={styles.addMemberInput} />
-                <button className={styles.addMemberButton} onClick={handleAddMember} disabled={!newMemberName.trim() || !newMemberRole.trim()}>
-                  ✅ Зберегти
-                </button>
-                <button className={styles.cancelButton} onClick={() => { setShowInput(false); setNewMemberName(""); setNewMemberRole(""); }}>
-                  ❌ Скасувати
-                </button>
-              </div>
-            ) : (
-              <button className={styles.addMemberMainButton} onClick={() => setShowInput(true)}>
-                Додати члена сім'ї <Plus size={20} className={styles.sortIcon} />
-              </button>
-            )}
+<ul className={styles.familyList}>
+  {settings.familyMembers.map(member => (
+    <li key={member.id} className={styles.familyItem}>
+      <div
+  className={styles.avatar}
+  style={
+    member.photo
+      ? { backgroundImage: `url(${member.photo})`, backgroundSize: "cover" }
+      : { backgroundColor: " rgba(215, 234, 235, 1)", display: "flex", alignItems: "center", justifyContent: "center" }
+  }
+>
+  {!member.photo && (
+    <span className={styles.avatarInitials}>
+      {member.name.charAt(0).toUpperCase()}
+    </span>
+  )}
+</div>
+      <div className={styles.memberInfo}>
+        <span className={styles.memberName}>{member.name}</span>
+        <span className={styles.memberRole}>{member.role}</span>
+      </div>
+      <button
+        className={styles.removeMember}
+        onClick={() => handleRemoveMember(member.id)}
+      >
+        ✕
+      </button>
+    </li>
+  ))}
+</ul>
+
+{/* Форма додавання */}
+{showInput ? (
+  <div className={styles.addMemberBlock}>
+    <input
+      type="text"
+      placeholder="Ім’я"
+      value={newMemberName}
+      onChange={e => setNewMemberName(e.target.value)}
+      className={styles.addMemberInput}
+    />
+    <input
+      type="text"
+      placeholder="Роль (напр. Мама)"
+      value={newMemberRole}
+      onChange={e => setNewMemberRole(e.target.value)}
+      className={styles.addMemberInput}
+    />
+
+    {/* Кнопка вибору фото */}
+    <label className={styles.photoUploadButton}>
+      <input
+        type="file"
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={(e) => {
+          if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const url = URL.createObjectURL(file);
+            setNewMemberPhoto(url); // зберігаємо фото у стан
+          }
+        }}
+      />
+      Додати фото
+    </label>
+
+    {/* превʼю фото */}
+    {newMemberPhoto && (
+      <img
+        src={newMemberPhoto}
+        alt="preview"
+        className={styles.previewAvatar}
+      />
+    )}
+
+<button
+  className={`${styles.addMemberButton} ${(!newMemberName.trim() || !newMemberRole.trim()) ? styles.disabledButton : ""}`}
+  onClick={handleAddMember}
+  disabled={!newMemberName.trim() || !newMemberRole.trim()}
+>
+  Зберегти
+</button>
+
+    <button
+      className={styles.cancelButton}
+      onClick={() => {
+        setShowInput(false);
+        setNewMemberName("");
+        setNewMemberRole("");
+        setNewMemberPhoto(null);
+      }}
+    >
+      Скасувати
+    </button>
+  </div>
+) : (
+  <button
+    className={styles.addMemberMainButton}
+    onClick={() => setShowInput(true)}
+  >
+    Додати члена сім'ї <Plus size={20} className={styles.sortIcon} />
+  </button>
+)}
+
             <div className={styles.sharedListsBlocks}>
               <div className={styles.sharedListsBlock}>
                 <div className={styles.sharedListsTextBlock}>
@@ -482,7 +563,7 @@ const [settings, setSettings] = useState<SettingsData>(() => {
     </div>
   );
 
-   case "Інтеграції":
+ case "Інтеграції":
   return (
     <div className={styles.integrationsBlock}>
       {/* Основний блок соцмереж */}
@@ -494,6 +575,14 @@ const [settings, setSettings] = useState<SettingsData>(() => {
               <div className={styles.integrationInfo}>
                 <img
                   className={styles.integrationAvatar}
+                  src={
+                    integration.name === "Instagram"
+                      ? "src/assets/instagram1.png"
+                      : integration.name === "Google"
+                      ? "src/assets/Facebook1.png"
+                      : "/avatars/default.png"
+                  }
+                  alt={integration.name}
                 />
                 <div className={styles.integrationText}>
                   <span className={styles.integrationName}>{integration.name}</span>
@@ -504,19 +593,21 @@ const [settings, setSettings] = useState<SettingsData>(() => {
                   </span>
                 </div>
               </div>
-              <button
-                className={styles.toggleIntegrationButton}
-                onClick={() =>
-                  updateSetting(
-                    "integrations",
-                    settings.integrations.map(i =>
-                      i.id === integration.id ? { ...i, connected: !i.connected } : i
-                    )
-                  )
-                }
-              >
-                {integration.connected ? "Відключити" : "Підключити"}
-              </button>
+            <button
+  className={`${styles.toggleIntegrationButton} ${
+    integration.connected ? styles.disconnectMode : ""
+  }`}
+  onClick={() =>
+    updateSetting(
+      "integrations",
+      settings.integrations.map(i =>
+        i.id === integration.id ? { ...i, connected: !i.connected } : i
+      )
+    )
+  }
+>
+  {integration.connected ? "Відключити" : "Підключити"}
+</button>
             </li>
           ))
         ) : (
@@ -525,34 +616,39 @@ const [settings, setSettings] = useState<SettingsData>(() => {
       </ul>
 
       {/* Блок сторонніх додатків */}
-        <div className={styles.connectedAppsBlock}>
-  <h4 className={styles.integrationsTitle}>Підключені додатки</h4>
-  <ul className={styles.connectedAppsList}>
-    {[
-      { name: "Fitness Tracker Sync", connected: true, lastSync: "2 години тому" },
-      { name: "Google Fit", connected: false, lastSync: "1 день тому" },
-      { name: "Apple Health", connected: true, lastSync: "3 години тому" },
-    ].map(app => (
-      <li key={app.name} className={styles.connectedAppItem}>
-        <div className={styles.connectedAppInfo}>
-          <span className={styles.connectedAppName}>{app.name}</span>
-          <span className={styles.connectedAppSync}>Останнє синхронізування: {app.lastSync}</span>
-        </div>
-        <button
-          className={styles.toggleIntegrationButton}
-          onClick={() => {
-            // Реальний toggle через settings, якщо потрібно
-            alert(`${app.connected ? "Відключено" : "Підключено"}: ${app.name}`);
-          }}
-        >
-          {app.connected ? "Відключити" : "Підключити"}
-        </button>
-      </li>
-    ))}
-  </ul>
-</div>
+      <div className={styles.connectedAppsBlock}>
+        <h4 className={styles.integrationsTitle}>Підключені додатки</h4>
+        <ul className={styles.connectedAppsList}>
+          {[
+            { name: "Fitness Tracker Sync", connected: true, lastSync: "2 години тому", avatar: "/avatars/fitness.png" }
+         
+          ].map(app => (
+            <li key={app.name} className={styles.connectedAppItem}>
+              <div className={styles.connectedAppInfo}>
+                <img className={styles.connectedAppAvatar} 
+                src={fitnessIcon} alt="fitness" />
+                <div className={styles.connectedAppInfoText}>
+                <span className={styles.connectedAppName}>{app.name}</span>
+                <span className={styles.connectedAppSync}>Останнє синхронізування: {app.lastSync}</span>
+                </div>
+              </div>
+            <button
+  className={`${styles.toggleIntegrationButton} ${
+    app.connected ? styles.disconnectMode : ""
+  }`}
+  onClick={() =>
+    alert(`${app.connected ? "Відключено" : "Підключено"}: ${app.name}`)
+  }
+>
+  {app.connected ? "Відключити" : "Підключити"}
+</button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
+
 
    case "Про платформу":
   return (
