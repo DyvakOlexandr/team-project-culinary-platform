@@ -55,9 +55,9 @@ line-height: 25px;
 }
 
 .inputIconWrapper {
-  margin-top: 32px;
+  width: 613px;
   position: relative;
-  width: 100%;
+
 }
 
 .inputIcon {
@@ -71,9 +71,9 @@ line-height: 25px;
 }
 
 .searchInput {
-  width: 680px;
+  width: 100%;
 height: 48px;
-  padding: 12px 16px 12px 40px; // лівий відступ під іконку
+  padding: 12px 16px 12px 40px; 
 border: 1.5px solid rgba(235, 235, 235, 1);
 border-radius: 12px;
 background: rgba(255, 255, 255, 1);
@@ -163,14 +163,14 @@ text-align: left;
 }
 
 .helpTitle_1{
+  margin-top: 560px;
     margin: 0;
     align-self: start;
     margin-top: 56px;
-color: rgba(28, 35, 39, 1);
+    color: rgba(28, 35, 39, 1);
 font-size: 24px;
-font-weight: 700;
+font-weight: 600;
 line-height: 33px;
-text-align: left;
 }
 
 .helpText_1{
@@ -187,10 +187,9 @@ line-height: 22px;
     margin-top: 1.5rem;
     padding: 1.5rem;
     width: 100%;
-box-sizing: border-box;
-border: 1px solid  rgba(227, 230, 232, 1);
+    box-sizing: border-box;
+border: 1px solid rgba(219, 219, 219, 1);
 border-radius: 16px;
-box-shadow: 0px 2px 7px 0px rgba(84, 112, 120, 0.2);
 }
 
 .supportSectionHeader{
@@ -217,7 +216,7 @@ box-shadow: 0px 2px 7px 0px rgba(84, 112, 120, 0.2);
 }
 
 .supportSectionInput{
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -236,25 +235,25 @@ background: rgba(255, 255, 255, 1);
 
 .inputField:focus {
   outline: none;
-  border: 1.5px solid rgba(84, 112, 120, 1);
+   border: 1.5px solid rgba(84, 112, 120, 1);
 box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
 }
 
 .inputField_1{
+  padding: 12px;
     display: flex;
-    padding: 0.75rem;
-    align-items: start;
        width: 100%;
    height: 132px;
     box-sizing: border-box;
 border: 1.5px solid rgba(235, 235, 235, 1);
 border-radius: 12px;
 background: rgba(255, 255, 255, 1);
-}
-.inputField_1:focus {
+
+&:focus {
   outline: none;
-  border: 1.5px solid rgba(84, 112, 120, 1);
+   border: 1.5px solid rgba(84, 112, 120, 1);
 box-shadow: 0px 0px 6px 0px rgba(84, 112, 120, 0.8);
+}
 }
 
 .submitButton{
