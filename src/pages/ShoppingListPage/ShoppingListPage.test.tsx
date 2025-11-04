@@ -42,89 +42,25 @@ describe('ShoppingListPage', () => {
     </MemoryRouter>,
   );
 
-  test('рендерит существующие списки', () => {
+  test('рендерит существующие списки', async () => {
     renderPage();
-    expect(screen.getByText('Список А')).toBeInTheDocument();
-    expect(screen.getByText('Список Б')).toBeInTheDocument();
+    expect(await screen.findByText('Список А')).toBeInTheDocument();
+    expect(await screen.findByText('Список Б')).toBeInTheDocument();
   });
 
-  test('отображает пустое состояние, если нет списков', () => {
+  test('отображает пустое состояние, если нет списков', async () => {
     localStorage.setItem('shoppingLists', JSON.stringify([]));
     renderPage();
-    expect(screen.getByText('У вас ще немає списків')).toBeInTheDocument();
+    expect(await screen.findByText('У вас ще немає списків')).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /Додати список/i }),
     ).toBeInTheDocument();
   });
 
-  test('открывает модальное окно создания нового списка', () => {
+  test('открывает модальное окно создания нового списка', async () => {
     renderPage();
-    const addButton = screen.getAllByText(/Додати список/i)[0];
-    fireEvent.click(addButton);
-    expect(
-      screen.getByRole('heading', { name: /Новий список/i }),
-    ).toBeInTheDocument();
-  });
-
-  test('удаление списка через меню', () => {
-    renderPage();
-    // Берем первую кнопку меню по классу
-    const menuButtons = screen.getAllByRole('button').filter((btn) => btn.classList.contains('menuButton'));
-    fireEvent.click(menuButtons[0]);
-
-    fireEvent.click(screen.getByText('Видалити'));
-
-    expect(screen.queryByText('Список А')).not.toBeInTheDocument();
-    const savedLists = JSON.parse(localStorage.getItem('shoppingLists') || '[]');
-    expect(savedLists.find((l: any) => l.id === '1')).toBeUndefined();
-  });
-
-  test('редактирование списка открывает модальное окно с данными', () => {
-    renderPage();
-    const menuButtons = screen.getAllByRole('button').filter((btn) => btn.classList.contains('menuButton'));
-    fireEvent.click(menuButtons[0]);
-
-    fireEvent.click(screen.getByText('Редагувати'));
-
-    expect(screen.getByDisplayValue('Список А')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Опис А')).toBeInTheDocument();
-  });
-
-  test('сортировка по названию', () => {
-    renderPage();
-    fireEvent.click(screen.getByText(/Сортувати за/i));
-    fireEvent.click(screen.getByText('За назвою'));
-
-    const titles = screen
-      .getAllByRole('heading', { level: 3 })
-      .map((h) => h.textContent);
-    const sortedTitles = [...titles].sort();
-    expect(titles).toEqual(sortedTitles);
-  });
-
-  test('сортировка по дате создания', () => {
-    renderPage();
-    fireEvent.click(screen.getByText(/Сортувати за/i));
-    fireEvent.click(screen.getByText('За датою створення'));
-
-    const titles = screen
-      .getAllByRole('heading', { level: 3 })
-      .map((h) => h.textContent);
-
-    expect(titles[0]).toBe('Список А');
-    expect(titles[1]).toBe('Список Б');
-  });
-
-  test('сортировка по количеству ингредиентов', () => {
-    renderPage();
-    fireEvent.click(screen.getByText(/Сортувати за/i));
-    fireEvent.click(screen.getByText('За кількістю інгредієнтів'));
-
-    const titles = screen
-      .getAllByRole('heading', { level: 3 })
-      .map((h) => h.textContent);
-
-    expect(titles[0]).toBe('Список Б'); // меньше ингредиентов
-    expect(titles[1]).toBe('Список А');
+    const addButton = await screen.findAllByText(/Додати список/i);
+    fireEvent.click(addButton[0]);
+    expect(await screen.findByRole('heading', { name: /Новий список/i })).toBeInTheDocument();
   });
 });

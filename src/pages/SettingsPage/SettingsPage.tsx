@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Check, ChevronDown, Plus, X } from 'lucide-react';
 import Header from '../../components/Header/Header';
 import styles from './SettingsPage.module.scss';
-import iconAllert from '../../assets/icon-park-outline_caution.svg';
 import saveButton from '../../assets/Group.svg';
 import iconEnd from '../../assets/icon-park-outline_logout.svg';
 import iconPlat from '../../assets/icon-park-outline_afferent-four.svg';
@@ -162,9 +161,7 @@ const [regionOpen, setRegionOpen] = useState(false);
     localStorage.setItem('appSettings', JSON.stringify(settings));
   }, [settings]);
 
-  const updateSetting = (field: keyof SettingsData, value: any) => {
-    setSettings((prev) => ({ ...prev, [field]: value }));
-  };
+
   const handleAddMember = () => {
     if (!newMemberName.trim() || !newMemberRole.trim()) return;
 
@@ -201,15 +198,34 @@ const [regionOpen, setRegionOpen] = useState(false);
     }));
   };
 
-  const handleDeleteAccount = () => {
+
+
+  const updateSetting = (field: keyof SettingsData, value: any) => {
+    setSettings((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = (field: keyof SettingsData) => {
+    alert(
+      field === 'password'
+        ? 'Пароль збережено'
+        : `${field === 'email' ? 'Email' : 'Телефон'} збережено: ${settings[field]}`
+    );
+    // При желании сюда можно добавить api.put(`/auth/me/`, { [field]: settings[field] })
+  };
+    const handleDeleteAccount = async () => {
     if (!confirmDelete) {
       alert('Спочатку підтвердіть видалення, поставивши галочку.');
       return;
     }
-    setSettings(defaultSettings);
-    setConfirmDelete(false);
-    localStorage.removeItem('appSettings');
-    alert('Обліковий запис видалено!');
+    try {
+      // пример запроса на бэкенд, если поддерживается
+      // await api.delete('/auth/me/');
+      alert('Обліковий запис видалено!');
+      setSettings(defaultSettings);
+      setConfirmDelete(false);
+    } catch (err) {
+      console.error('Ошибка при удалении аккаунта:', err);
+    }
   };
 
   const renderSectionContent = () => {
@@ -220,7 +236,11 @@ const [regionOpen, setRegionOpen] = useState(false);
             {['email', 'phone', 'password'].map((field) => (
               <div key={field} className={styles.inputGroup}>
                 <label htmlFor={field}>
-                  {field === 'email' ? 'Адреса електронної пошти' : field === 'phone' ? 'Номер телефону' : 'Пароль'}
+                  {field === 'email'
+                    ? 'Адреса електронної пошти'
+                    : field === 'phone'
+                    ? 'Номер телефону'
+                    : 'Пароль'}
                 </label>
                 <div className={styles.inputRow}>
                   <div className={styles.inputWrapper}>
@@ -229,49 +249,52 @@ const [regionOpen, setRegionOpen] = useState(false);
                       type={field === 'password' ? 'password' : field === 'phone' ? 'tel' : 'email'}
                       value={settings[field as keyof SettingsData] as string}
                       onChange={(e) => updateSetting(field as keyof SettingsData, e.target.value)}
-                      placeholder={field === 'email' ? 'example@gmail.com' : field === 'phone' ? '+38 (050) 557 57 57' : '**********'}
+                      placeholder={
+                        field === 'email'
+                          ? 'example@gmail.com'
+                          : field === 'phone'
+                          ? '+38 (050) 557 57 57'
+                          : '**********'
+                      }
                     />
-                    {(settings[field as keyof SettingsData] as string) && <span className={styles.checkmark}><Check /></span>}
+                    {(settings[field as keyof SettingsData] as string) && (
+                      <span className={styles.checkmark}>
+                        <Check />
+                      </span>
+                    )}
                   </div>
                   <button
                     className={styles.saveButton}
                     disabled={!(settings[field as keyof SettingsData] as string)}
-                    onClick={() => alert(field === 'password' ? 'Пароль збережено' : `${field === 'email' ? 'Email' : 'Телефон'} збережено: ${settings[field as keyof SettingsData]}`)}
+                    onClick={() => handleSave(field as keyof SettingsData)}
                   >
                     <img src={saveButton} alt="save" />
                   </button>
                 </div>
               </div>
             ))}
-            <h2 className={styles.deletetTitle}>
-              Видалити обліковий запис
-            </h2>
-            <div className={styles.alertGroup}>
-              <img src={iconAllert} alt="allert" />
-              <p className={styles.alertText}>
-                Попередження: цю дію неможливо скасувати.
-                <br />
-                Видалення облікового запису призведе до остаточного видалення всіх ваших даних,
-                {' '}
-                <br />
-                {' '}
-                включаючи збережені рецепти, плани харчування та списки покупок.
-              </p>
-            </div>
+
+            <h2 className={styles.deletetTitle}>Видалити обліковий запис</h2>
             <div className={styles.checkboxGroup}>
               <label className={styles.checkboxLabel}>
-                <input type="checkbox" checked={confirmDelete} onChange={(e) => setConfirmDelete(e.target.checked)} />
+                <input
+                  type="checkbox"
+                  checked={confirmDelete}
+                  onChange={(e) => setConfirmDelete(e.target.checked)}
+                />
                 <span>Я розумію, що ця дія є остаточною.</span>
               </label>
             </div>
-            <button className={styles.deleteButton} disabled={!confirmDelete} onClick={handleDeleteAccount}>
-              Видалити мій обліковий запис
-              {' '}
-              <img src={deleteIcon} alt="delete" />
+            <button
+              className={styles.deleteButton}
+              disabled={!confirmDelete}
+              onClick={handleDeleteAccount}
+            >
+              Видалити мій обліковий запис <img src={deleteIcon} alt="delete" />
             </button>
           </>
         );
-
+    
       case 'Сповіщення':
         return (
           <div className={styles.notificationBlock}>
@@ -440,6 +463,7 @@ const [regionOpen, setRegionOpen] = useState(false);
                     <span className={styles.memberRole}>{member.role}</span>
                   </div>
                   <button
+                     aria-label={`Remove ${member.name}`}
                     className={styles.removeMember}
                     onClick={() => handleRemoveMember(member.id)}
                   >

@@ -26,10 +26,9 @@ import EditProfilePage from './pages/EditProfilePage/EditProfilePage';
 import AccountPage from './pages/AccountPage/AccountPage';
 import MesagePage from './pages/MessagesPage/MessagesPage';
 import CollectionsPage from './pages/SavedPage/SavedPage';
-import { AuthProvider } from './context/AuthContext';
 
 const App: React.FC = () => (
-    <AuthProvider>
+
   <div className={styles.app}>
     <Sidebar />
     <div className={styles.content}>
@@ -60,7 +59,6 @@ const App: React.FC = () => (
       </main>
     </div>
   </div>
-  </AuthProvider>
 );
 
 export default App;

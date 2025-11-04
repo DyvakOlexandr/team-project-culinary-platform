@@ -8,8 +8,16 @@
   .logo {
     
     padding: 1.29rem;
-    text-align: center;
+    text-align: left;
+    
   }
+
+  .logoButton{
+     transition: transform 0.3s ease-in-out;
+     &:hover{
+       transform: scale(1.02);
+     }
+    }
 
   .groupTitle {
     color: rgba(41, 90, 97, 1);
